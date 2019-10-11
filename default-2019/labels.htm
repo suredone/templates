@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{{ sd_htmltitle() }}</title>
+<meta http-equiv="Content-Type" content="text/html; charset={{ sd_siteinfo('charset') }}" />
+<meta name="generator" content="SureDone {{ sd_siteinfo('version') }}" />
+<meta name="robots" content="noindex,nofollow" /><meta name="GOOGLEBOT" content="noindex,nofollow" />
+<meta name="description" content="" />
+{{ sd_siteinfo('favicon') }}
+{{ sd_siteinfo('stylesheet') }}
+{{ sd_siteinfo('jquery') }}
+{{ sd_siteinfo('javascript') }}
+{{ sd_siteinfo('javascript_admin') }}
+{% if sd_option('site_custom_htmlhead') is not empty %}
+{{ sd_swaptags('add',sd_option('site_custom_htmlhead')) }}
+{% endif %}
+</head>
+<body>
+<div id="sd-invlabels">
+
+{% if sd_is_admin and get_do() == 'labels' %}
+    {% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'),true) : [] %}
+    <div class="sd-invlabelHead"><h1>Inventory Labels - {{ data['all'] }}</h1></div>
+    {% for key, row in data %}
+        {% if not is_array(row) or row['id'] is empty %}
+            {# continue #}
+        {% else %}
+            <div class="sd-invlabelContent">
+
+            {# custom inventory label views #}
+            {% if get_reqs('view') or shipopts['label_fields']|length > 0 %}
+                {% set viewvars = get_reqs('view') ? get_reqs('view')|split(',') : shipopts['label_fields'] %}
+                {% for view in viewvars %}
+                    {% if view == 'media' %}
+                        {% set media = is_image(row['media']) ? '<a href="' ~ sd_getmediafull(row['media']) ~ '" target="_blank"><img src="' ~ sd_getmediathumb(row['media']) ~ '" alt="" /></a>' : '' %}
+                        <span class="sd-{{ view }}">{{ media }}</span>
+                    {% else %}
+                        <span class="sd-{{ view }}">{{ row[view]|escape('html') }}</span>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {% set sku = row['guid'] %}
+                <script type="text/javascript">
+                    $(document).ready(function(){
+                        $("#bcTarget{{ row['id'] }}").barcode("{{ sku }}", "code128",{barWidth:1, barHeight:30});
+                    });
+                </script>
+                <span class="sd-title">{{ row['title']|escape('html') }}</span>
+                <span class="sd-price">{{ row['price'] }}</span>
+                <span class="sd-sku"><a href="https://app.suredone.com/#!/products/edit/{{ sku|escape('url') }}/guid">{{ sku|escape('html') }}</a></span>
+                <div id="bcTarget{{ row['id'] }}"></div>
+            {% endif %}
+
+            </div>
+
+        {% endif %}
+    {% endfor %}
+    {% if data['all'] > sd_option('results_limit') %}
+        <div class="sd-invoice-nav">
+            {{ sd_page_numbers('page_nums', data['all'])|replace({'page=':'do=labels&page=','onclick':'ondblclick','http:':'https:'}) }}
+        </div>
+    {% endif %}
+{% endif %}
+</div>
+{{ sd_siteinfo('javascript_barcode') }}
+</body>
+</html>

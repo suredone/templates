@@ -1,0 +1,45 @@
+{# suredone default account/login template #}
+{% set doaction = output.doaction %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 category-hidden padding-right-o"></div>
+        <div class="col-md-9">
+            <div id="sd-site-body" class="sd-acct-body">
+                {# create or edit account #}
+                {% if doaction == 'create-account' or (doaction == 'edit-account' and sd_is_logged_in) %}
+                {% include 'form-accountform.htm' with {'data':output.form_data} %}
+
+                {# signed-in #}
+                {% elseif doaction == 'sign-in' and sd_is_logged_in %}
+                {% include 'accounts-sign-in.htm' %}
+
+                {# account created #}
+                {% elseif doaction == 'account-created' %}
+                {% include 'accounts-created.htm' %}
+
+                {# verify email #}
+                {% elseif doaction == 'verify' %}
+                {% include 'accounts-verify.htm' %}
+
+                {# forgot password #}
+                {% elseif doaction == 'forgot-password' %}
+                {% include 'accounts-recover.htm' %}
+
+                {# delete account #}
+                {% elseif doaction == 'delete-account' and sd_is_logged_in %}
+                {% include 'accounts-delete.htm' %}
+
+                {# account login #}
+                {% else %}
+                <div class="account-login">
+                    {% include 'form-accountloginform.htm' with {'data': output.form_data} %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.htm' %}

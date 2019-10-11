@@ -1,0 +1,144 @@
+<form action="{{ output.cart_suri }}" method="post" id="sd-payForm" name="sd_payForm" onsubmit="return sdValidForm();">
+    <input type="hidden" name="do" value="process-paypal"/>
+    <input type="hidden" name="sd_js" value="jsoff"/>
+    <div rules="none" cellpadding="0" cellspacing="0" id="sd-payment-info">
+        <div>
+            <div id="sd-cartNotice">
+            {% if (not data['ccerror'])  %}
+                {{ sd_notice(false) }}
+            {% endif %}
+            </div>
+        </div>
+        {% if (sd_is_logged_in) %}
+        <div>
+            <div><b class="sd-infoBold">ADDRESS CHANGES WILL NOT UPDATE ACCOUNT DETAILS</b></div>
+        </div>
+        <div>
+            <div>
+                <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" name="sdform-vemail" alt=""/>
+                <input type="hidden" name="sd_email" value="{{ data['email'] }}"/>
+                <input type="hidden" name="sd_cemail" value="{{ data['cemail'] }}"/>
+                <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" name="sdform-vcemail" alt=""/>
+            </div>
+        </div>
+        <div>
+            <div class="sd-payInfo">
+                <strong id="sd-email-acct"><label>Email</label> {{ data['email'] }}</strong>
+            </div>
+        </div>
+        {# end logged in form head #}
+        {% endif %}
+
+        {# adaptive shipping form #}
+        {% if (sd_option('site_shipping') == 'on') %}
+        <div>
+            <div class="sd-payInfo">
+                <b class="sd-infoBold">SHIPPING ADDRESS</b>
+                <img src="{{ sd_securemedia(output.icons['required']) }}" alt="Required"/> = REQUIRED
+                <div id="sd-billingForm">
+                    {% include 'form-wwwcartbilling.htm' with {'data': data} %}
+                </div>
+            </div>
+        </div>
+        {# end adaptive shipping form #}
+        {% endif %}
+
+        {# show email inputs and create account offer #}
+        {% if (sd_option('site_accounts') == 'on' and not sd_is_logged_in) %}
+        <div>
+            <div class="sd-payInfo">
+                <div id="sd-emailForm">
+                    {% include 'form-cartemail.htm' with {'data': data} %}
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="sd-payInfo">
+                <div id="sd-passForm">
+                    {% include 'form-cartpass.htm' with {'data': data} %}
+                </div>
+            </div>
+        </div>
+        {# show only email inputs #}
+        {%  elseif (sd_option('site_accounts') != 'on') %}
+        <div>
+            <div class="sd-payInfo">
+                <div id="sd-emailForm">
+                    {% include 'form-cartemail.htm' with {'data': data} %}
+                </div>
+            </div>
+        </div>
+        {# end email inputs and create account offer #}
+        {% endif %}
+
+        {# shipasgift/promo codes/comments #}
+        {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_gift') == 'on') %}
+            {% if (data['shipasgift'])  %}
+                {% set sag_check = ' checked' %}
+            {% else %}
+                {% set sag_nocheck = ' checked' %}
+            {% endif %}
+        <div id="sd-shipAsGift">
+            <div class="sd-ccField">
+                <label for="sd-ship-as-gift">Ship as Gift</label>
+                <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" alt="" />
+                <div class="sd-ccLVimg">
+
+                </div>
+            </div>
+            <div class="sd-ccInfo">
+                <label class="sd-sag-opt">Yes
+                    <input type="radio" id="sd-ship-as-gift" name="sd_ship_as_gift" value="yes" {{ sag_check }}/>
+                </label>
+                <label class="sd-sag-opt">No
+                    <input type="radio" id="sd-ship-as-gift"name="sd_ship_as_gift" value="no" {{ sag_nocheck }}/>
+                </label>
+                <a href="{{ output.legal_uri }}#shipasgift" target="_blank">
+                    <img src="{{ sd_securemedia(output.icons['q']) }}" alt="Learn more" title="Learn more" />
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if (sd_option('site_cart_promo_codes') == 'on') %}
+        <div id="sd-customCodes">
+            <div class="sd-payInfo">
+                <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" alt=""/>
+                <label for="sd-order-code">Promo Code</label>
+                <input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="15"  value="{{ data['code'] }}"/>
+                <input type="button" id="sd-apply-code" value="Apply" onclick="sdApplyTotals('discount','sd-order-code');"/>
+
+                {% if output.legal_uri %}
+                    <a href="{{ output.legal_uri }}" target="_blank" onclick="window.open('{{ output.legal_uri }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">
+                        <img src="{{ sd_securemedia(output.icons['q']) }}" alt="See terms" title="See terms"/>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if (sd_option('site_cart_comments') == 'on') %}
+        <div>
+            <div class="sd-payInfo">
+                <textarea rows="4" cols="30" name="sd_order_comments" id="sd-orderComments" onfocus="sdClearValue(this.id);">
+
+                    {% if data['comments'] %}
+                        {{ data['comments'] }}
+                    {% else %}
+                        {{ sd_option('site_cart_comments_text') }}
+                    {% endif %}
+                </textarea>
+            </div>
+        </div>
+        {% endif %}
+        {# submit #}
+        <div>
+            <div id="sd-submitBlock">
+                <input alt="Pay Now with PayPal" id="sd-formSubmitButton" type="image" src="{{ sd_securemedia(output.icons['checkout_paypal']) }}" value="Pay Now with PayPal"/>
+                {% if output.buttons['checkout_dwolla'] %}
+                    {{ output.buttons['checkout_dwolla'] }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>

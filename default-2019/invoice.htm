@@ -1,0 +1,96 @@
+{% set admindash = sd_option('site_admin_dashboard') ? json_decode(sd_option('site_admin_dashboard'),true) : [] %}
+{% set adminv2set = admindash['user_interface']['v2'] ? true : false %}
+{% set adminurlbase = adminv2set ? sd_seturl('#!/orders','admin','',true) : sd_seturl('orders','admin','',true) %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>{{ sd_htmltitle() }}</title>
+<meta http-equiv="Content-Type" content="text/html; charset={{ sd_siteinfo('charset') }}" />
+<meta name="generator" content="SureDone {{ sd_siteinfo('version') }}" />
+<meta name="robots" content="noindex,nofollow" /><meta name="GOOGLEBOT" content="noindex,nofollow" />
+<meta name="description" content="" />
+{{ sd_siteinfo('favicon') }}
+{{ sd_siteinfo('stylesheet') }}
+{{ sd_siteinfo('jquery') }}
+{{ sd_siteinfo('javascript') }}
+{{ sd_siteinfo('jqueryui') }}
+{{ sd_siteinfo('javascript_admin') }}
+{% if sd_option('site_custom_htmlhead') is not empty %}
+{{ sd_swaptags('add',sd_option('site_custom_htmlhead')) }}
+{% endif %}
+</head>
+<body id="sd-body-invoice" data-shipping-units="{{ sd_option('shipping_units') }}">
+
+<style type="text/css" media="print" id="print"></style>
+
+<div id="sd-invoices" class="sd-{{ get_do() }}">
+    {% if sd_is_admin and get_do() == 'picklist' %}
+        {% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'),true) : [] %}
+        {% set invoice_fields = is_array(shipopts['invoice_fields']) ? shipopts['invoice_fields'] : [] %}
+        {% set uservars = sd_option('user_field_names') ? sd_option('user_field_names')|split('*') : [] %}
+
+        {# Order/Images/SKUs/Qtys/Titles/Weights/Shipping/Customer #}
+        {% if get_reqs('view') is empty %}
+        <div class="sd-invoiceHead">
+            <img src="{{ sd_siteinfo('logo_secure_url',false) }}" alt="{{ sd_siteinfo('business',false) }}" />
+            <h1>Pick List - {{ orders['all'] }} Orders</h1>
+        </div>
+        <table rules="all" cellspacing="0" cellpadding="0" id="sd-invoiceContent">
+        <thead><tr class="sd-cartHead">
+            <td class="sd-cartOrder">Order</td><td class="sd-cartMedia">Images</td>
+            <td class="sd-cartSku">SKUs</td><td class="sd-cartQty">Qtys</td>
+            <td class="sd-cartTitle">Titles</td><td class="sd-cartWeight">Weights</td>
+            <td class="sd-cartShipservice">Shipping</td><td class="sd-cartCustomer">Customer</td>
+            {% for inv_field in invoice_fields %}
+                {% set inv_field_label = inv_field in uservars ? 'user-' ~ inv_field : inv_field %}
+                {% set inv_field_label_value = output.details_labels[inv_field_label] ? output.details_labels[inv_field_label] : inv_field %}
+                <td class="{{ inv_field }}">{{ inv_field_label_value }}</td>
+            {% endfor %}
+        </tr></thead>
+        <tbody>
+        {% endif %}
+        {# process each pick list line begin #}
+        {% for key,order in orders %}
+            {% if is_array(order) %}
+                {% if get_reqs('view') is not empty %}
+            <div class="sd-invoiceContent">
+                {% endif %}
+                {% include 'form-orderpicklist.htm' with {'order':order} %}
+                {% if get_reqs('view') is not empty %}
+            </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {# process each pick list line end #}
+        {% if get_reqs('view') is empty %}
+        </tbody>
+        </table>
+        {% endif %}
+
+        {% if orders['all'] > sd_option('site_accounts_orders_limit') %}
+        <div class="sd-invoice-nav">
+        {{ sd_page_numbers('page_nums', orders['all'], sd_option('site_accounts_orders_limit'))|replace({'page=':'do=picklist&page=','onclick':'ondblclick','http:':'https:'}) }}
+        </div>
+        {% endif %}
+    {% elseif sd_is_admin and get_do() == 'packing' %}
+        {% if orders['all'] is defined and orders['all']>50 %}
+            {{ sd_admin_forms('ShippingProcessAll', orders) }}
+        {% endif %}
+        {% for order in orders %}
+            {% if is_array(order) %}
+                {% set order = order|merge(order,{'printerset':true}) %}
+                {% include 'form-orderinvoice.htm' with {'order':order} %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        {% include 'form-orderinvoice.htm' with {'order':orders[1]} %}
+    {% endif %}
+
+    {% set nexticon = sd_is_admin ? sd_seturl('base/icon/next.gif','asset','',true) : output.icons['next'] %}
+    {% set nexturl = sd_is_logged_in or sd_is_admin ? sd_is_logged_in ? output.accounts_uri : adminurlbase : sd_seturl('','home') %}
+    <div class="sd-invoice-nav">
+        <a href="{{ nexturl }}"><img src="{{ nexticon }}" alt="Next" /></a>
+    </div>
+</div>
+
+</body>
+</html>

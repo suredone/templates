@@ -1,0 +1,107 @@
+{% set carriers = ['FEDEX', 'UPS', 'USPS', 'DHL'] %}
+{% set site_sets = sd_option('site_live') ? json_decode(sd_option('site_live'), true) : [] %}
+{% set site_url = (sd_option('site_user') and site_sets['site'] == 'on' and site_sets['live'] == 'on') ? sd_siteinfo('url', false) : '' %}
+{% set site_logo = sd_siteinfo('logo_secure_url', false) %}
+{% set trackcodes = ['NOTRACKING', 'REFUNDED', 'CANCELED', 'PICKUP', 'PENDING', 'ORDERED', 'SHIPPED', 'DROPSHIPPED', 'REJECTED'] %}
+{% set statuskw = ((data['shiptracking']|upper) in trackcodes) ? 'Status:' : 'Tracking#' %}
+
+<html>
+<head>
+    <title>{{ sd_siteinfo('business', false) }} Ship Tracking</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+{% if site_url %}
+    <a href="{{ site_url }}">
+        <img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}" style="border:0px none;" />
+    </a>
+{% else %}
+    <img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}" style="border:0px none;" />
+{% endif %}
+<br/><br/>
+Order# {{ data['order'] }}<br/><br/>
+{{ statuskw }}
+{% spaceless %}
+{% if data['shiptracking'] %}
+
+    {% set shipping_tracking_codes = ['FEDEX', 'UPS', 'USPS'] %}
+    {% set data = data|merge({'shipcarrier': data['shipcarrier']|upper}) %}
+
+    {% if('*' in data['shiptracking']) %}
+        {% set tracking = data['shiptracking']|split('*') %}
+    {% else %}
+        {% set tracking = data['shiptracking']|split(',') %}
+    {% endif %}
+
+    {% if shipping_tracking_codes[(tracking[0]|upper)] %}
+        {{ tracking[0] }}
+    {% elseif shipping_tracking_codes[data['shipcarrier']] %}
+
+        {% if data['shipcarrier'] == 'FEDEX' %}
+            {% for trk in tracking %}
+            <span>
+                <a href="https://www.fedex.com/fedextrack/?tracknumbers={{ trk }}" target="_blank">{{ trk }}</a>
+            </span>
+            <br />
+            {% endfor %}
+        {% elseif data['shipcarrier'] == 'UPS' %}
+            {% for trk in tracking %}
+            <span>
+                <a href="https://wwwapps.ups.com/WebTracking/processInputRequest?track.x=0&track.y=0&InquiryNumber1={{ trk }}" target="_blank">{{ trk }}</a>
+            </span>
+            <br />
+            {% endfor %}
+        {% elseif data['shipcarrier'] == 'USPS' %}
+            {% for trk in tracking %}
+            <span>
+                <a href="https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1={{ trk }}" target="_blank">{{ trk }}</a>
+            </span>
+            <br />
+            {% endfor %}
+        {% else %}
+            {% for trk in tracking %}
+            <span>
+                <a href="https://www.google.com/#q={{ trk }}" target="_blank">{{ trk }}</a>
+            </span>
+            <br />
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        {% for trk in tracking %}
+        <span>
+            <a href="https://www.google.com/#q={{ trk }}" target="_blank">{{ trk }}</a>
+        </span>
+        <br />
+        {% endfor %}
+    {% endif %}
+{% endif %}
+{% endspaceless %}
+<br/><br/>
+
+{% if (data['shipservice']) %}
+    {% set shipservice = output.shipping_services_labels[data['shipservice']] ? output.shipping_services_labels[data['shipservice']] : data['shipservice'] %}
+    Ship Service: {{ shipservice }}<br/><br/>
+{% elseif data['shipcarrier'] in carriers %}
+    Ship Carrier: {{ data['shipcarrier'] }}<br/><br/>
+{% endif %}
+
+<table rules="none" width="500">
+    <col width="500"/>
+    <tr>
+        <td align="left">SHIP TO:</td>
+    </tr>
+    <tr>
+        <td align="left">
+            {% include 'form-shippingaddress.htm' with {'data':data} %}
+        </td>
+    </tr>
+</table>
+
+{% if data['shiptrackingmessage'] %}
+<br/><br/>
+{{ data['shiptrackingmessage'] }}
+{% endif %}
+<br/><br/>
+{{ sd_option('email_signature') }}
+</body>
+</html>

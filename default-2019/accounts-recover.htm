@@ -1,0 +1,15 @@
+<div id="sd-login">
+   <form action="{{ output.accounts_uri }}" method="post" id="sd-loginForm" onsubmit="return sdEmptyValue('user-email')">
+       <input type="hidden" name="do" value="retrieve-password" />
+       <b id="sd-acctTitle">{{ sd_option('business_name') }} Account</b>
+       <span id="sd-acctNotice">{{ sd_notice() }}</span>
+       <label for="user-email">Email Address</label>
+       <br />
+       <input type="text" size="45" maxlength="100" id="user-email" name="sd_user" value="{{ output.form_data['email'] }}" />
+       <div id="sd-recaptcha">{{ sd_recaptcha() }}</div>
+       <input type="image" src="{{ output.icons['send_email'] }}" value="Send Email" class="sd-formButton" />
+       <a href="{{ output.accounts_uri }}?do=create-account">
+           <img src="{{ output.icons['create_acct'] }}" alt="Create Account" class="sd-formButton" />
+       </a>
+   </form>
+</div>

@@ -1,0 +1,23 @@
+{# suredone default gallery template #}
+{# legacy feature for independent media gallery never expires #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 category-hidden padding-right-o"></div>
+        <div class="col-md-9">
+            <div id="sd-site-body" class="gallery-{{ sd_identifier() }} sd-galleries">
+                <div id="sd-gallery">
+                    <div id="gallery-details">
+                        {{ sd_content('buy_now_button') }}
+                        {{ sd_content('buy_now_price') }}
+                        {{ sd_content('related_item_link') }}
+                    </div>
+                    <h1>{{ sd_content('title_link') }}</h1>
+                    {{ sd_content('media_gallery') }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.htm' %}

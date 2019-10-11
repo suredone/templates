@@ -1,0 +1,114 @@
+{# suredone default cart template #}
+{% set doaction = output.doaction %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+
+<div class="container">
+    <div class="row">
+        {% if doaction == 'thank-you' %}
+        <div class="col-md-9 col-md-offset-3">
+        {% endif %}
+            {% if sd_is_cart_set and doaction == 'checkout' %}
+            <div class="ma-main-container col1-layout">
+            {% else %}
+            <div class="ma-main-container col2-layout">
+            {% endif %}
+
+                    <div class="main">
+                        {# cart progress bar #}
+                        {% include 'form-cartprogress.htm' with {'data':output.cart} %}
+
+                        {# shopping cart #}
+                        {% if doaction == 'view-cart' %}
+                        <div class="col-md-9 col-md-offset-3 padding-o padding-sm">
+                            <div class="col-main">
+                                <div class="cart">
+                                    {% include 'form-cartcontents.htm' with {'data': output.cart} %}
+                                    {% if (output.cart['index'] > 0) %}
+                                    <div id="sd-paymentOptions">
+                                        {{ output.buttons['checkout_cards'] }}
+                                        {{ output.buttons['checkout_paypal'] }}
+                                        {{ output.buttons['continue_shopping'] }}
+                                        {{ output.buttons['create_account'] }}
+                                        {{ output.buttons['checkout_login'] }}
+                                    </div>
+                                    {% endif %}
+                                    {{ output.buttons['login_form'] }}
+                                </div>
+                            </div>
+                        </div>
+                        {# end shopping cart #}
+
+                        {% elseif sd_is_cart_set and doaction in ['checkout-customer', 'checkout-payment'] %}
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="checkout">
+                                    <div class="row-fluid checkout-wrapper">
+                                        <div class="sd-account-info">
+                                            {% include 'form-checkoutsteps.htm' with {'data': output.form_data} %}
+                                        </div>
+                                        <div class="sd-order-summary-info">
+                                            <div id="checkout-progress-wrapper">
+                                                <div class="block block-progress opc-block-progress">
+                                                    <div class="block-title">
+                                                        <strong><span>Order Summary</span></strong>
+                                                    </div>
+                                                    <div class="block-content">
+                                                        {% include 'form-cartsummary-div.htm' with {'data': output.cart,'steps': 'true'} %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# cart checkout form #}
+                        {% elseif sd_is_cart_set and doaction == 'checkout' %}
+                        <div class="col-xs-12">
+                            <div class="row-fluid checkout-wrapper">
+                                <div class="sd-account-info">
+                                    {% if sd_option('site_cart_card_processor') != 'paypaladaptive' %}
+                                    {% include 'form-checkoutform.htm' with {'data': output.form_data} %}
+                                    {% else %}
+                                    {% include 'form-adaptiveform.htm' with {'data': output.form_data} %}
+                                    {% endif %}
+                                </div>
+                                <div class="sd-order-summary-info">
+                                    <div id="checkout-progress-wrapper">
+                                        <div class="block block-progress opc-block-progress">
+                                            <div class="block-title">
+                                                <strong><span>Order Summary</span></strong>
+                                            </div>
+                                            <div class="block-content">
+                                                {% include 'form-cartsummary.htm' with {'data': output.cart} %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# cart confirm form #}
+                        {% elseif sd_is_cart_set and doaction == 'confirm' %}
+                        <div id="sd-checkout-contents">
+                            {% include 'form-cartconfirmed.htm' with {'data': output.form_data} %}
+                            {% include 'form-checkoutconfirmed.htm' with {'data': output.form_data} %}
+                        </div>
+                        {# paypal express checkout #}
+                        {% elseif sd_setsecure('cart') and sd_function_last == 'paypal-express-checkout' and doaction == 'paypal-checkout' %}
+                        <div id="sd-checkout-contents">
+                            {% include 'form-cartsummary.htm' with {'data': output.cart} %}
+                            {% include 'form-paypalcheckout.htm' with {'data':output.form_data } %}
+                        </div>
+                        {# cart post sale #}
+                        {% elseif doaction == 'thank-you' %}
+                        {% include 'form-cartpostsale.htm' with {'data': output.form_data} %}
+                        {% endif %}
+                    </div>
+            </div>
+        {% if doaction == 'thank-you' %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% include 'footer.htm' %}

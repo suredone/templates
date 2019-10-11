@@ -1,0 +1,178 @@
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<section class="xt-xt-single-product">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 visible-xs visible-sm padding-right-o"></div>
+            <div class="col-md-9 col-md-offset-3 padding-o xt-product-outer">
+                <div class="xt-product-inner" itemscope itemtype="http://schema.org/Product">
+                    <div class="col-md-6">
+                        <div id="sd-product" >
+                            <div id="sd-media">
+                                {{ sd_content('media_main') }}
+                                {{ sd_content('media_thumbs') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="each-product-info product-{{ sd_identifier() }}">
+                            <h1>{{ sd_content('title_link') }}</h1>
+                            <span class="single-price"><b>Current Price:</b> {{ sd_content('price') }}</span>
+                            <div class="addto-cart-wrapper clearfix">
+                                {% set sd_content = sd_content('cart_details', false) %}
+                                {% set sd_content = sd_content|replace({ 'return sdAjaxCart(this.form)': 'return sdAjaxCartCustom(this.form)' }) %}
+                                {{ sd_content }}
+                            </div>
+                            {{ sd_content('long_description') }}
+                            <div class="hidden-props">
+                                {{ sd_content('description_details') }}
+                                {{ sd_content('tags') }}
+                            </div>
+                            <div class="product-additional-info">
+                                <ul>
+                                    <li>{{ sd_content('cat_breadcrumbs') }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="clearfix"></div>
+<div class="xt-product-description product-description">
+    <div class="container">
+        <div class="row section-separator">
+            <div class="col-md-3"></div>
+            <div class="col-md-9">
+                <div class="xt-single-item-info">
+                    <ul class="nav nav-tabs xt-single-item-tab">
+                        <li id="product_tabs_description" class="active"><a href="#">Description</a></li>
+                        <li id="product_tabs_details" class=""><a href="#">Details</a></li>
+                        {% if sd_content('tags', false) %}
+                        <li id="product_tabs_tags"><a href="#">Tags</a></li>
+                        {% endif %}
+                        {% if sd_content('shipping_details', false) %}
+                        <li id="product_tabs_ship" class="last"><a href="#">Shipping Details</a></li>
+                        {% endif %}
+                    </ul>
+                    <div class="product-tabs-content tab-pane xt-pane xt-description" id="product_tabs_description_contents">
+                        <div class="std">{{ sd_content('long_description') }}</div>
+                    </div>
+                    <div class="product-tabs-content tab-pane xt-pane xt-description" id="product_tabs_details_contents" style="display: none;">
+                        <div class="std clearfix">{{ sd_content('item_details') }}</div>
+                    </div>
+                    {% if sd_content('tags', false) %}
+                    <div class="product-tabs-content tab-pane xt-pane xt-description" id="product_tabs_tags_contents" style="display: none;">
+                        <div class="std">{{ sd_content('tags') }}</div>
+                    </div>
+                    {% endif %}
+                    {% if sd_content('shipping_details', false) %}
+                    <div class="product-tabs-content tab-pane xt-pane xt-description" id="product_tabs_ship_contents" style="display: none;">
+                        <div class="std">{{ sd_content('shipping_details') }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                <script>
+                    $(function () {
+                        $(document).ready(function () {
+                            $('.xt-single-item-tab li:first-child a').click();
+                        });
+                        $('.xt-single-item-tab li a').click(function(e){
+                            parent = $(this).parent();
+                            id = $(this).parent().attr('id');
+
+                            $('.xt-single-item-tab li').removeClass('active');
+                            parent.addClass('active');
+                            $('div.product-tabs-content').hide();
+                            $('#' + id + '_contents').show();
+                            return false;
+                        });
+                    });
+                </script>
+
+                <!--end singlw item info -->
+                <div class="xt-feature-product">
+                    <div class="row section-separator">
+                        {% set featured = sd_getresults('featured:=1') %}
+                        {% if featured %}
+                        <div class="section-title">
+                            <h2>Featured Products</h2>
+                            <span class="xt-title-bg"></span>
+                        </div>
+                        <div class="xt-each-feature">
+                            {% for key, row in featured %}
+                            {% if (key == 'all' or key == 'time') %}
+                            {# continue #}
+                            {% else %}
+                            {% spaceless %}
+                            {% if row['guid'] %}
+                            {% set sku = row['guid'] %}
+                            {% else %}
+                            {% set sku = row['sku'] %}
+                            {% endif %}
+
+                            {% set media = sd_parsemedia(row['media']) %}
+
+                            {% if (is_image(media[0])) %}
+                            {% set image_url = sd_securemedia(media[0]) %}
+
+                            {% if media[1] %}
+                            {% set alt_text = media[1]|escape %}
+                            {% else %}
+                            {% set alt_text = row['title']|escape %}
+                            {% endif %}
+
+                            {% if (sd_option('image_thumb_titles') == 'on') %}
+                            {#
+                            {% set alt_text = alt_text ~ '" title="' ~ alt_text %}
+                            #}
+                            {% endif %}
+                            {% else %}
+                            {% set image_url = output.icons['no_thumb'] %}
+                            {% set alt_text = '' %}
+                            {% endif %}
+
+                            {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
+
+                            {% endspaceless %}
+                            <div class="col-md-4 col-sm-4">
+                                <div class="xt-feature">
+                                    <div class="product-img">
+                                        <img src="{{ image_url }}" alt="{{ alt_text }}" class="img-responsive">
+                                        <span class="product-tag xt-uppercase">sale!</span>
+                                    </div>
+                                    <div class="product-info">
+                                        <div class="product-title">
+                                            <span class="category xt-uppercase">{{ row['title'] }}</span>
+                                        </div>
+                                        <div class="price-tag pull-right">
+                                            <span class="new-price xt-semibold">{{ sd_price(false, true, true, row) }}</span>
+                                        </div>
+                                        <div class="xt-featured-caption">
+                                            <div class="product-title">
+                                                <span class="category xt-uppercase">{{ row['title'] }}</span>
+                                            </div>
+                                            <div class="price-tag pull-right">
+                                                <span class="new-price xt-semibold">{{ sd_price(false, true, true, row) }}</span>
+                                            </div>
+                                            <div class="add-cart">
+                                                <a href="{{ sd_seturl(row['uri'], 'item') }}" class="btn btn-fill">View product</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <!---->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.htm' %}

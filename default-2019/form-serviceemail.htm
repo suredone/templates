@@ -1,0 +1,28 @@
+{% set site_url = sd_siteinfo('url', false) %}
+{% set site_logo = sd_siteinfo('logo_secure_url', false) %}
+{% set request_type = data['type']|capitalize %}
+<html>
+<head>
+    <title>{{ sd_siteinfo('business', false) }} {{ request_type }} {{ data['request'] }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+<a href="{{ site_url }}">
+    <img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}" style="border:0px none;"/></a>
+    <br/><br/>
+    A {{ data['type'] }} request has been submitted with the following details:<br/>
+    Name: {{ data['bfirstname'] }}<br/>
+    Email: {{ data['email'] }}<br/>
+    {% if (data['order']) %}
+    Order: {{ data['order'] }}<br/>
+    {% endif %}
+    {% if (data['items']) %}
+    Items: {{ data['items'] }}<br/>
+    {% endif %}
+    Message: {{ data['message'] }}<br/><br/>
+    Ticket# {{ data['request'] }}<br/><br/>
+    {{ sd_option('email_signature') }}
+</body>
+</html>
+
+S

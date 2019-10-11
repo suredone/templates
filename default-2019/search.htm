@@ -1,0 +1,23 @@
+{# suredone default search template #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 category-hidden padding-right-o"></div>
+        <div class="col-md-9">
+            <div id="sd-site-body">
+                <div id="sd-search">
+                    <h1>{{ sd_title() }}</h1>
+                    <div id="sd-content" class="clearfix">
+                        {{ sd_content() }}
+                        {% set searchtype = get_type()=='pages' and get_reqs('name') ? 'newest_blogs' : 'results' %}
+                        {# sd_content(searchtype) #}
+                        {% include 'results.htm' with {'results':searchtype=='results'?output.results:output.newest_blogs, 'group':searchtype=='results'?'':'newest_blogs'} %}
+                    </div>
+                </div>
+                {% include 'widgets.htm' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.htm' %}

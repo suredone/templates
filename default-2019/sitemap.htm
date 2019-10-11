@@ -1,0 +1,17 @@
+{# suredone default sitemap template #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 category-hidden padding-right-o"></div>
+        <div class="col-md-9">
+            <div id="sd-site-body">
+                <h3>Sitemap</h3>
+                <div id="sd-content">
+                    {{ sd_content() }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.htm' %}

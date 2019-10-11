@@ -1,0 +1,14 @@
+{# suredone default sidebar template #}
+<div id="sd-sidebar-nav">
+{% set site_custom_navhead = sd_option('site_custom_navhead') %}
+{% if site_custom_navhead %}
+    {{ sd_swaptags('add',site_custom_navhead) }}
+{% endif %}
+
+{{ sd_content('cat_nav_menu') }}
+
+{% set site_custom_navfoot = sd_option('site_custom_navfoot') %}
+{% if site_custom_navfoot %}
+    {{ sd_swaptags('add',site_custom_navfoot) }}
+{% endif %}
+</div>

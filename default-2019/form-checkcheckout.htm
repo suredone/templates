@@ -1,0 +1,125 @@
+{# card processing form #}
+{% set wpsets = sd_option('site_cart_card_processor')=='worldpay' and sd_option('worldpay_settings') ? json_decode(sd_option('worldpay_settings'),true) : [] %}
+<div rules="none" cellpadding="0" cellspacing="0">
+    <div>
+        <div colspan="3" id="sd-cardNotice">
+            {% if (data['ccerror'])  %}
+                {{  sd_notice(false) }}
+            {% endif %}
+        </div>
+    </div>
+    {% if sd_option('site_cart_card_processor')=='worldpay' and wpsets['methods']=='creditcheck' %}
+    <div>
+        <div class="sd-payInfo" colspan="3"><b class="sd-infoBold sd-shipAddrLabel">PAYMENT TYPE</b><br />
+            <select id="sd-payment_type" name="sd_payment_type" onchange="sdShipForm(this,this.value,'sd-paymentForm');">
+                <option value="CardCheckout" {{ data['select_paybycredit'] }}>Pay By Credit Card</option>
+                <option value="CheckCheckout" selected>Pay By Check</option>
+            </select>
+        </div>
+    </div>
+    {% endif %}
+    <div>
+        <div class="sd-ccLVimg">
+            <img class="sd-formIcon" src="{{ output.icons['vform']['check_account'] }}" name="sdform-vcheckaccount" alt="Required pay by check account"/>
+        </div>
+        <div class="sd-ccField">
+            <label for="sd-check-account">Pay By Check Account</label>
+        </div>
+        <div class="sd-ccInfo">
+            <input AUTOCOMPLETE="off" type="text" size="4" maxlength="4" id="sd-check-account" name="sd_check_account" value=""/>
+        </div>
+    </div>
+    <div>
+        <div class="sd-ccLVimg">
+            <img class="sd-formIcon" src="{{ output.icons['vform']['check_routing'] }}" name="sdform-vcheckrouting" alt="Required pay by check routing"/>
+        </div>
+        <div class="sd-ccField">
+            <label for="sd-check-routing">Pay By Check Routing</label>
+        </div>
+        <div class="sd-ccInfo">
+            <input AUTOCOMPLETE="off" type="text" size="4" maxlength="4" id="sd-check-routing" name="sd_check_routing" value=""/>
+        </div>
+    </div>
+
+    {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on' and sd_option('shipping_gift') == 'on')  %}
+        {% if (data['shipasgift'])  %}
+            {% set sag_check = ' checked' %}
+        {% else %}
+            {% set sag_nocheck = ' checked' %}
+        {% endif %}
+    <div id="sd-shipAsGift">
+        <div class="sd-ccField">
+            <label for="sd-ship-as-gift">Ship as Gift</label>
+            <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" alt="" />
+            <div class="sd-ccLVimg">
+
+            </div>
+        </div>
+        <div class="sd-ccInfo">
+            <label class="sd-sag-opt">Yes
+                <input type="radio" id="sd-ship-as-gift" name="sd_ship_as_gift" value="yes" {{ sag_check }}/>
+            </label>
+            <label class="sd-sag-opt">No
+                <input type="radio" id="sd-ship-as-gift"name="sd_ship_as_gift" value="no" {{ sag_nocheck }}/>
+            </label>
+            <a href="{{ output.legal_uri }}#shipasgift" target="_blank">
+                <img src="{{ sd_securemedia(output.icons['q']) }}" alt="Learn more" title="Learn more" />
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if (sd_option('site_cart_promo_codes') == 'on')  %}
+    <div id="sd-customCodes">
+        <div class="sd-ccLVimg">
+            <img class="sd-formIcon" src="{{ output.icons['blank'] }}" alt="" />
+        </div>
+        <div class="sd-ccField">
+            <label for="sd-order-code">Promo Code</label>
+        </div>
+        <div class="sd-ccInfo">
+            <input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="15" value="{{ data['code']  }}" />
+            <input type="button" id="sd-apply-code" value="Apply" onclick="sdApplyTotals('discount','sd-order-code');"/>
+            {% if output.legal_uri  %}
+            <a href="{{ output.legal_uri }}" target="_blank" id="sd-agree-popup" onclick="window.open('{{ output.legal_uri  }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">
+                <img src="{{ output.icons['q'] }}" alt="See terms" title="See terms" />
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if (sd_option('site_cart_comments') == 'on') %}
+        {% set order_comments = data['comments'] %}
+        {% if not order_comments %}
+            {% set order_comments = sd_option('site_cart_comments_text') %}
+        {% endif %}
+    <div>
+        <div colspan="3">
+            <textarea rows="4" cols="30" name="sd_order_comments" id="sd-orderComments" onfocus="sdClearValue(this.id);">{{ order_comments }}</textarea>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if (sd_option('site_cart_checkout_agree') == 'on')  %}
+    <div>
+        <div class="sd-ccLVimg">
+            <img class="sd-formIcon" src="{{ output.icons['vform']['agree'] }}" name="sdform-vagree" alt="Must agree to terms" title="Must agree to terms" />
+        </div>
+        <div class="sd-ccField">
+            <label for="sd-agree">Agree to Terms</label>
+        </div>
+        <div class="sd-ccInfo">
+            <input AUTOCOMPLETE="off" type="checkbox" id="sd-agree" name="sd_agree" value="true"/>
+            <a href="{{ output.legal_uri }}" target="_blank" id="sd-agree-popup" onclick="window.open('{{ output.legal_uri }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">
+                <img src="{{ output.icons['q'] }}" alt="View terms of service" title="View terms of service" />
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    <div>
+        <div id="sd-submitBlock" colspan="3">
+            <input alt="Pay Now" class="sd-formButton" tabindex="35" id="sd-formSubmitButton" type="image" src="{{ output.icons['pay_now_cards'] }}" value="Pay Now"/>
+        </div>
+    </div>
+</div>

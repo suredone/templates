@@ -1,0 +1,28 @@
+<table rules="none" cellpadding="0" cellspacing="0" id="sd-createAccount">
+    <col width=""/>
+    <col width=""/>
+    <tr>
+        <td id="sd-createAcctFlds">
+            <input tabindex="18" type="checkbox" id="sd-create-acct" name="sd_create_acct" value="yes" {{ data['create_account_check'] }} onclick="sdDoPassword();"/>
+            <b class="sd-infoBold">CREATE ACCOUNT</b>
+            <br/>
+
+            <img class="sd-formIcon" src="{{ output.icons['vform']['cart_pass'] }}" name="sdform-vpass" alt="Password with 7 or more characters"/>
+
+            Password (7 or more characters)<br/>
+            <input tabindex="19" type="password" size="20" maxlength="20" id="sd-password" name="sd_password" value=""/>
+            <br/>
+
+            <input tabindex="19" type="checkbox" id="sd-show-password" onclick="sdShowPassword();"/>
+            Check Password
+        </td>
+        <td id="sd-createAcctWhy"><b class="sd-infoBold">ACCOUNT BENEFITS:</b>
+            <ul>
+                <li>Order Management</li>
+                <li>Online Tracking Number</li>
+                <li>Expedited Checkout</li>
+                <li>Earned Discounts</li>
+            </ul>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,9 @@
+{% set nexticon = sd_is_admin ? sd_seturl('base/icon/next.gif', 'asset', '', true) : sd_securemedia(output.icons['next']) %}
+{% if (sd_is_logged_in) %}
+    {% set sd_url = output.accounts_uri %}
+{% elseif (sd_is_admin) %}
+    {% set sd_url = sd_seturl('orders', 'admin', '', true) %}
+{% else %}
+    {% set sd_url = sd_seturl('', 'home') %}
+{% endif %}
+<div class="sd-invoice-nav"><a href="{{ sd_url }}"><img src="{{ nexticon }}" alt="Next" /></a></div>

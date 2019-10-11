@@ -1,0 +1,241 @@
+{# suredone default footer #}
+<!--
+|========================
+|  SUBSCRIBE
+|========================
+-->
+{% if output.doaction not in ['checkout', 'paypal-checkout', 'checkout-customer', 'checkout-payment'] %}
+<div class="black-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <form action="{{ output.contact_uri }}" class="form-inline xt-subscribe-form" onsubmit="return sdJoinEmailList2(this)">
+                    <div class="form-group col-xs-10 xt-subscribe">
+                        <label for="footer-sd-emailListInput">Subscribe</label>
+                        <input type="text" class="form-control" id="footer-sd-emailListInput" name="add_email" placeholder="Your email address" onfocus="sdClearValue(this.id)">
+                    </div>
+                    <div class="col-md-2 col-xs-2">
+                        <button type="submit" id="footer-sd-emailListSubmit" class="btn btn-fill"><i class="fa flaticon-home"></i></button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="xt-social">
+                    <span>stay conected</span>
+                    <ul>
+                        <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                        <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                        <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                        <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<footer class="xt-footer">
+    {% if output.doaction not in ['checkout', 'paypal-checkout', 'checkout-customer', 'checkout-payment'] %}
+    <div class="container">
+        <div class="section-separator">
+            <div class="row">
+                <div class="col-md-3 col-sm-3">
+                    <div class="footer-widget footer-contact">
+                        <img src="{{ sd_siteinfo('logo_secure_url') }}" alt="" class="img-responsive">
+                        <ul>
+                            {% if (sd_option('business_phone')) %}
+                            <li>
+                                <i class="fa fa-mobile-phone"></i>
+                                <a href="tel:{{ sd_option('business_phone') }}">{{ sd_option('business_phone') }}</a>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <i class="fa fa-envelope-o"></i>
+                                <a href="mailto:{{ sd_option('business_email') }}">{{ sd_option('business_email') }}</a>
+                            </li>
+                            <li>
+                                <i class="fa fa-location-arrow"></i>
+                                <address>
+                                    {{ sd_option('business_street') }} {%if (sd_option('business_street_2')) %} {{ sd_option('business_street_2') }}{% endif %}, {{ sd_option('business_city') }}{% if (sd_option('business_state')) %} {{ sd_option('business_state') }}{% endif %}, {{ sd_option('business_country') }}
+                                </address>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <div class="footer-widget">
+                        <h4>My account</h4>
+                        <ul>
+                            <li><a href="{{ output.accounts_uri }}"><i class="fa fa-caret-right"></i>my account</a></li>
+                            <li><a href="{{ output.cart_suri }}"><i class="fa fa-caret-right"></i>shopping cart</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <div class="footer-widget">
+                        <h4>Customer Service</h4>
+                        <ul>
+                            <li><a href="{{ output.contact_uri }}"><i class="fa fa-caret-right"></i>contact</a></li>
+                            <li><a href="{{ output.legal_uri }}"><i class="fa fa-caret-right"></i>terms</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <div class="footer-widget">
+                        <h4>Information</h4>
+                        <ul>
+                            <li><a href="{{ sd_seturl(['index', 'blog'], 'pageindex') }}"><i class="fa fa-caret-right"></i>our blog</a></li>
+                            <li><a href="{{ sd_seturl(['about', 'pages'], 'page') }}"><i class="fa fa-caret-right"></i>about us</a></li>
+                            <li><a href="{{ output.sitemap_uri }}"><i class="fa fa-caret-right"></i>sitemap</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="clearfix"></div>
+    <div class="footer-middle bg-2">
+        <div class="container">
+            <div class="row section-separator">
+                <div class="col-md-4 col-sm-4">
+                    <div class="footer-widget-2">
+                        <div class="row">
+                            <div class="col-md-2 f-icon">
+                                <i class="fa flaticon-credit-card"></i>
+                            </div>
+                            <div class="col-md-10">
+                                <h4>Safe Payment</h4>
+                                <p>
+                                    Pay with the world's most popular and secure
+                                    payment methods.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="footer-widget-2">
+                        <div class="row">
+                            <div class="col-md-2 f-icon">
+                                <i class="fa flaticon-shipped"></i>
+                            </div>
+                            <div class="col-md-10">
+                                <h4>Worldwide delivery</h4>
+                                <p>
+                                    With sites in 5 languages, we shop to over 100
+                                    countries and regions.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="footer-widget-2">
+                        <div class="row">
+                            <div class="col-md-2 f-icon">
+                                <i class="fa flaticon-question"></i>
+                            </div>
+                            <div class="col-md-10">
+                                <h4>24/7 help center</h4>
+                                <p>
+                                    Round-the-clock assistance for a smooth
+                                    shopping experience.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row section-separator">
+                <div class="col-md-6 col-sm-6">
+                    <a class="pull-left" href="https://www.suredone.com" target="_blank" rel="nofollow"><img src="https://assets.suredone.com/v6/logos/logo-16pb.png" alt="Powered by SureDone"></a>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <img src="https://assets.suredone.com/default-2019/images/payment.png" alt="" class="img-responsive">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if sd_is_secure == false and sd_request_uri != output.cart_uri and sd_option('site_adsense') == 'on' and sd_option('site_adsense_google_account') is not empty %}
+    <div id="foot-ads">
+        <script>
+            <!--
+            google_ad_client = "ca-pub-{{ sd_siteinfo('google_adsense') }}";
+            google_ad_slot = "8146650125";
+            google_ad_width = 728;
+            google_ad_height = 90;
+            //-->
+        </script>
+        <script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+    </div>
+    {% endif %}
+    <div id="foot-pow">{{ sd_siteinfo('version_logo_powered_link') }}</div>
+    {% if sd_option('site_tracking') == 'on' and sd_option('site_tracking_google_account') is not empty %}
+    <script>
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    {% endif %}
+
+</footer>
+<!--
+|========================
+|      Script
+|========================
+-->
+<!-- jquery -->
+<script src="https://assets.suredone.com/default-2019/plugins/js/jquery-1.11.3.min.js"></script>
+<!-- Bootstrap -->
+<script src="https://assets.suredone.com/default-2019/plugins/js/bootstrap.min.js"></script>
+<!-- mean menu nav-->
+<script src="https://assets.suredone.com/default-2019/plugins/js/meanmenu.js"></script>
+<!-- googlemap -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3jPFJmX2I08quCFwUREVQtpGAckkiSn0"></script>
+<!-- wow -->
+<script src="https://assets.suredone.com/default-2019/plugins/js/wow.min.js"></script>
+<!-- Owl carousel-->
+<script src="https://assets.suredone.com/default-2019/plugins/js/owl.carousel.js"></script>
+<!--flexslider-->
+<script src="https://assets.suredone.com/default-2019/plugins/js/jquery.flexslider-min.js"></script>
+<!--dropdownhover-->
+<script src="https://assets.suredone.com/default-2019/plugins/js/bootstrap-dropdownhover.min.js"></script>
+<!--jquery-ui.min-->
+<script src="https://assets.suredone.com/default-2019/plugins/js/jquery-ui.min.js"></script>
+<!--validator -->
+<script src="https://assets.suredone.com/default-2019/plugins/js/validator.min.js"></script>
+<!--smooth scroll-->
+<script src="https://assets.suredone.com/default-2019/plugins/js/smooth-scroll.js"></script>
+<!-- Fancybox js-->
+<script src="https://assets.suredone.com/default-2019/plugins/js/jquery.fancybox.min.js"></script>
+<!-- SELECTIZE-->
+<script src="https://assets.suredone.com/default-2019/plugins/js/selectize.js"></script>
+<!-- init -->
+<script src="https://assets.suredone.com/default-2019/js/init.js"></script>
+<!-- colorbox image gallery -->
+<script src="https://assets.suredone.com/default-2019/js/drop-down.js"></script>
+<script>
+    $.noConflict();
+    $(".sd-gallery-thumbs").colorbox({
+        rel: 'sd-gallery-thumbs', transition: "none", width: "75%", height: "75%", current: 'Image {current} of {total}', 'onComplete': function () {
+            //$('#cboxLoadedContent img').wrap('<span style="display:block"></span>').css('display', 'block').parent().zoom();
+        }
+    });
+
+    jQuery(document).ready(function ($) {
+        $("#accordion").accordion();
+        if (document.getElementById('main-image')) {
+            sdResetMainImageZoom();
+        }
+    });
+</script>
+<script>sdAjaxCartUpdate();</script>
+</body>
+</html>

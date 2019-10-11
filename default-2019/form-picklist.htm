@@ -1,0 +1,64 @@
+{% set site_sets = sd_option('site_live') ? json_decode(sd_option('site_live'), true) : [] %}
+{% set site_url = (sd_option('site_user') and site_sets['site'] == 'on' and site_sets['live'] == 'on') ? sd_siteinfo('url', false) : '' %}
+{% set site_logo = sd_siteinfo('logo_secure_url', false) %}
+{% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'), true) : [] %}
+{% set uservars = sd_option('user_field_names') ? (sd_option('user_field_names')|split('*')) : [] %}
+
+{# Order/Images/SKUs/Qtys/Titles/Weights/Shipping/Customer/ #}
+<div class="sd-invoiceHead">
+    {% if site_url %}
+        <a href="{{ site_url }}"><img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}" /></a>
+    {% else %}
+        <img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}" />
+    {% endif %}
+    <h1>Pick List - {{ data['all'] }} Orders</h1>
+</div>
+
+{% if not get_reqs('view') %}
+<table rules="all" cellspacing="0" cellpadding="0" id="sd-invoiceContent">
+    <thead>
+    <tr class="sd-cartHead">
+        <td class="sd-cartOrder">Order</td>
+        <td class="sd-cartMedia">Images</td>
+        <td class="sd-cartSku">SKUs</td>
+        <td class="sd-cartQty">Qtys</td>
+        <td class="sd-cartTitle">Titles</td>
+        <td class="sd-cartWeight">Weights</td>
+        <td class="sd-cartShipservice">Shipping</td>
+        <td class="sd-cartCustomer">Customer</td>
+
+    {% if shipopts['invoice_fields'] %}
+        {% for il in shipopts['invoice_fields'] %}
+        {% set iflabel = (il in uservars) ? 'user-' ~ il : il %}
+        <td class="{{ il }}">
+            {{ (output.details_labels[iflabel] ? output.details_labels[iflabel] : il) }}
+        </td>
+        {% endfor %}
+    {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+{% endif %}
+
+{% for key, order in data %}
+    {% if (key != 'all' and key != 'time' and key != 'type') %}
+        {% if not get_reqs('view') %}
+            {% include 'form-picklistorder.htm' with {'data': order} %}
+        {% else %}
+            <div class="sd-invoiceContent">
+                {% include 'form-picklistorder.htm' with {'data': order} %}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% if not get_reqs('view') %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if data['all'] > sd_option('site_accounts_orders_limit') %}
+    <div class="sd-invoice-nav">
+        {{ (sd_page_numbers('page_nums', data['all'], 'orders')|replace({'onclick': 'ondblclick'})) }}
+    </div>
+{% endif %}

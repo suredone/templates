@@ -1,0 +1,22 @@
+{# form BusinessAddress #}
+<b>{{ sd_siteinfo('business', false) }}</b>
+<br />{{ sd_option('business_street') }}<br />{{ sd_option('business_street_2') }}
+
+{% if sd_option('business_country') == 'US' or sd_option('business_country') == 'CA' %}
+    <br />{{ sd_option('business_city')|escape('html') }}, {{ sd_option('business_state')|escape('html') }} {{ sd_option('business_zip')|escape('html') }}
+{% else %}
+    <br />{{ sd_option('business_zip')|escape('html') }} {{ sd_option('business_city')|escape('html') }}
+    {% if sd_option('business_state') %}
+        <br />{{ sd_option('business_state')|escape('html') }}
+    {% endif %}
+{% endif %}
+
+{% if sd_option('business_country_name') %}
+    <br />{{ sd_option('business_country_name')|escape('html') }}
+{% endif %}
+{% if sd_option('business_phone') %}
+    <br />{{ sd_option('business_phone')|escape('html') }}
+{% endif %}
+{% if sd_option('business_email') %}
+    <br /><a href="mailto:{{ sd_option('business_email')|escape('html') }}">{{ sd_option('business_email')|escape('html') }}</a>
+{% endif %}

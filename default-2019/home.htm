@@ -1,0 +1,460 @@
+{# suredone default home page template #}
+{% set customhome = sd_option('site_custom_home') %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+    {% if is_sd_preview %}
+<div id="sd-site-preview" style="text-align:center;font-weight:bold;font-size:16px;background-color:black;color:red;height:20px;padding:10px;border:solid 1px #DEDEDE;border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px 6px;-moz-box-shadow:inset 0 -2px 15px #E0E0E0;-webkit-box-shadow:inset 0 -2px 15px #E0E0E0;box-shadow:inset 0 -2px 15px #E0E0E0;">THIS IS A PREVIEW ONLY</div>
+    {% endif %}
+<div id="sd-site-home">
+    <!--
+    |========================
+    |  SLIDER
+    |========================
+    -->
+    <section class="xt-slider">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 category-hidden padding-right-o"></div>
+                <div class="col-md-9 col-md-offset-3 padding-o padding-sm">
+                    <div class="flexslider xt-slider-inner">
+                        <ul class="slides">
+                            <li>
+                                <img src="https://assets.suredone.com/default-2019/images/model-five.jpg" alt="" />
+                                <div class="slide_text">
+                                    <span class="slide-category">Fashion</span>
+                                    <h2 class="slide_title">Spring Summer <br> Fashion Collection</h2>
+                                    <p class="slide_byline ">
+                                        Lorem ipsum dolor sit amet, consectetur adipis
+                                        cing elit, sed do eiusmod tempor incididunt ut labore
+                                        et dolore magna aliqua ut enim ad minim.
+                                    </p>
+                                    <a href="" class="btn btn-fill ">Shop Now</a>
+                                </div>
+                            </li>
+                            <li>
+                                <img src="https://assets.suredone.com/default-2019/images/model-four.jpg" alt="" />
+                                <div class="slide_text">
+                                    <span class="slide-category">Style</span>
+                                    <h2 class="slide_title ">Winter Autumn <br> Jacket Collection</h2>
+                                    <p class="slide_byline ">
+                                        Usher in the summer months with showerproof jackets
+                                        and lightweight boys' coats. Items are great to be presented
+                                        loved ones and the reasonable price makes the collection suitable.
+                                    </p>
+                                    <a href="" class="btn btn-fill ">Shop Now</a>
+                                </div>
+                            </li>
+                            <li>
+                                <img src="https://assets.suredone.com/default-2019/images/model-three.jpg" alt="" />
+                                <div class="slide_text">
+                                    <span class="slide-category">Spring Collection</span>
+                                    <h2 class="slide_title ">Spring Upcomming <br> New Collection</h2>
+                                    <p class="slide_byline ">
+                                        Bags, Glasses and belts are all of the best quality
+                                        and are made by famous brands in this area. Vitrine helped
+                                        them to show their products better and sell more.
+                                    </p>
+                                    <a href="" class="btn btn-fill ">Shop Now</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flexslider-controls">
+                        <ol class="flex-control-nav">
+                            <li>
+                                <img src="https://assets.suredone.com/default-2019/images/model-five-thumb.jpg" alt="" />
+                                <div class="nav-title">
+                                    <span>Fashion</span>
+                                    <h3>Spring Summer Fashion Collection</h3>
+                                </div>
+
+                            </li>
+                            <li>
+                                <img src="https://assets.suredone.com/default-2019/images/model-four-thumb.jpg" alt="" />
+                                <div class="nav-title">
+                                    <span>Style</span>
+                                    <h3>Winter Autumn Jacket COllection</h3>
+                                </div>
+
+                            </li>
+                            <li>
+                                <img src="https://assets.suredone.com/default-2019/images/model-three-thumb.jpg" alt="" />
+                                <div class="nav-title">
+                                    <span>Spring</span>
+                                    <h3>Spring New Collection 2018</h3>
+                                </div>
+
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--
+    |========================
+    |  FEATURED SECTION
+    |========================
+    -->
+    <section class="xt-deal-section">
+        <div class="container">
+            <div class="row section-separator">
+                <div class="xt-each-deal">
+                    <div class="col-md-8 col-sm-6">
+                        <div class="xt-spring-deal cover-bg white xt-deal" style="background-image: url(https://assets.suredone.com/default-2019/images/f1.jpg);">
+                            <div class="xt-overlay"></div>
+                            <span>fresh your soul</span>
+                            <h2>spring summer <br> fashion collection</h2>
+                            <a href="" class="btn btn-fill">Shop now</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="xt-summer-deal cover-bg white xt-deal" style="background-image: url(https://assets.suredone.com/default-2019/images/f2.jpg);">
+                            <div class="xt-overlay"></div>
+                            <span>SAVE 35% ON DESIGNER</span>
+                            <h2>hot summer collection</h2>
+                            <a href="" class="btn btn-fill">Shop now</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="xt-off-deal cover-bg white xt-deal xt-color-bg">
+                            <span>summer collection 2017</span>
+                            <h2 class="xt-deal-price">66<span>%<br>off</span></h2>
+                            <a href="" class="btn btn-border">Shop now</a>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-6">
+                        <div class="xt-summer-deal cover-bg white xt-deal" style="background-image: url(https://assets.suredone.com/default-2019/images/f3.jpg);">
+                            <div class="xt-overlay"></div>
+                            <span>Winter COllection</span>
+                            <h2>Winter Autumn <br> Jacket Collection</h2>
+                            <a href="" class="btn btn-fill">Shop now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--
+    |========================
+    |  PRODUCT
+    |========================
+    -->
+    <section class="xt-feature-product">
+        <div class="container">
+            <div class="row section-separator">
+                {% set featured = sd_getresults('featured:=1') %}
+                {% if featured %}
+                <div class="section-title">
+                    <h2>Featured Product</h2>
+                    <span class="xt-title-bg"></span>
+                </div>
+                <div class="xt-each-feature">
+                    {% for key, row in featured %}
+                    {% if (key == 'all' or key == 'time') %}
+                    {# continue #}
+                    {% else %}
+                    {% spaceless %}
+                    {% if row['guid'] %}
+                    {% set sku = row['guid'] %}
+                    {% else %}
+                    {% set sku = row['sku'] %}
+                    {% endif %}
+
+                    {% set media = sd_parsemedia(row['media']) %}
+
+                    {% if (is_image(media[0])) %}
+                    {% set image_url = sd_getmediathumb(sd_securemedia(media[0], true)) %}
+
+                    {% if media[1] %}
+                    {% set alt_text = media[1]|escape %}
+                    {% else %}
+                    {% set alt_text = row['title']|escape %}
+                    {% endif %}
+
+                    {% if (sd_option('image_thumb_titles') == 'on') %}
+                    {#
+                    {% set alt_text = alt_text ~ '" title="' ~ alt_text %}
+                    #}
+                    {% endif %}
+                    {% else %}
+                    {% set image_url = output.icons['no_thumb'] %}
+                    {% set alt_text = '' %}
+                    {% endif %}
+
+                    {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
+
+                    {% endspaceless %}
+                    <div class="col-md-3 col-sm-3">
+                        <div class="xt-feature">
+                            <div class="product-img">
+                                <img src="{{ image_url }}" alt="{{ alt_text }}">
+                                <span class="product-tag xt-uppercase">sale!</span>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-title">
+                                    <span class="category xt-uppercase">{{ row['title'] }}</span>
+                                </div>
+                                <div class="price-tag pull-right">
+                                    <span class="new-price xt-semibold">{{ sd_price(false, true, true, row) }}</span>
+                                </div>
+                                <div class="xt-featured-caption">
+                                    <div class="product-title">
+                                        <span class="category xt-uppercase">{{ row['title'] }}</span>
+                                    </div>
+                                    <div class="price-tag pull-right">
+                                        <span class="new-price xt-semibold">{{ sd_price(false, true, true, row) }}</span>
+                                    </div>
+                                    <div class="add-cart">
+                                        <a href="{{ sd_seturl(row['uri'], 'item') }}" class="btn btn-fill">View product</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    <!--
+    |========================
+    |  BY CATEGORY
+    |========================
+    -->
+    <section class="product-category">
+        <div class="container">
+            <div class="row section-separator">
+                <div class="section-title">
+                    <h2> PRODUCTS by category </h2>
+                    <span class="xt-title-bg"></span>
+                </div>
+                <div class="col-xs-12">
+                    <div class="xt-product-slide">
+                        <div class="xt-carousel owl-theme">
+                            <div class="xt-item">
+                                <i class="fa flaticon-dress-1"></i>
+                                <span>Fashion</span>
+                            </div>
+                            <div class="xt-item">
+                                <i class="fa flaticon-jacket-1"></i>
+                                <span>Style</span>
+                            </div>
+                            <div class="xt-item">
+                                <i class="fa flaticon-v-neck-shirt"></i>
+                                <span>Lipstick</span>
+                            </div>
+                            <div class="xt-item">
+                                <i class="fa flaticon-high-heel"></i>
+                                <span>Blezzar</span>
+                            </div>
+                            <div class="xt-item">
+                                <i class="fa flaticon-dress"></i>
+                                <span>Jacket</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="xt-category-feature col-xs-12">
+                    <div class="col-md-4 col-sm-4">
+                        <div class="xt-feature">
+                            <div class="product-img">
+                                <img src="https://assets.suredone.com/default-2019/images/model-one-660-640.jpg" alt="" class="img-responsive">
+                                <span class="product-tag xt-uppercase">sale!</span>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-title">
+                                    <span class="category xt-uppercase">Winter COllection</span>
+                                    <span class="name xt-semibold">Black Color</span>
+                                </div>
+                                <div class="price-tag pull-right">
+                                    <span class="old-price"><del>$280</del></span>
+                                    <span class="new-price xt-semibold">$260</span>
+                                </div>
+                                <div class="xt-featured-caption">
+                                    <div class="product-title">
+                                        <span class="category xt-uppercase">Winter COllection</span>
+                                        <span class="name xt-semibold">Black Color</span>
+                                    </div>
+                                    <div class="price-tag pull-right">
+                                        <span class="old-price"><del>$280</del></span>
+                                        <span class="new-price xt-semibold">$260</span>
+                                    </div>
+                                    <div class="add-cart">
+                                        <a href="" class="btn btn-fill">Add to cart</a>
+                                        <ul class="reaction">
+                                            <li><a href=""><i class="fa fa-search"></i></a></li>
+                                            <li><a href=""><i class="fa fa-heart-o"></i></a></li>
+                                            <li><a href=""><i class="fa fa-bar-chart-o"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                        <div class="xt-feature">
+                            <div class="product-img">
+                                <img src="https://assets.suredone.com/default-2019/images/model-two-660-640.jpg" alt="" class="img-responsive">
+                                <span class="product-tag xt-uppercase">sale!</span>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-title">
+                                    <span class="category xt-uppercase">Autumn Collection</span>
+                                    <span class="name xt-semibold">Imported From U.A.E.</span>
+                                </div>
+                                <div class="price-tag pull-right">
+                                    <span class="old-price"><del>$280</del></span>
+                                    <span class="new-price xt-semibold">$260</span>
+                                </div>
+                                <div class="xt-featured-caption">
+                                    <div class="product-title">
+                                        <span class="category xt-uppercase">Autumn Collection</span>
+                                        <span class="name xt-semibold">Imported From U.A.E.</span>
+                                    </div>
+                                    <div class="price-tag pull-right">
+                                        <span class="old-price"><del>$280</del></span>
+                                        <span class="new-price xt-semibold">$260</span>
+                                    </div>
+                                    <div class="add-cart">
+                                        <a href="" class="btn btn-fill">Add to cart</a>
+                                        <ul class="reaction">
+                                            <li><a href=""><i class="fa fa-search"></i></a></li>
+                                            <li><a href=""><i class="fa fa-heart-o"></i></a></li>
+                                            <li><a href=""><i class="fa fa-bar-chart-o"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                        <div class="xt-feature">
+                            <div class="product-img">
+                                <img src="https://assets.suredone.com/default-2019/images/model-five-660-640.jpg" alt="" class="img-responsive">
+                                <span class="product-tag xt-uppercase">sale!</span>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-title">
+                                    <span class="category xt-uppercase">Spring Collection</span>
+                                    <span class="name xt-semibold">2017 New Model</span>
+                                </div>
+                                <div class="price-tag pull-right">
+                                    <span class="old-price"><del>$280</del></span>
+                                    <span class="new-price xt-semibold">$260</span>
+                                </div>
+                                <div class="xt-featured-caption">
+                                    <div class="product-title">
+                                        <span class="category xt-uppercase">Spring Collection</span>
+                                        <span class="name xt-semibold">2017 New Model</span>
+                                    </div>
+                                    <div class="price-tag pull-right">
+                                        <span class="old-price"><del>$280</del></span>
+                                        <span class="new-price xt-semibold">$260</span>
+                                    </div>
+                                    <div class="add-cart">
+                                        <a href="" class="btn btn-fill">Add to cart</a>
+                                        <ul class="reaction">
+                                            <li><a href=""><i class="fa fa-search"></i></a></li>
+                                            <li><a href=""><i class="fa fa-heart-o"></i></a></li>
+                                            <li><a href=""><i class="fa fa-bar-chart-o"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--
+    |========================
+    |  TESTIMONIAL
+    |========================
+    -->
+    <section class="xt-testimonial section-separator">
+        <div class="container">
+            <div class="row">
+                <div class="section-title">
+                    <h2>clients testimonial</h2>
+                    <span class="xt-title-bg"></span>
+                </div>
+                <div class="testimonial-content col-xs-12 xt-client-carousel">
+                    <div class="xt-clients">
+                        <div class="user-img">
+                            <img src="https://assets.suredone.com/default-2019/images/t3.jpg" alt="" class="img-responsive">
+                        </div>
+                        <h5>Richard I. Moore</h5>
+                        <span>Manager</span>
+                        <p>
+                            The founder of SEO Monster is so helpful and efficient with any problem you might have.
+                            I highly recommend choosing his products. Professional, sexy, sleek, and fun!
+                        </p>
+                    </div>
+                    <div class="xt-clients">
+                        <div class="user-img">
+                            <img src="https://assets.suredone.com/default-2019/images/t3.jpg" alt="" class="img-responsive">
+                        </div>
+                        <h5>Stephen L. Jacques</h5>
+                        <span>C.E.O.</span>
+                        <p>
+                            The founder of SEO Monster is so helpful and efficient with any problem you might have.
+                            I highly recommend choosing his products. Professional, sexy, sleek, and fun!
+                        </p>
+                    </div>
+                    <div class="xt-clients">
+                        <div class="user-img">
+                            <img src="https://assets.suredone.com/default-2019/images/t3.jpg" alt="" class="img-responsive">
+                        </div>
+                        <h5>Tim C. Cross</h5>
+                        <span>H.R. HEAD</span>
+                        <p>
+                            The founder of SEO Monster is so helpful and efficient with any problem you might have.
+                            I highly recommend choosing his products. Professional, sexy, sleek, and fun!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--
+    |========================
+    |  BLOG
+    |========================
+    -->
+    <section class="xt-blog">
+        <div class="container">
+            <div class="row section-separator">
+                <div class="section-title">
+                    <h2>Latest blog Post</h2>
+                    <span class="xt-title-bg"></span>
+                </div>
+                <div class="xt-blog col-xs-12">
+                    {% for i in sd_getnewpages('blog')|slice(0, 3)|reverse %}
+                    {% set group = 'newest_blogs' %}
+                    <div class="col-md-4 col-sm-4">
+                        <div class="xt-grid-post">
+                            <img src="{{ i['media'] }}" alt="{{ i['title'] }}" class="img-responsive">
+                            <div class="grid-content">
+                                {% if (i['dateupdated'] == '0000-00-00 00:00:00') %}
+                                <span>{{ i['date'] }}</span>
+                                {% else %}
+                                <span>{{ i['dateupdated'] }}</span>
+                                {% endif %}
+                                <a href="{{ i['url'] }}"><h3>{{ i['title'] }}</h3></a>
+                                <p>{{ i['longdescription'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% include 'results.htm' with {'var':'home-blog'} %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% include 'widgets.htm' %}
+</div>
+{% include 'footer.htm' %}

@@ -1,0 +1,29 @@
+{% if data.progress == 1 %}
+<div class="col-md-9 col-md-offset-3 padding-o padding-sm">
+    <div class="page-title title-buttons">
+        <h1>Shopping Cart</h1>
+    </div>
+</div>
+{% elseif data.progress == 2 %}
+<div class="row">
+    <div class="col-xs-12 checkout-title">
+        <div class="page-title title-buttons">
+            <h1>Checkout</h1>
+        </div>
+    </div>
+</div>
+{% elseif data.progress == 3 %}
+<div class="row">
+    <div class="col-xs-12 checkout-title">
+        <div class="page-title title-buttons">
+            <h1>Order Complete</h1>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="col-md-9 col-md-offset-3 padding-o padding-sm">
+    <div class="page-title title-buttons">
+        <h1>Shopping Cart</h1>
+    </div>
+</div>
+{% endif %}

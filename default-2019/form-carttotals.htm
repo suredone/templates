@@ -1,0 +1,122 @@
+{% set totals = sd_carttotals() %}
+{% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'), true) : [] %}
+<table>
+    <col width="250"/>
+    <col width="50"/>
+    {% if (sd_shipnotice()) %}
+        <tr>
+            <td colspan="2" id="sd-shipNotice">{{ sd_shipnotice() }}</td>
+        </tr>
+    {% endif %}
+
+    <tr>
+        <td class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel('subtotal') }}
+        </td>
+        <td class="sd-cartTotals">
+            {{ sd_currency(false) ~ (totals['item']|number_format(2)) }}
+        </td>
+    </tr>
+{% for key, total in totals %}
+    {% if (key == 'shipping' and sd_option('site_shipping') == 'on')  %}
+    <tr>
+        <td class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </td>
+        <td class="sd-cartTotals">
+            {% set cartshiptotal = shipopts['combine_handling'] == 'on' ? (totals['handling'] + total) : total %}
+            {{ sd_currency(false) ~ cartshiptotal|number_format(2) }}
+        </td>
+    </tr>
+    {% endif %}
+
+    {% if (key == 'handling' and total > 0 and shipopts['combine_handling'] != 'on')  %}
+    <tr>
+        <td class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </td>
+        <td class="sd-cartTotals">{{ sd_currency(false) ~ total|number_format(2) }}</td>
+    </tr>
+    {% endif %}
+
+    {% if (key == 'tax' and total > 0)  %}
+    <tr>
+        <td class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </td>
+        <td class="sd-cartTotals">{{ sd_currency(false) ~ total|number_format(2) }}</td>
+    </tr>
+    {% endif %}
+
+    {% if (key == 'discount' and total > 0)  %}
+    <tr>
+        <td class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </td>
+        <td class="sd-cartDiscounts">-{{ sd_currency(false) ~ total|number_format(2) }}</td>
+    </tr>
+    {% endif %}
+
+    {% if (key == 'total') %}
+    <tr>
+        <td class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </td>
+        <td class="sd-cartTotals">{{ sd_currency(false) ~ total|number_format(2) }}</td>
+    </tr>
+    {% endif %}
+{% endfor %}
+</table>
+
+{% if (sd_option('site_cart_checkout_confirm') == 'on') %}
+<div id="sd-confirm-totals">
+    <h3>Please Confirm Totals:</h3>
+    <p>
+        {{ sd_carttotalslabel('subtotal') }}:
+        {{ sd_currency(false) ~ totals['item']|number_format(2) }}
+    </p>
+
+    {% for key, total in totals %}
+        {% if (key == 'shipping' and sd_option('site_shipping') == 'on') %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {% set cartshiptotal = shipopts['combine_handling'] == 'on' ? (totals['handling'] + total) : total %}
+            {{ sd_currency(false) ~ cartshiptotal|number_format(2) }}
+        </p>
+        {% endif %}
+
+        {% if (key == 'handling' and total > 0 and shipopts['combine_handling'] != 'on') %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {{ sd_currency(false) ~ total|number_format(2) }}
+        </p>
+        {% endif %}
+
+        {% if (key == 'tax' and total > 0) %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {{ sd_currency(false) ~ total|number_format(2) }}
+        </p>
+        {% endif %}
+
+        {% if (key == 'discount' and total > 0) %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {{ sd_currency(false) ~ total|number_format(2) }}
+        </p>
+        {% endif %}
+
+        {% if (key == 'total') %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {{ sd_currency(false) ~ total|number_format(2) }}
+        </p>
+        {% endif %}
+    {% endfor %}
+
+    <span>
+        <img class="sd-formButton close" src="{{ sd_securemedia(output.icons['cancel']) }}"/>
+        <img class="sd-formButton close" src="{{ sd_securemedia(output.icons['confirm']) }}" onclick="sdConfirmCheckout(true);"/>
+    </span>
+</div>
+{% endif %}

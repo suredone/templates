@@ -1,0 +1,23 @@
+{# suredone default tag template #}
+{% set sdcontent = data.state == 'page' ? 'page_index' : 'results' %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 category-hidden padding-right-o"></div>
+        <div class="col-md-9">
+            <div id="sd-site-body" class="tag-{{ sd_identifier() }} sd-tags">
+                <div id="sd-category">
+                    <h1>{{ sd_content('title_link') }}</h1>
+                    {{ sd_content('media_images') }}
+                    <p>
+                        {{ sd_content('long_description') }}
+                    </p>
+                    <div id="sd-content">{{ sd_content(sdcontent) }}</div>
+                </div>
+                {% include 'widgets.htm' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.htm' %}

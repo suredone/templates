@@ -1,0 +1,5 @@
+{% if data['billing'] %}
+{{ data['billing']['firstname'] }} {{ data['billing']['middlename'] }} {{ data['billing']['lastname'] }}
+{% else %}
+{{ data['bfirstname'] }} {{ data['bminitial'] }} {{ data['blastname'] }}
+{% endif %}

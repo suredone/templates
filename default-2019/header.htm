@@ -1,0 +1,287 @@
+<body>
+    {% if is_ie_check %}
+    <script>
+            $(document).ready(function () {
+                if (typeof $.cookie != undefined && !$.cookie('sdie_check')){
+                    $.cookie('sdie_check', '1');
+                    var url = '{{ output.contact_uri }}';
+                    $('<iframe src="'+url+'" frameborder = "0" width = "1" height = "1" scrolling = "no" ></iframe>').append('body');
+                }
+            });
+    </script>
+    {% endif %}
+    {% if output.doaction not in ['checkout', 'paypal-checkout', 'checkout-customer', 'checkout-payment'] %}
+    <header id="xt-home" class="xt-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="row">
+                    <div class="user-nav pull-right col-md-6 col-sm-6 col-xs-12">
+                        <ul>
+                            <li><a href="{{ output.cart_suri }}" title="Cart">Cart</a></li>
+                            <li><a href="{{ output.cart_suri }}?do=checkout" title="Checkout">Checkout</a></li>
+                            {% if sd_is_logged_in %}
+                            <li><a href="{{ output.accounts_uri }}?do=sign-out" title="Logout">Logout</a></li>
+                            {% else %}
+                            <li><a href="{{ output.accounts_uri }}" title="Login">Login</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-navigation">
+            <nav class="navbar navbar-fixed-top nav-scroll">
+                <div class="container">
+                    <div class="row">
+                        <div class="navbar-header">
+                            <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span aria-hidden="true" class="icon"></span>
+                            </button>-->
+                            <a class="navbar-brand hidden-xs hidden-sm" href="{{ sd_siteinfo('url') }}">
+                                {{ sd_siteinfo('logo_secure') }}
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse hidden-xs hidden-sm" id="js-navbar-menu">
+                            <ul class="nav navbar-nav navbar-right ep-mobile-menu" id="navbar-nav">
+                                <li class="active"><a href="{{ sd_siteinfo('url') }}">Home</a></li>
+                                <li><a href="{{ sd_seturl(['about', 'pages'], 'page') }}">About</a></li>
+                                <li><a href="{{ sd_seturl(['index', 'blog'], 'pageindex') }}">Blog</a></li>
+                                <li><a href="{{ output.contact_uri }}">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <!--Mobile Menu-->
+        <div class="main-color-bg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 left-menu-wrapper">
+                        <div class="xt-sidenav hidden-xs hidden-sm">
+                            <nav>
+                                <ul class="xt-side-menu">
+                                    <li>
+                                        <a href="#">Categories</a>
+                                        <ul class="xt-dropdown">
+                                            {% set catsMenu = sd_categories() %}
+                                            {% set newCats = [] %}
+                                            {% set newChilds = [] %}
+                                            {% for cat in catsMenu %}
+                                                {% if cat.level < 2 %}
+                                                    {% set newCat = {(cat.cid) : (cat.navorder)} %}
+                                                    {% set newCats = newCats + newCat %}
+                                                {% else %}
+                                                    {% if newChilds[(cat.parenturi)] %}
+                                                        {% set temp = newChilds[(cat.parenturi)] %}
+                                                        {% set temp = temp + ({(cat.cid) ~ '' : (cat.navorder)})%}
+                                                        {% set newChilds = newChilds|merge({(cat.parenturi): temp}) %}
+                                                    {% else %}
+                                                        {% set newChilds = newChilds + ({(cat.parenturi) : ({(cat.cid) ~ '' : (cat.navorder)})}) %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for catID, val in newCats|sort %}
+                                            <li>
+                                                <a class="xt-nav-link" href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">{{ catsMenu[catID].navtitle ? catsMenu[catID].navtitle : catsMenu[catID].title }}{% if newChilds[(catsMenu[catID].uri)] %}<i class="fa fa-angle-right"></i>{% endif %}</a>
+                                                {% if newChilds[(catsMenu[catID].uri)] %}
+                                                <ul class="mega-menu">
+                                                    <li>
+                                                        {% for catChildID, val in newChilds[(catsMenu[catID].uri)]|sort %}
+                                                        <ul class="xt-single-mega">
+                                                            <li>
+                                                                <a href="{{ sd_seturl(catsMenu[catChildID].uri, 'category') }}">{{ catsMenu[catChildID].navtitle }}</a>
+                                                            </li>
+                                                        </ul>
+                                                        {% endfor %}
+                                                    </li>
+                                                </ul>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-10 col-xs-12 xt-header-search">
+                        <form action="{{ output.search_uri }}" method="get" id="search-box" class="clearfix" onsubmit="return sdAjaxForm(this)">
+                            <div class="form-group xt-form search-bar col-md-11 col-sm-11 col-xs-11 padding-right-o">
+                                <input type="text" name="q" class="form-control" id="search-box-input" placeholder="Search entire store..." />
+                            </div>
+                            <div class="form-group xt-form xt-search-cat col-md-1 col-sm-1 col-xs-1 padding-left-o ">
+                                <div class="xt-search-opt xt-search-btn">
+                                    <button type="submit" value="q" id="search-box-btn" onclick="return sdEmptyValue('search-box-input')" class="btn btn-primary btn-search"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!--CART-->
+                    <div class="col-md-1 col-sm-2 col-xs-2">
+                        <div class="xt-cart">
+                            <ul>
+                                <li class="dropdown">
+                                    <a href="{{ output.cart_suri }}">
+                                        <i class="fa flaticon-shopping-cart"></i>
+                                    </a>
+                                    {% if output.cart %}
+                                    {% set itemtotal = 0 %}
+                                    <ul class="dropdown-menu xt-cart-items">
+                                        {% for i in range(low=1, high=output.cart['index'], step=1) %}
+                                        {% if (output.cart[i]['qty'] == 0) %}
+                                        {# continue #}
+                                        {% else %}
+                                        {% if output.cart[i]['guid'] %}
+                                        {%  set sku = output.cart[i]['guid'] %}
+                                        {% else %}
+                                        {%  set sku = output.cart[i]['sku'] %}
+                                        {% endif %}
+
+                                        {% if output.cart[i]['secure_media'] %}
+                                        {% set media = output.cart[i]['secure_media'] %}
+                                        {%  else %}
+                                        {%  set media = output.cart[i]['media'] %}
+                                        {% endif %}
+
+                                        {% set totalprice = (output.cart[i]['qty'] * output.cart[i]['sdprice']) %}
+                                        <li class="clearfix">
+                                            {% if output.cart[i]['galleryuri'] %}
+                                            <a href="{{ sd_seturl(output.cart[i]['galleryuri'], 'gallery', 'absolute') }}" title="{{ output.cart[i]['title'] }} Gallery">
+                                                <img alt="{{ output.cart[i]['title'] }}" src="{{ media }}" />
+                                                <h3 class="item_title">{{ output.cart[i]['title'] }}</h3>
+                                                <span class="cart-price">{{ sd_currency(false) ~ totalprice|number_format(2) }}</span>
+                                            </a>
+                                            {% else %}
+                                            <a href="{{ sd_seturl(output.cart[i]['galleryuri'], 'gallery', 'absolute') }}" title="{{ output.cart[i]['title'] }} Gallery">
+                                                <img alt="{{ output.cart[i]['title'] }}" src="{{ media }}" />
+                                                <h3 class="item_title">{{ output.cart[i]['title'] }}</h3>
+                                                <span class="cart-price">{{ sd_currency(false) ~ totalprice|number_format(2) }}</span>
+                                            </a>
+                                            {% endif %}
+                                        </li>
+                                        {% set itemtotal = itemtotal + totalprice %}
+                                        {% endif %}
+                                        {% endfor %}
+                                        <li>
+                                            <a href="" class="subtotal top-checkout">
+                                                <h3>Subtotal : </h3>
+                                                <span class="total-price">{{ sd_currency(false) ~ itemtotal|number_format(2) }}</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ output.cart_suri }}?do=checkout" class="process top-checkout">
+                                                <h3>Process to Checkout </h3>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                            {% set totals = sd_carttotals() %}
+                            {% if totals %}
+                            <span class="top-cart-price xt-item-count">
+                                {% if output.cart and output.cart['index'] %}
+                                {{ output.cart['index'] }}
+                                {% else %}
+                                0
+                                {% endif %}
+                            </span>
+                            {% else %}
+                            <span class="top-cart-price xt-item-count">0</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!--
+    |========================
+    |  MOBILE MENU
+    |========================
+    -->
+    <div class="menu-spacing">
+        <div class="container">
+            <div class="row">
+                <div class="mobile-menu-area visible-xs visible-sm clearfix">
+                    <a class="navbar-brand visible-sm visible-xs" href="{{ sd_siteinfo('url') }}">
+                        {{ sd_siteinfo('logo_secure') }}
+                    </a>
+                    <div class="mobile-menu">
+                        <nav id="mobile-menu-active">
+                            <ul class="main-menu">
+                                <li class="active"><a href="{{ sd_siteinfo('url') }}">Home</a></li>
+                                <li><a href="/about">About</a></li>
+                                <li><a href="/blog">Blog</a></li>
+                                <li><a href="/contact">Contact</a></li>
+                                <li class="last_cat"><a href="#">Store Categories <i class="fa fa-arrow-circle-down"></i></a></li>
+                                {% set catsMenu = sd_categories() %}
+                                {% set newCats = [] %}
+                                {% set newChilds = [] %}
+                                {% for cat in catsMenu %}
+                                {% if cat.level < 2 %}
+                                {% set newCat = {(cat.cid) : (cat.navorder)} %}
+                                {% set newCats = newCats + newCat %}
+                                {% else %}
+                                {% if newChilds[(cat.parenturi)] %}
+                                {% set temp = newChilds[(cat.parenturi)] %}
+                                {% set temp = temp + ({(cat.cid) ~ '' : (cat.navorder)})%}
+                                {% set newChilds = newChilds|merge({(cat.parenturi): temp}) %}
+                                {% else %}
+                                {% set newChilds = newChilds + ({(cat.parenturi) : ({(cat.cid) ~ '' : (cat.navorder)})}) %}
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                {% for catID, val in newCats|sort %}
+                                {% if newChilds[(catsMenu[catID].uri)] %}
+                                <li>
+                                    <a class="main-a" href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">{{ catsMenu[catID].navtitle ? catsMenu[catID].navtitle : catsMenu[catID].title }}</a>
+                                    <ul>
+                                        {% for catChildID, val in newChilds[(catsMenu[catID].uri)]|sort %}
+                                        <li>
+                                            <a href="{{ sd_seturl(catsMenu[catChildID].uri, 'category') }}" class="main-a">{{ catsMenu[catChildID].navtitle }}</a>
+                                            {% if newChilds[(catsMenu[catChildID].uri)] %}
+                                            <ul>
+                                                {% for catChildChildID, val in newChilds[(catsMenu[catChildID].uri)]|sort %}
+                                                <li><a href="{{ sd_seturl(catsMenu[catChildChildID].uri, 'category') }}">{{ catsMenu[catChildChildID].navtitle ? catsMenu[catChildChildID].navtitle : catsMenu[catChildChildID].title }}</a></li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                {% else %}
+                                <li>
+                                    <a class="main-a" href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">{{ catsMenu[catID].navtitle ? catsMenu[catID].navtitle : catsMenu[catID].title }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <header id="xt-home" class="xt-header">
+        <div class="main-navigation">
+            <nav class="navbar navbar-fixed-top nav-scroll">
+                <div class="container">
+                    <div class="row">
+                        <div class="navbar-header">
+                            <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span aria-hidden="true" class="icon"></span>
+                            </button>-->
+                            <a class="navbar-brand" href="{{ sd_siteinfo('url') }}">
+                                {{ sd_siteinfo('logo_secure') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    {% endif %}

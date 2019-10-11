@@ -1,0 +1,80 @@
+{% if (sd_is_logged_in) %}
+    {% set user_login = sd_login_info %}
+    {% set user = sd_getaccount(user_login.id, user_login.email) %}
+{% endif %}
+
+{% if (not data['bfirstname'])  %}
+    {% set data = data|merge({'bfirstname': user['bfirstname']}) %}
+{% endif %}
+
+{% if (not data['email'])  %}
+    {% set data = data|merge({'email': user['email']}) %}
+{% endif %}
+
+{% if (not data['message']) %}
+    {% set data = data|merge({'message': sd_option('site_helpform_text_support')}) %}
+{% endif %}
+
+{% if (data['agree'])  %}
+    {% set sd_agree = 'checked' %}
+{% endif %}
+<table rules="none" cellpadding="0" cellspacing="0" id="sd-supportInfo">
+    <col width="100"/>
+    <col width="400"/>
+    <tr>
+        <td id="sd-svcHead" colspan="2">
+            <b class="sd-infoBold">SUPPORT</b>
+            <input type="hidden" name="do" value="request-support"/>
+            <input type="hidden" name="type" value="support"/>
+        </td>
+    </tr>
+    <tr id="sd-svcName">
+        <td class="sd-fieldName">Name:</td>
+        <td class="sd-fieldInput">
+            <input type="text" size="50" maxlength="100" name="sd_b_firstname" value="{{ data['bfirstname'] }}"/>
+            <img class="sd-formIcon" src="{{ output.icons['vsupport']['bfirstname'] }}" name="sdsvc-vname" alt="Required name"/>
+        </td>
+    </tr>
+    <tr id="sd-svcEmail">
+        <td class="sd-fieldName">Email:</td>
+        <td class="sd-fieldInput">
+            <input type="text" size="50" maxlength="100" name="sd_email" value="{{ data['email'] }}"/>
+            <img class="sd-formIcon" src="{{ output.icons['vsupport']['email'] }}" name="sdsvc-vemail" alt="Required email address"/>
+        </td>
+    </tr>
+    <tr id="sd-svcOrder">
+        <td class="sd-fieldName">Order:</td>
+        <td class="sd-fieldInput">
+            <input type="text" size="50" maxlength="100" name="sd_order" value="{{ data['order'] }}"/>
+            <img class="sd-formIcon" src="{{ output.icons['vsupport']['order'] }}" name="sdsvc-vorder" alt="Optional order number"/>
+        </td>
+    </tr>
+    <tr id="sd-svcItems">
+        <td class="sd-fieldName">Items:</td>
+        <td class="sd-fieldInput">
+            <input type="text" size="50" maxlength="100" name="sd_items" value="{{ data['items'] }}"/>
+            <img class="sd-formIcon" src="{{ output.icons['vsupport']['items'] }}" name="sdsvc-vitems" alt="Optional item numbers"/>
+        </td>
+    </tr>
+    <tr id="sd-svcMessage">
+        <td class="sd-fieldName">Message:</td>
+        <td class="sd-fieldInput">
+            <textarea rows="4" cols="40" name="sd_message" id="sd-serviceMessage" onfocus="sdClearValue(this.id);">{{ data['message'] }}</textarea>
+            <img class="sd-formIcon" src="{{ output.icons['vsupport']['message'] }}" name="sdsvc-vmessage" alt="Required message"/>
+        </td>
+    </tr>
+    <tr id="sd-svcAgree">
+        <td class="sd-fieldBoth" colspan="2">
+            <input type="checkbox" name="sd_agree" value="YES" {{ sd_agree }}/>
+            <label>Use
+                this request as a FAQ</label>
+            <img src="{{ sd_securemedia(output.icons['q']) }}" alt="Frequently Asked Question" title="Frequently Asked Question"/>
+        </td>
+    </tr>
+    <tr>
+        <td id="sd-svcSubmit" colspan="2">
+            <input type="image" src="{{ sd_securemedia(output.icons['submit_request']) }}" value="Submit Request"/>
+        </td>
+    </tr>
+</table>
+

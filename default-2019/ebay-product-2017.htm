@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+{% set custom_ebay_style = sd_option('ebay' ~ data.instanceid ~ '_description_style') %}
+{% if custom_ebay_style %}
+    {{ custom_ebay_style }}
+{% else %}
+    <style>
+        .business-phone,body{font-family:'Open Sans',sans-serif}body{margin:0;padding:0;font-size:14px;background-color:#fff}.ebay-store-header{margin-top:10px;margin-bottom:10px}.business-phone{font-weight:700;font-size:16px}.header-wrapper{border-top:4px solid #07669d}.custom-header{display:block;margin:0 auto;text-align:center}.image-wrapper{margin-top:15px;border-top:2px solid #929ba4}.slider{margin-top:20px;position:relative;padding-top:400px}.slider>img{position:absolute;left:0;right:0;top:0;bottom:15px;margin:auto;display:none;max-height:270px;width:auto}.slider input[name=slide_switch]{display:none}.slider label{margin:6px 0 15px 15px;float:left;cursor:pointer;opacity:.6}.slider label img{width:auto;height:60px;display:block}.slider input[name=slide_switch]:checked+label{border-color:#666;opacity:1}.slider input[name=slide_switch]~img{opacity:0}.slider input[name=slide_switch]:checked+label+img{max-height:100%;max-width:100%;width:auto;height:auto;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;display:block;opacity:1}.title-wrapper>h2{font-size:24px;color:#07669d;font-family:'Open Sans';padding-bottom:3px;margin-bottom:3px;border-bottom:5px solid #07669d}.about-description h3,.payment-description h3,.returns-description h3,.shipping-description h3{margin:20px 0 10px;font-size:16px;font-weight:700;font-family:'Open Sans',sans-serif;border-bottom:2px solid #929ba4}.about-description h3>i,.payment-description h3>i,.returns-description h3>i,.shipping-description h3>i{font-size:8px;vertical-align:middle;padding-bottom:1px}.details-wrapper{margin-top:0}.ebay-description>div,.ebay-details>div{border-bottom:1px solid #07669d}.ebay-description,.ebay-details{margin:10px 0}.footer-wrapper{border-top:1px solid #000;margin-top:20px;padding-top:20px}.ebay-details ul{list-style-type:none;padding-left:0}.ebay-details ul li{padding-top:4px;padding-bottom:4px}.ebay-details ul li span{width:50%;display:inline-block;float:left;padding-left:5px}.ebay-details ul li::before,.ebay-details ul li:after{clear:both;display:table;content:" "}.ebay-details ul li strong{float:right;width:50%}.ebay-details ul li::before{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.ebay-details ul li:nth-child(2n+1){background-color:#eae9e9}.ebay-details ul li:after{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.ebay-details ul.custom li.sku{background-color:#07669d;color:#fff;font-weight:700}.phone-wrapper{text-align:right}@media only screen and (min-device-width :768px) and (max-device-width :1024px) and (orientation :landscape){.ebay-store,.phone-wrapper{width:50%}}@media only screen and (min-device-width :768px) and (max-device-width :1024px) and (orientation :portrait){.ebay-store,.phone-wrapper{width:50%}}@media (max-width:768px){.ebay-store img{margin:0 auto}.phone-wrapper{text-align:center}.custom-header{margin-top:15px}.slider{margin-top:0}}@media (max-width:360px){.slider{margin-top:0;padding-top:270px}.slider label img{height:50px}}
+    </style>
+{% endif %}
+</head>
+
+<body>
+    <div class="container-fluid header-wrapper">
+        {% set ebay_store_name = sd_option('ebay' ~ data.instanceid ~ '_store_name') %}
+        <div class="container ebay-store-header">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 ebay-store">
+                    {% if ebay_store_name %}
+                    <a href="https://www.ebay.com/str/{{ebay_store_name}}">
+                        <img alt="{{ ebay_store_name }}" class="img-responsive" src="{{ sd_siteinfo('logo_secure_url') }}" />
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% set custom_ebay_header = sd_option('ebay' ~ data.instanceid ~ '_description_header') %}
+        {% if custom_ebay_header %}
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 custom-header">
+                    {{ custom_ebay_header }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="container-fluid image-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="slider">
+                        <!--PRODUCT IMAGES-->
+                        <input type="radio" name="slide_switch" id="id1" checked="checked" />
+                        <label for="id1">
+                            {% if data.media1 %}<img class="img-responsive" src="{{ sd_securemedia(data.media1) }}" />{% endif %}
+                        </label>
+                        {% if data.media1 %}<img class="img-responsive" src="{{ sd_securemedia(data.media1) }}" />{% endif %}
+
+                        {% if data.media2 %}
+                        <input type="radio" name="slide_switch" id="id2" />
+                        <label for="id2">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media2) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media2) }}" />
+                        {% endif %}
+
+                        {% if data.media3 %}
+                        <input type="radio" name="slide_switch" id="id3" />
+                        <label for="id3">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media3) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media3) }}" />
+                        {% endif %}
+
+                        {% if data.media4 %}
+                        <input type="radio" name="slide_switch" id="id4" />
+                        <label for="id4">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media4) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media4) }}" />
+                        {% endif %}
+
+                        {% if data.media5 %}
+                        <input type="radio" name="slide_switch" id="id5" />
+                        <label for="id5">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media5) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media5) }}" />
+                        {% endif %}
+
+                        {% if data.media6 %}
+                        <input type="radio" name="slide_switch" id="id6" />
+                        <label for="id6">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media6) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media6) }}" />
+                        {% endif %}
+
+                        {% if data.media7 %}
+                        <input type="radio" name="slide_switch" id="id7" />
+                        <label for="id7">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media7) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media7) }}" />
+                        {% endif %}
+
+                        {% if data.media8 %}
+                        <input type="radio" name="slide_switch" id="id8" />
+                        <label for="id8">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media8) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media5) }}" />
+                        {% endif %}
+
+                        {% if data.media9 %}
+                        <input type="radio" name="slide_switch" id="id9" />
+                        <label for="id9">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media9) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media9) }}" />
+                        {% endif %}
+
+                        {% if data.media10 %}
+                        <input type="radio" name="slide_switch" id="id10" />
+                        <label for="id10">
+                            <img alt="gallery image" src="{{ sd_securemedia(data.media10) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(data.media10) }}" />
+                        {% endif %}
+
+                        {% if data.mediax %}
+                            {% set mediax = data.mediax|split('*') %}
+                            {% for m in 0..mediax|length-1 %}
+                                {% set mediaid = 10 + m + 1 %}
+                        <input type="radio" name="slide_switch" id="id{{ mediaid }}" />
+                        <label for="id{{ mediaid }}">
+                            <img alt="gallery image" src="{{ sd_securemedia(mediax[m]) }}" />
+                        </label>
+                        <img alt="gallery image" src="{{ sd_securemedia(mediax[m]) }}" />
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 title-wrapper">
+                    <h2>[%EBAY_TITLE%]</h2>
+                </div>
+            </div>
+            <div class="row details-wrapper">
+                <div class="col-xs-12 ebay-details">
+                    <div>
+                        <ul class="custom">
+                            <li class="sku">
+                                <span>SKU: </span>
+                                <strong>{{ data.sku }}</strong>
+                            </li>
+                        </ul>
+                        [%EBAY_DETAILS%]
+                    </div>
+                </div>
+                <div class="col-xs-12 ebay-description">
+                    <div>
+                        [%EBAY_LONGDESCRIPTION%]
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 about-description">
+                    {% set ebay_description_about = sd_option('ebay' ~ data.instanceid ~ '_description_about') %}
+                    {% if ebay_description_about %}
+                    <h3 class=""><i class="fa fa-square" aria-hidden="true"></i> ABOUT</h3>
+                    <div>
+                        {{ ebay_description_about }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 payment-description">
+                    {% set ebay_policy_payments = sd_option('ebay' ~ data.instanceid ~ '_policy_payments') %}
+                    {% if ebay_policy_payments %}
+                    <h3 class=""><i class="fa fa-square" aria-hidden="true"></i> PAYMENTS</h3>
+                    <div>
+                        {{ ebay_policy_payments }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 shipping-description">
+                    {% set ebay_policy_shipping_domestic = sd_option('ebay' ~ data.instanceid ~ '_policy_shipping_domestic') %}
+                    {% set ebay_policy_shipping_international = sd_option('ebay' ~ data.instanceid ~ '_policy_shipping_international') %}
+                    {% if ebay_policy_shipping_international and ebay_policy_shipping_domestic %}
+                    <h3 class=""><i class="fa fa-square" aria-hidden="true"></i> DOMESTIC SHIPPING</h3>
+                    <div>
+                        {{ ebay_policy_shipping_domestic }}
+                    </div>
+                    <h3 class=""><i class="fa fa-square" aria-hidden="true"></i> INTERNATIONAL SHIPPING</h3>
+                    <div>
+                        {{ ebay_policy_shipping_international }}
+                    </div>
+                    {% elseif ebay_policy_shipping_domestic %}
+                    <h3 class=""><i class="fa fa-square" aria-hidden="true"></i> SHIPPING</h3>
+                    <div>
+                        {{ ebay_policy_shipping_domestic }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 returns-description">
+                    {% set ebay_policy_returns = sd_option('ebay' ~ data.instanceid ~ '_policy_returns') %}
+                    {% if ebay_policy_returns %}
+                    <h3 class=""><i class="fa fa-square" aria-hidden="true"></i> RETURNS</h3>
+                    <div>
+                        {{ ebay_policy_returns }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid footer-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 ebay-footer">
+                    {% set custom_ebay_footer = sd_option('ebay' ~ data.instanceid ~ '_description_footer') %}
+                    {% if custom_ebay_footer %}
+                    <div>
+                        {{ custom_ebay_footer }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

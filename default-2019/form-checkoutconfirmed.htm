@@ -1,0 +1,85 @@
+<form action="{{ output.cart_suri }}" method="post" id="sd-payForm" name="sd_payForm">
+    <input type="hidden" name="do" value="process-checkout"/>
+    <input type="hidden" id="sd-confirm" name="confirm" value="true"/>
+    <input type="hidden" name="sd_js" value="jsoff"/>
+    <div rules="none" cellpadding="0" cellspacing="0" id="sd-payment-info">
+        <div>
+            <div id="sd-cartNotice">{{ sd_notice(false) }}</div>
+        </div>
+        <div>
+            <div>
+                <input type="hidden" name="sd_email" value="{{ data['email'] }}"/>
+                <input type="hidden" name="sd_cemail" value="{{ data['cemail'] }}"/>
+            </div>
+        </div>
+        <div>
+            <div class="sd-payInfo sd-checkOutConfirmedEmail">
+                <strong id="sd-email-acct">
+                    <label>Email: <span>{{ data['email'] }}</span></label>
+                </strong>
+            </div>
+        </div>
+        <div>
+            <div class="sd-payInfo">
+            {% if (data['shiplocation'] == 'OtherAddress') %}
+                <b class="sd-infoBold">BILLING ADDRESS</b>
+            {% elseif (sd_option('shipping_address') == 'on') %}
+                <b class="sd-infoBold">BILLING/SHIPPING ADDRESS</b>
+            {% endif %}
+                <input type="hidden" name="sd_b_firstname" value="{{ data['bfirstname'] }}"/>
+                <input type="hidden" name="sd_b_lastname" value="{{ data['blastname'] }}"/>
+                <input type="hidden" name="sd_b_business" value="{{ data['bbusiness'] }}"/>
+                <input type="hidden" name="sd_b_address_1" value="{{ data['baddress1'] }}"/>
+                <input type="hidden" name="sd_b_address_2" value="{{ data['baddress2'] }}"/>
+                <input type="hidden" name="sd_b_city" value="{{ data['bcity'] }}"/>
+                <input type="hidden" name="sd_b_state" value="{{ data['bstate'] }}"/>
+                <input type="hidden" name="sd_b_zip" value="{{ data['bzip'] }}"/>
+                <input type="hidden" name="sd_b_country" value="{{ data['bcountry'] }}"/>
+                <input type="hidden" name="sd_b_phone" value="{{ data['bphone'] }}"/>
+                <input type="hidden" name="sd_ship_location" value="{{ data['shiplocation'] }}"/>
+
+                <div id="sd-billingForm">
+                    {% include 'form-billingaddress.htm' with {'data':data} %}
+                </div>
+            </div>
+        </div>
+
+        {# shipping form #}
+        {% if (data['shiplocation'] == 'OtherAddress') %}
+        <div>
+            <div class="sd-payInfo">
+                <b class="sd-infoBold">SHIPPING ADDRESS</b>
+                <input type="hidden" name="sd_s_firstname" value="{{ data['sfirstname'] }}"/>
+                <input type="hidden" name="sd_s_lastname" value="{{ data['slastname'] }}"/>
+                <input type="hidden" name="sd_s_business" value="{{ data['sbusiness'] }}"/>
+                <input type="hidden" name="sd_s_address_1" value="{{ data['saddress1'] }}"/>
+                <input type="hidden" name="sd_s_address_2" value="{{ data['saddress2'] }}"/>
+                <input type="hidden" name="sd_s_city" value="{{ data['scity'] }}"/>
+                <input type="hidden" name="sd_s_state" value="{{ data['sstate'] }}"/>
+                <input type="hidden" name="sd_s_zip" value="{{ data['szip'] }}"/>
+                <input type="hidden" name="sd_s_country" value="{{ data['scountry'] }}"/>
+                <input type="hidden" name="sd_s_phone" value="{{ data['sphone'] }}"/>
+                <div id="sd-shippingForm">
+                    {% include 'form-shippingaddress.htm' with {'data':data} %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {# shipping form end #}
+
+        <div>
+            <div class="sd-payInfo">
+                <div id="sd-creditcardForm">
+                    {% include 'form-cardcheckout.htm' with {'data':data} %}
+                </div>
+            </div>
+        </div>
+<!--
+        <div>
+            <div id="sd-submitBlock">
+                <input alt="Pay Now" class="sd-formButton" tabindex="35" id="sd-formSubmitButton" type="image" src="{{ sd_securemedia(output.icons['pay_now_cards']) }}" value="Pay Now"/>
+            </div>
+        </div>
+-->
+    </div>
+</form>

@@ -1,0 +1,50 @@
+{# suredone default contact us template #}
+{% set customcontact = sd_option('site_custom_contact') %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 category-hidden padding-right-o"></div>
+        <div class="col-md-9 col-md-offset-3 padding-sm">
+            <div id="contact-us">
+                {% if sd_option('site_helpform') == 'on' and sd_option('site_uri_helpform') == sd_option('site_uri_contact') %}
+                <div class="col-xs-12 col-md-6">
+                    <div>{{ sd_content() }}</div>
+                </div>
+                {% endif %}
+                {% if customcontact %}
+                <div class="col-xs-12 col-sm-6">
+                    {{ customcontact }}
+                </div>
+                {% else %}
+                <div class="col-xs-12 col-md-6">
+                    <div class="vcard">
+                        {% if sd_option('business_name') %}
+                        <div><b><span class="fn org">{{ sd_option('business_name') }}</span></b></div>
+                        {% endif %}
+                        {% if sd_option('business_phone') %}
+                        <div><span class="tel">{{ sd_option('business_phone') }}</span></div>
+                        {% endif %}
+                        {% if sd_option('business_street') %}
+                        <div class="adr">
+                            <div>MAILING ADDRESS:</div>
+                            <div><span class="street-address">{{ sd_option('business_street') }}</span></div>
+                            {% if sd_option('business_street_2') %}
+                            <div><span class="street-address">{{ sd_option('business_street_2') }}</span></div>
+                            {% endif %}
+                            <div>
+                                <span class="locality">{{ sd_option('business_city') }}</span>, <span class="region">{{ sd_option('business_state') }}</span> <span class="postal-code">{{ sd_option('business_zip') }}</span>
+                            </div>
+                            {% if sd_option('business_country') %}
+                            <div><span class="country-name">{{ sd_option('business_country') }}</span></div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.htm' %}

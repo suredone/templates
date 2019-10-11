@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>{{ sd_htmltitle() }}</title>
+    <meta charset="utf-8" />
+    <meta name="generator" content="SureDone {{ sd_siteinfo('version') }}" />
+    {% if sd_store_verifications is not empty %}{{ sd_store_verifications }}{% endif %}
+    <meta name="robots" content="{{ sd_metarobots() }}" />
+    <meta name="GOOGLEBOT" content="{{ sd_metarobots() }}" />
+    <meta name="description" content="{{ sd_metadescription() }}" />
+    <meta property="og:url" content="{{ sd_canonical() }}" />
+    {% if data.state == 'stock' or data.state == 'active' %}
+    <meta property="og:type" content="product" />
+    {% else %}
+    <meta property="og:type" content="article" />
+    {% endif %}
+    <meta property="og:title" content="{{ sd_htmltitle() }}" />
+    <meta property="og:description" content="{{ sd_metadescription() }}" />
+    {% if data.media1 %}
+    <meta property="og:image" content="{{ sd_getmediafull(sd_securemedia(data.media1)) }}" />
+    {% else %}
+    <meta property="og:image" content="{{ sd_siteinfo('logo_secure_url') }}" />
+    {% endif %}
+    <link rel="canonical" href="{{ sd_canonical() }}" />
+    {{ sd_feed_links }}
+    {{ sd_store_favicons }}
+    {{ sd_store_javascripts }}
+    <script>
+    var sdcross_cart='{{ sd_cart_uri_ssl }}';
+    var sdcross_acct='{{ sd_acct_uri_ssl }}';
+    {% if sd_search_uri != sd_search_uri_ssl %}
+    var sdsearch_uri='{{ sd_search_uri }}';
+    var sdsearch_ssl='{{ sd_search_uri_ssl }}';
+    {% endif %}
+    {% if is_custom_icon %}
+    {# custom icon directory #}
+    var sdicons_location = '{{ sd_option('icon_directory') }}';
+    var sdicons_extension = '{{ sd_option('icon_extension') }}';
+    {% endif %}
+    {% if sd_option('site_cart_card_countries') is not empty %}
+    var sdcards_countries = "{{ sd_option('site_cart_card_countries') }}".split('*');
+    var sdcards_checkoutpaypal = '{{ output.buttons['checkout_paypal'] }}';
+    {% endif %}
+    {% if sd_option('image_size_id_small') != '-tms' %}
+    var sdimage_small = '{{ sd_option('image_size_id_small') }}';
+    {% endif %}
+    {% if sd_option('image_size_id_medium') != '-pics' %}
+    var sdimage_medium = '{{ sd_option('image_size_id_medium') }}';
+    {% endif %}
+    {% if sd_option('image_size_id_large') != '-photos' %}
+    var sdimage_large = '{{ sd_option('image_size_id_large') }}';
+    {% endif %}
+    </script>
+    {% if sd_option('site_tracking') == 'on' and sd_option('site_tracking_google_account') is not empty  %}
+    {% set gaDomain = is_ga_suredone ? 'suredone.com' : 'auto' %}
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-{{ sd_siteinfo('google_analytics') }}', '{{ gaDomain }}');
+    ga('set', 'forceSSL', true);
+    ga('require', 'displayfeatures');
+    ga('require', 'ec');{{ sd_ga_tracking_code }}
+    ga('send', 'pageview');
+    </script>
+    {% endif %}
+    {% if output.request_uri == '/' %}
+    <script type="application/ld+json">
+        {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "url": "{{ sd_seturl('','home') }}",
+        "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ sd_seturl(sd_option('site_uri_search'),'service') }}?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+        }
+        }
+    </script>
+    {% endif %}
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <!-- GOOGLE FONTS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700%7cPlayfair+Display:400,400i,700,900" />
+    <!-- FONT ICONS -->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/css/font-awesome.min.css" />
+    <!-- Custom Icon Font -->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/fonts/flaticon.css" />
+    <!-- Bootstrap-->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/bootstrap.min.css" />
+    <!-- Fancybox-->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/jquery.fancybox.min.css" />
+    <!-- Animation -->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/animate.css" />
+    <!-- owl -->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/owl.css" />
+    <!--flexslider-->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/flexslider.min.css" />
+    <!-- selectize -->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/selectize.css" />
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/selectize.bootstrap3.css" />
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/jquery-ui.min.css" />
+    <!--dropdown -->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/bootstrap-dropdownhover.min.css" />
+    <!-- mobile nav-->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/plugins/css/meanmenu.css" />
+    <!-- COUSTOM CSS link  -->
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/css/sd-style-white.css" />
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/css/style-black-red.css" />
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/css/style.css" />
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/css/responsive.css" />
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/css/colorbox.css" />
+
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/css/custom-20191009.css" />
+    <link rel="stylesheet" href="https://assets.suredone.com/default-2019/css/custom-style.css" />
+    <script src="https://assets.suredone.com/default-2019/js/cart.js"></script>
+    {% if sd_option('site_custom_htmlhead') is not empty %}
+    {{ sd_swaptags('add',sd_option('site_custom_htmlhead')) }}
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            var catID = $('#no_show').text();
+            console.log(catID);
+            $('li[class="' + catID + '"]').addClass('active').children('ul').css('display', 'block');
+            $('li[class="' + catID + ' active"]').parentsUntil('ul.sidebar_dropdown').css('display', 'block');
+        });
+    </script>
+</head>

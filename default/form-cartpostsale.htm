@@ -1,0 +1,25 @@
+{# form CartPostSale #}
+<table rules="none" cellpadding="0" cellspacing="0" id="sd-paymentDone">
+	<tr>
+		<td class="sd-ccSuccess">
+			Thank you, your order was processed successfully.<br/><br/>
+			Your transaction number is:<br/>
+			<b>{{ data['transactionid'] }}</b><br/><br/>
+			Your order number is:<br/>
+			<b>{{ data['order'] }}</b><br/><br/>
+			An email confirmation should arrive from {{ sd_siteinfo('business_email', false) }} shortly.
+		{% if sd_option('site_shipping') == 'on' %}
+			<br/>
+			A {{ data['shipservice'] }} tracking number will be emailed to you as soon as your shipment has been processed.
+			{% if (sd_is_logged_in) %}
+			<br/><br/>
+			Once your shipment has been processed you may log in
+			<a href="{{ sd_seturl(sd_option('site_uri_accounts'), 'service', '', true) }}">here</a> to track your shipment.
+			{% endif %}
+		{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<td id="sd-paymentMessage">{{ sd_option('site_cart_payments_text') }}</td>
+	</tr>
+</table>

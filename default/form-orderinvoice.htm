@@ -1,0 +1,152 @@
+{# form OrderInvoice #}
+{% set site_sets = sd_option('site_live') ? json_decode(sd_option('site_live'),true) : [] %}
+{% set site_url = sd_option('site_user') and site_sets['site'] == 'on' and site_sets['live']=='on' ? sd_siteinfo('url',false) : '' %}
+{% set site_logo = sd_siteinfo('logo_secure_url',false) %}
+{% set site_link = site_url ? '<a href="'~ site_url ~'"><img src="'~ site_logo ~'" alt="'~ sd_siteinfo('business',false) ~'" /></a>' : '<img src="'~ site_logo ~'" alt="'~ sd_siteinfo('business',false) ~'" />' %}
+
+{% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'),true) : [] %}
+{% set invoice_fields = is_array(shipopts['invoice_fields']) ? shipopts['invoice_fields'] : [] %}
+{% set uservars = sd_option('user_field_names') ? sd_option('user_field_names')|split('*') : [] %}
+{% set stockbys = sd_option('site_cart_stock_by') ? sd_array_unique(['stock']|merge(sd_option('site_cart_stock_by')|split('*'))) : ['stock'] %}
+
+{% if order['oid'] %}
+	{% set giftclass = order['shipasgift'] ? 'sd-ship-gift ' : '' %}
+	{% set items = order['items']|split('*') %}
+	{% set names = order['names']|split('*') %}
+	{% set titles = order['titles']|split('*') %}
+	{% set prices = order['prices']|split('*') %}
+	{% set qtys = order['qtys']|split('*') %}
+	{% set imgs = order['media']|split('*') %}
+	{% set uris = order['uris'] ? order['uris']|split('*') : [] %}
+	{% set currency_symbol = sd_currency(false) %}
+	{% set printing_logic = shipopts['printer_sets'] is defined and shipopts['printer_sets']['invoice'] is defined ? shipopts['printer_sets']['invoice']|escape('html') : 'post' %}
+	{% set invoice_url = sd_is_admin ? sd_seturl('#!/orders/edit/' ~ order['order'],'admin',null,true) : output.accounts_uri ~ '?do=invoice&order=' ~ order['order'] %}
+	{% set invoice_vars = '' %}
+<div class="sd-invoice">
+{% if order['printerset'] is empty %}
+	<form id="sd-shipping-options-printer-sets-{{ order['order'] }}">
+		<input type="hidden" id="sd-shipping_options_printer_sets_label" name="sd_shipping_options_printer_sets_label" value="{{ shipopts['printer_sets']['label']|escape('html') }}" />
+		<input type="hidden" id="sd-shipping_options_printer_sets_invoice" name="sd_shipping_options_printer_sets_invoice" value="{{ printing_logic }}" />
+	</form>
+{% endif %}
+	<div class="sd-invoiceHead">
+		<span class="sd-invoiceLogo">{{ site_link }}</span>
+		<span class="sd-invoiceAddress">{% include('form-businessaddress.htm') %}</span>
+	</div>
+	<div class="sd-invoiceDate">Order Date: {{ date('F jS, Y - H:i:s',strtotime(order['date'])) }} UTC</div>
+	<div class="sd-invoiceTitle">Order Number: <a href="{{ invoice_url }}" target="_blank">{{ order['order'] }}</a></div>
+	{% if order['shipcarrier'] and order['shiptracking'] %}
+	<div class="sd-invoiceTracking">Tracking: {{ order['shipcarrier']|upper }} {{ order['shiptracking'] }}</div>
+	{% endif %}
+
+	<table rules="all" class="sd-cartContents"><col width="400" /><col width="400" />{% 
+		include 'form-cartbillshipto.htm' with {'data':order} 
+	%}</table>
+	<table rules="all" class="sd-cartContents">
+		<col width="150" />
+		<col width="400" />
+		<col width="50" />
+		<col width="100" />
+		<col width="100" />
+		<tr class="sd-cartHeader"><td colspan="2">ITEM</td><td>QTY</td><td>EACH</td><td>TOTAL</td></tr>
+{# order items begin #}
+{% for i in 0..items|length-1 %}
+	{% set skus = items[i]|split('|') %}
+	{% set media = sd_securemedia(imgs[i]) %}
+	{% set urls = uris[i]|length > 0 ? uris[i]|split('|') : [] %}
+	{% set totalprice = qtys[i] * prices[i] %}
+	{% set invoice_fields_data = '' %}
+	{% if sd_is_admin and invoice_fields|length > 0 and order['item'][i] %}
+		{% for inv_field in invoice_fields %}
+			{% if order['item'][i][inv_field] or inv_field in stockbys %}
+				{% set inv_field_label = inv_field in uservars ? 'user-' ~ inv_field : inv_field %}
+				{% set inv_field_label_value = output.details_labels[inv_field_label] ? output.details_labels[inv_field_label] ~ output.details_labels[inv_field_label~'_sep'] : '' %}
+				{% set inv_field_label_value = inv_field_label_value ~ order['item'][i][inv_field] %}
+				{% set invoice_fields_data = invoice_fields_data ~ '<span class="{{ inv_field }}">' ~ inv_field_label_value ~ '</span>' %}
+			{% endif %}
+		{% endfor %}
+		{% if invoice_fields_data is not empty %}
+			{% set invoice_vars = invoice_vars ~ '<div class="item"><span class="sku">SKU: ' ~ skus[0] ~ '</span>' ~ invoice_fields_data ~ '</div>' %}
+		{% endif %}
+	{% endif %}
+	<tr>
+	{% if media %}
+		<td class="sd-cartMedia"><a href="{{ sd_getmediafull(media) }}" target="_blank"><img class="sd-cartImage" src="{{ media }}" alt="{{ skus[0] }}" /></a></td>
+	{% else %}
+		<td class="sd-cartMedia"></td>
+	{% endif %}
+	{% if site_sets['site']=='on' and urls[0] %}
+		<td class="sd-cartTitle"><a href="{{ sd_seturl(urls[0],'item','absolute') }}" target="_blank">{{ titles[i]|escape('html') }}<br />{{ skus[0] }}</a></td>
+	{% else %}
+		<td class="sd-cartTitle">{{ titles[i]|escape('html') }}<br />{{ skus[0] }}</td>
+	{% endif %}
+		<td class="sd-cartQty">{{ qtys[i] }}</td>
+		<td class="{{ giftclass }}sd-cartPrice">{{ currency_symbol }}{{ prices[i]|number_format(2) }}</td>
+		<td class="{{ giftclass }}sd-cartPriceTotal">{{ currency_symbol }}{{ totalprice|number_format(2) }}</td>
+	</tr>
+{% endfor %}
+{# order items end #}
+	<tr>
+		<td class="sd-order-totals-labels" colspan="4">ITEM TOTAL</td>
+		<td class="{{ giftclass }}sd-order-totals">{{ currency_symbol }}{{ order['itemtotal']|number_format(2) }}</td>
+	</tr>
+	{% if order['taxtotal']>0 %}
+	{% set taxstate = sd_option('business_state') == order['bstate'] ? sd_option('business_state') : order['bstate'] %}
+	<tr>
+		<td class="sd-order-totals-labels" colspan="4">{{ taxstate }} TAX TOTAL</td>
+		<td class="{{ giftclass }}sd-order-totals">{{ currency_symbol }}{{ order['taxtotal']|number_format(2) }}</td>
+	</tr>
+	{% endif %}
+	{% if order['shippingtotal']>0 %}
+	{% set cartshiptotal = shipopts['combine_handling'] is defined and shipopts['combine_handling']=='on' ? order['shippingtotal']+order['handlingtotal'] : order['shippingtotal'] %}
+	<tr>
+		<td class="sd-order-totals-labels" colspan="4">SHIPPING TOTAL</td>
+		<td class="{{ giftclass }}sd-order-totals">{{ currency_symbol }}{{ cartshiptotal|number_format(2) }}</td>
+	</tr>
+	{% endif %}
+	{% if order['handlingtotal']>0 and shipopts['combine_handling'] is defined and shipopts['combine_handling']!='on' %}
+	<tr>
+		<td class="sd-order-totals-labels" colspan="4">HANDLING TOTAL</td>
+		<td class="{{ giftclass }}sd-order-totals">{{ currency_symbol }}{{ order['handlingtotal']|number_format(2) }}</td>
+	</tr>
+	{% endif %}
+	{% if order['discount']>0 %}
+	<tr>
+		<td class="sd-order-totals-labels" colspan="4">ORDER DISCOUNT</td>
+		<td class="{{ giftclass }}sd-order-totals">{{ currency_symbol }}{{ order['discount']|number_format(2) }}</td>
+	</tr>
+	{% endif %}
+	<tr>
+		<td class="sd-order-totals-labels" colspan="4">ORDER TOTAL</td>
+		<td class="{{ giftclass }}sd-order-totals">{{ currency_symbol }}{{ order['total']|number_format(2) }}</td>
+	</tr>
+	{% if order['comments'] is not empty %}
+		<tr class="sd-cartHeader">
+			<td colspan="5">ORDER COMMENTS</td>
+		</tr>
+		<tr>
+			<td class="sd-invoiceComments" colspan="5">{{ order['comments'] }}</td>
+		</tr>
+	{% endif %}
+	</table>
+{# admin shipping label processing begin #}
+	{% if sd_is_admin and invoice_vars is not empty %}
+	<div class="sd-ship-vars">{{ invoice_vars }}</div>
+	{% endif %}
+	{% if sd_is_admin and order['shipauth'] %}
+		{{ sd_admin_forms('ShippingProcessBox',order) }}
+	{% endif %}
+	{% if sd_is_admin and order['shiplabs'] %}
+		{{ sd_admin_forms('ShippingProcessLabel',order) }}
+	{% endif %}
+{# admin shipping label processing end #}
+</div>
+{% else %}
+{% set invoice_notice = sd_notice(false) ? sd_notice(false) : sd_formnotice('No Orders Available','error') %}
+<div class="sd-invoice">
+	<div class="sd-invoiceHead">
+		<span class="sd-invoiceLogo"><a href="{{ site_url }}"><img src="{{ site_logo }}" alt="{{ sd_siteinfo('business',false) }}" /></a></span>
+	</div>
+	<div class="sd-invoiceTitle">{{ invoice_notice }}</div>
+</div>
+{% endif %}

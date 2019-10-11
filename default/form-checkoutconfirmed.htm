@@ -1,0 +1,87 @@
+<form action="{{ output.cart_suri }}" method="post" id="sd-payForm" name="sd_payForm">
+	<input type="hidden" name="do" value="process-checkout"/>
+	<input type="hidden" id="sd-confirm" name="confirm" value="true"/>
+	<input type="hidden" name="sd_js" value="jsoff"/>
+	<table rules="none" cellpadding="0" cellspacing="0" id="sd-payment-info">
+		<col width="1"/>
+		<tr>
+			<td id="sd-cartNotice">{{ sd_notice(false) }}</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="hidden" name="sd_email" value="{{ data['email'] }}"/>
+				<input type="hidden" name="sd_cemail" value="{{ data['cemail'] }}"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="sd-payInfo">
+				<strong id="sd-email-acct">
+					<label>Email</label>
+					{{ data['email'] }}
+				</strong>
+			</td>
+		</tr>
+		<tr>
+			<td class="sd-payInfo">
+			{% if (data['shiplocation'] == 'OtherAddress') %}
+				<b class="sd-infoBold">BILLING ADDRESS</b>
+			{% elseif (sd_option('shipping_address') == 'on') %}
+				<b class="sd-infoBold">BILLING/SHIPPING ADDRESS</b>
+			{% endif %}
+				<input type="hidden" name="sd_b_firstname" value="{{ data['bfirstname'] }}"/>
+				<input type="hidden" name="sd_b_lastname" value="{{ data['blastname'] }}"/>
+				<input type="hidden" name="sd_b_business" value="{{ data['bbusiness'] }}"/>
+				<input type="hidden" name="sd_b_address_1" value="{{ data['baddress1'] }}"/>
+				<input type="hidden" name="sd_b_address_2" value="{{ data['baddress2'] }}"/>
+				<input type="hidden" name="sd_b_city" value="{{ data['bcity'] }}"/>
+				<input type="hidden" name="sd_b_state" value="{{ data['bstate'] }}"/>
+				<input type="hidden" name="sd_b_zip" value="{{ data['bzip'] }}"/>
+				<input type="hidden" name="sd_b_country" value="{{ data['bcountry'] }}"/>
+				<input type="hidden" name="sd_b_phone" value="{{ data['bphone'] }}"/>
+				<input type="hidden" name="sd_ship_location" value="{{ data['shiplocation'] }}"/>
+
+				<div id="sd-billingForm">
+					{% include 'form-billingaddress.htm' with {'data':data} %}
+				</div>
+			</td>
+		</tr>
+
+		{# shipping form #}
+		{% if (data['shiplocation'] == 'OtherAddress') %}
+		<tr>
+			<td class="sd-payInfo">
+				<b class="sd-infoBold">SHIPPING ADDRESS</b>
+				<input type="hidden" name="sd_s_firstname" value="{{ data['sfirstname'] }}"/>
+				<input type="hidden" name="sd_s_lastname" value="{{ data['slastname'] }}"/>
+				<input type="hidden" name="sd_s_business" value="{{ data['sbusiness'] }}"/>
+				<input type="hidden" name="sd_s_address_1" value="{{ data['saddress1'] }}"/>
+				<input type="hidden" name="sd_s_address_2" value="{{ data['saddress2'] }}"/>
+				<input type="hidden" name="sd_s_city" value="{{ data['scity'] }}"/>
+				<input type="hidden" name="sd_s_state" value="{{ data['sstate'] }}"/>
+				<input type="hidden" name="sd_s_zip" value="{{ data['szip'] }}"/>
+				<input type="hidden" name="sd_s_country" value="{{ data['scountry'] }}"/>
+				<input type="hidden" name="sd_s_phone" value="{{ data['sphone'] }}"/>
+				<div id="sd-shippingForm">
+					{% include 'form-shippingaddress.htm' with {'data':data} %}
+				</div>
+			</td>
+		</tr>
+		{% endif %}
+		{# shipping form end #}
+
+		<tr>
+			<td class="sd-payInfo">
+				<div id="sd-creditcardForm">
+					{% include 'form-cardcheckout.htm' with {'data':data} %}
+				</div>
+			</td>
+		</tr>
+<!--
+		<tr>
+			<td id="sd-submitBlock">
+				<input alt="Pay Now" class="sd-formButton" tabindex="35" id="sd-formSubmitButton" type="image" src="{{ output.icons['pay_now_cards'] }}" value="Pay Now"/>
+			</td>
+		</tr>
+-->
+	</table>
+</form>

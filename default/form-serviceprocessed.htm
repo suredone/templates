@@ -1,0 +1,19 @@
+{% if (data['type'] == 'support') %}
+	{% set response = sd_option('site_helpform_response_support') %}
+{% elseif (data['type'] == 'returns') %}
+	{% set response = sd_option('site_helpform_response_returns') %}
+{% elseif (data['type'] == 'feedback') %}
+	{% set response = sd_option('site_helpform_response_feedback') %}
+{% endif %}
+<div id="sd-support">
+	<b id="sd-acctTitle">{{ sd_siteinfo('business', false) }} Customer Service</b>
+	<div id="sd-supportInfo">
+		<span id="sd-svcNotice">{{ sd_notice(false) }}</span>
+		<span id="sd-svcResponse">{{ response }}</span>
+		<span id="sd-svcSubmit">
+			<a href="{{ output.accounts_uri }}">
+				<img src="{{ output.icons['next'] }}" alt="Continue" class="sd-formButton"/>
+			</a>
+		</span>
+	</div>
+</div>

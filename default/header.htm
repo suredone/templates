@@ -1,0 +1,25 @@
+{# suredone default headers #}
+{% set sdheadercustom = sd_option('site_custom_header') %}
+{% if sdheadercustom %}
+    {{ sd_swaptags('add', sdheadercustom) }}
+{% else %}
+    <div id="sd-masthead">
+        <div id="mast-bar">
+            {{ output.accounts_html }}
+            {{ output.contact_html }}
+            {{ output.cart_html }}
+            {{ output.releases_html }}
+            {{ output.sitemap_html }}
+        </div>
+        <div id="mast-brand">
+            <a href="{{ sd_siteinfo('url') }}" title="HOME">
+                {% if sd_is_secure %}
+                    {{ sd_siteinfo('logo_secure') }}
+                {% else %}
+                    {{ sd_siteinfo('logo') }}
+                {% endif %}
+            </a>
+        </div>
+        <div id="mast-nav">{{ output.search_html }}</div>
+    </div>
+{% endif %}

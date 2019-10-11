@@ -1,0 +1,12 @@
+{# suredone default terms of service/privacy policy template #}
+{% set dateupdated = sd_option('site_legal_last_updated') %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div id="tos">
+    <h3> {{ sd_title() }}</h3>
+{% if sd_lastupdated(dateupdated) %}
+    <p id="last-updated"><b>Last Updated: {{ sd_datetext(sd_localtime(dateupdated)) }}</b></p>
+{% endif %}
+    {{ sd_content('terms_policy_default') }}
+</div>
+{% include 'footer.htm' %}

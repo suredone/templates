@@ -1,0 +1,22 @@
+{# suredone default category template #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div id="sd-site-body" class="category-{{ sd_identifier() }} sd-categories">
+    {% include 'sidebar.htm' %}
+    <div id="sd-category">
+        {{ sd_content('cat_breadcrumbs') }}
+        <h1>{{ sd_content('title_link') }}</h1>
+        {{ sd_content('media_images') }}
+        <p>
+            {{ sd_content('long_description') }}
+            {{ sd_content('cat_children') }}
+            {{ sd_content('content') }}
+        </p>
+        <div id="sd-content">
+            {# sd_content('results') #}
+            {% include 'results.htm' %}
+        </div>
+    </div>
+    {% include 'widgets.htm' %}
+</div>
+{% include 'footer.htm' %}

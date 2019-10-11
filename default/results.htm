@@ -1,0 +1,759 @@
+{# suredone default product list layout #}
+
+{% set group_defaults = ['default', 'orders_default', 'page_index', 'newest_blogs', 'grid', 'stock'] %}
+{% set group_settings = sd_option('results_group_default') ? json_decode(sd_option('results_group_default'), true) : {'group': 'default'} %}
+
+{% if get_reqs('view') %}
+    {% set group = get_reqs('view') %}
+{% endif %}
+
+{% if not results %}
+    {% set results = output.results %}
+{% endif %}
+
+{% if not group %}
+    {% set group = output.group %}
+    {% if not group %}
+        {% set group = group_settings['group'] %}
+        {% if not group %}
+            {% set group = 'default' %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+{% if (not (group in group_defaults) and group and (group in (sd_option('results_group_options')|split('*')))) %}
+    {% include 'groups.htm' %}
+{% elseif (group == 'orders_default') %}
+
+    {% if results %}
+        {% set url = output.accounts_uri %}
+        {% set sort_string = get_accounts_sort() %}
+
+        {% if (sort_string == sd_option('site_accounts_sort_default')) %}
+            {% set sort_query_string = '' %}
+        {% else %}
+            {% set sort_query_string = 'sort=' ~ sort_string ~ '&' %}
+        {% endif %}
+
+        {% if (not preg_match('/_$/', sort_string)) %}
+            {% set sort = sort_string %}
+            {% set sort_direction = 'ASC' %}
+        {% else %}
+            {% set sort = sort_string|slice(0, -1) %}
+            {% set sort_direction = 'DESC' %}
+        {% endif %}
+
+        {# setup output.sorting #}
+        {% set sortlinks = [] %}
+        {% for link in output.accounts_sorting %}
+            {% set sortlinks = sortlinks|merge({ link : '<a href="' ~ url ~ '?sort=' ~ link ~ '" onclick="return sdAjaxCall(\'sort=' ~ link ~ '\')">' ~ output.accounts_sorting_labels[link] ~ '</a>' }) %}
+        {% endfor %}
+
+        {% if (sort_direction == 'ASC') %}
+            {% set sortlinks = sortlinks|merge({ sort : '<a class="sort-asc" href="' ~ url ~ '?sort=' ~ sort ~ '_" onclick="return sdAjaxCall(\'sort=' ~ sort ~ '_\')">' ~ output.accounts_sorting_labels[sort] ~ '</a>'}) %}
+        {% else %}
+            {% set sortlinks = sortlinks|merge({ sort : '<a class="sort-desc" href="' ~ url ~ '?sort=' ~ sort ~ '" onclick="return sdAjaxCall(\'sort=' ~ sort ~ '\')">' ~ output.accounts_sorting_labels[sort] ~ '</a>'}) %}
+        {% endif %}
+
+        {# setup head #}
+        <table rules="all" cellspacing="0" cellpadding="0" id="sd-acctOrders">
+            <col width="100"/>
+            <col width="150"/>
+            <col width="150"/>
+            <col width="100"/>
+            <col width="50"/>
+            <col width="150"/>
+            <col width="100"/>
+            <thead>
+                <tr>
+                    <td colspan="7" id="sd-acctOrdersTitle">{{ sd_siteinfo('business', false) }} Orders</td>
+                </tr>
+                <tr id="results-head">
+                    <td>{{ sortlinks['date'] }}</td>
+                    <td>{{ sortlinks['order'] }}</td>
+                    <td>{{ sortlinks['titles'] }}</td>
+                    <td>{{ sortlinks['items'] }}</td>
+                    <td>QTYS</td>
+                    <td>{{ sortlinks['shiptracking'] }}</td>
+                    <td>{{ sortlinks['total'] }}</td>
+                </tr>
+            </thead>
+
+        {# get data and setup thumbs #}
+            <tbody>
+        {% set page_total = 0 %}
+        {% for key, row in results %}
+            {% if (not is_array(row)) %}
+                {# continue #}
+            {% else %}
+
+                {% set page_total = page_total + row['total'] %}
+                {% set media = sd_parsemedia(row['media']) %}
+
+                {% if (is_image(media[0])) %}
+                    {% set image_url = sd_getmediathumb(media[0]) %}
+                    {% set alt_text = row['title'] %}
+                {% else %}
+                    {% set image_url = output.icons['no_thumb'] %}
+                    {% set alt_text = '' %}
+                {% endif %}
+
+                {% if (rownum != 1) %}
+                    {% set rowclass = 'sd-otd' %}
+                    {% set rownum = 1 %}
+                {% else %}
+                    {% set rowclass = 'sd-otd-x' %}
+                    {% set rownum = 0 %}
+                {% endif %}
+
+                {# legacy storage of both order sku|guid #}
+                {% if not ('|' in row['items']) %}
+                    {% set order_items = row['items']|replace({'*': '<br />'})%}
+                {% else %}
+                    {% if not ('*' in row['items']) %}
+                        {% set order_items = preg_replace('/^(.+\|)?(.+)$/', '$2', row['items']) %}
+                    {% else %}
+                        {% set all_items = preg_replace('/^(.+\|)?(.+)$/', '$2', row['items']|split('*')) %}
+                        {% set order_items = all_items|join('<br />') %}
+                    {% endif %}
+                {% endif %}
+
+                <tr class="{{ rowclass }}">
+                    <td class="acct-order-time">{{ row['date'] }}</td>
+                    <td class="acct-order-number">
+                        <a href="{{ url }}?do=invoice&order={{ row['order'] }}" target="_blank">{{ row['order'] }}</a>
+                        <span>
+                            <em>
+                                <a href="{{ output.contact_uri }}?do=support&order={{ row['order'] }}&items={{ row['items']|replace({'*': ','}) }}">Support</a>
+                            </em> |
+                            <em>
+                                <a href="{{ output.contact_uri }}?do=returns&order={{ row['order'] }}&items={{ row['items']|replace({'*': ','}) }}">Return</a>
+                            </em>
+                        </span>
+                    </td>
+                    <td class="acct-order-titles">{{ row['titles']|replace({'*': '<br />'}) }}</td>
+                    <td class="acct-order-items">{{ order_items }}</td>
+                    <td class="acct-order-qtys">{{ row['qtys']|replace({'*': '<br />'}) }}</td>
+                    <td class="acct-order-tracking">
+                        {{ sd_order_tracking(row) }}
+                    </td>
+                    <td class="acct-order-totals">{{ sd_currency(false) ~ row['total'] }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+            </tbody>
+
+        {# setup page nav #}
+        {% set pages = sd_page_numbers('array', results['all'], sd_option('site_accounts_orders_limit')) %}
+
+        {% if (pages['total_pages'] > 1) %}
+            <tbody>
+                <tr class="results-pages">
+                    <td>{{ pages['page_of'] }}<br/>{{ pages['total_items'] }}</td>
+                    <td>{{ pages['page_goto'] }}</td>
+                    <td colspan="3">{{ pages['page_nums_plus'] }}</td>
+                    <td colspan="2">Total: {{ sd_currency(false) ~ page_total }}</td>
+                </tr>
+            </tbody>
+        {% else %}
+            <tbody>
+                <tr class="results-pages">
+                    <td colspan="6"></td>
+                    <td>Total {{  sd_currency(false) ~ page_total }}</td>
+                </tr>
+            </tbody>
+        {% endif %}
+        </table>
+    {% endif %}
+
+{% elseif (group == 'page_index') %}
+
+    {% if results %}
+        {% set url = sd_seturl() %}
+
+        {% set search_query = get_search_query() %}
+        {% if search_query %}
+            {% set search_query_string = 'q=' ~ search_query ~ '&' %}
+        {% else %}
+            {% set search_query_string = '' %}
+        {% endif %}
+
+        {% set sort_string = get_sort() %}
+        {% if (sort_string == sd_option('site_sort_default')) %}
+            {% set sort_query_string = '' %}
+        {% else %}
+            {% set sort_query_string = 'sort=' ~ sort_string ~ '&' %}
+        {% endif %}
+
+        {% if (not preg_match('/_$/', sort_string)) %}
+            {% set sort = sort_string %}
+            {% set sort_direction = 'ASC' %}
+        {% else %}
+            {% set sort = sort_string|slice(0, -1) %}
+            {% set sort_direction = 'DESC' %}
+        {% endif %}
+
+        {# setup output.sorting #}
+        {% set sortlinks = [] %}
+
+        {% for link in output.sorting %}
+            {% set sortlinks = sortlinks|merge({ link : ('<a href="' ~ url ~ '?' ~ search_query_string ~ 'sort=' ~ link ~ '" onclick="return sdAjaxCall(\'' ~ search_query_string ~ 'sort=' ~ link ~ '\')">' ~ output.sorting_labels[link] ~ '</a>') }) %}
+        {% endfor %}
+
+        {% if (sort_direction == 'ASC') %}
+            {% set sortlinks = sortlinks|merge({ sort : ('<a class="sort-asc" href="' ~ url ~ '?' ~ search_query_string ~ 'sort=' ~ sort ~ '_" onclick="return sdAjaxCall(\'' ~ search_query_string ~ 'sort=' ~ sort ~ '_\')">' ~ output.sorting_labels[sort] ~ '</a>')}) %}
+        {% else %}
+            {% set sortlinks = sortlinks|merge({ sort : '<a class="sort-desc" href="' ~ url ~ '?' ~ search_query_string ~ 'sort=' ~ sort ~ '" onclick="return sdAjaxCall(\'' ~ search_query_string ~ 'sort=' ~ sort ~ '\')">' ~ output.sorting_labels[sort] ~ '</a>'}) %}
+        {% endif %}
+
+    <div id="sd-releases">
+        {# get data #}
+        {% for key, row in results %}
+            {% if (not is_array(row)) %}
+                {# continue #}
+            {% else %}
+            <p class="release-item">
+                <strong><a href="{{ sd_seturl([row['uri'], row['name']], 'page') }}">{{ row['title'] }}</a></strong>
+                <span class="description">{{ row['description'] }}</span>
+            </p>
+            {% endif %}
+        {% endfor %}
+
+        <table rules="none">
+            <col/>
+            <col/>
+            <col/>
+            <col/>
+        {# setup page nav #}
+        {% set pages = sd_page_numbers('array') %}
+
+        {% if (pages['total_pages'] > 1) %}
+            <tbody>
+                <tr class="results-pages">
+                    <td>{{ pages['page_of'] }}</td>
+                    <td>{{ pages['page_goto'] }}</td>
+                    <td>{{ pages['page_nums_plus'] }}</td>
+                    <td>{{ pages['total_items'] }}</td>
+                </tr>
+            </tbody>
+        {% else %}
+            <tbody>
+                <tr class="results-pages">
+                    <td colspan="4"></td>
+                    <td>{{ pages['total_items'] }}</td>
+                </tr>
+            </tbody>
+        {% endif %}
+        </table>
+    </div>
+    {% endif %}
+
+{% elseif (group == 'newest_blogs') %}
+
+    {% if results %}
+    <div class="blog-entry-all">
+        {# get data #}
+        {% for key, row in results %}
+            {% if (not is_array(row)) %}
+                {# continue #}
+            {% else %}
+            {% set blogdate = strtotime(row['dateupdated'])>0 ? row['dateupdated'] : row['date'] %}
+            <div class="blog-entry" id="blog-{{ row['pgid'] }}">
+                <h2 class="blog-entry-title">
+                    <a href="{{ row['url'] }}">{{ row['title'] }}</a>
+                </h2>
+                <div class="blog-entry-date">
+                    {{ sd_datetext(blogdate,false) }}
+                </div>
+                {% set media = sd_parsemedia(row['media']) %}
+                {% set mediatitle = media[1] ? media[1] : row['title'] %}
+                {% if (is_image(media[0])) %}
+                    <div class="blog-entry-media"><img src="{{ sd_securemedia(media[0], true) }}" alt="{{ mediatitle }}" /></div>
+                {% else %}
+                    <div class="blog-entry-media">{{ media[0] }}</div>
+                {% endif %}
+                <div class="blog-entry-content">{{ row['longdescription'] }}</div>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        {# setup page nav #}
+        {% set pages = sd_page_numbers('array',output.newest_blogs['all']) %}
+
+        {% if (pages['total_pages'] > 1) %}
+            <div class="blog-entry-all">See all entries {{ pages['page_nums_plus'] }}</div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+{% elseif (group == 'releases') %}
+
+    {% if results %}
+    <div id="sd-releases">
+        {# get data #}
+        {% for key, row in results %}
+            {% if (not is_array(row)) %}
+                {# continue #}
+            {% else %}
+            {% set url = sd_seturl([row['uri'], row['date']], 'post') %}
+            <p class="release-item">
+                <strong><a href="{{ url }}">{{ row['title'] }}</a></strong>
+                <em class="published">{{ sd_datetext(row['date'],false) }}</em>
+                <span class="description">{{ row['description'] }}</span>
+            </p>
+            {% endif %}
+        {% endfor %}
+        {% set prevpage = results['prev_page'] %}
+        {% set nextpage = results['next_page'] %}
+        {# setup page nav #}
+        {% if (prevpage == 0 and nextpage == 0) %}
+            <p id="release-nav">
+                <a href="{{ sd_seturl('','home') }}">{{ sd_option('site_nav_icon_prev') }} {{ sd_option('post_home_link_text') }} {{ sd_option('site_nav_icon_next') }}</a>
+            </p>
+        {% else %}
+            <p id="release-nav">
+            {% if (prevpage == 0) %}
+                <span id="page-prev"><a href="{{ sd_seturl('','home') }}">{{ sd_option('site_nav_icon_prev') }} {{ sd_option('post_home_link_text') }} </a></span>
+            {% elseif (prevpage == 1) %}
+                <span id="page-prev"><a href="{{ output.request_uri }}" onclick="return sdAjaxCall(\'page={{ prevpage }}\')" rel="prev">{{ sd_option('site_nav_icon_prev') }} Prev </a></span>
+            {% else %}
+                <span id="page-prev"><a href="{{ output.request_uri }}?page={{ prevpage }}" onclick="return sdAjaxCall(\'page={{ prevpage }}\')" rel="prev">{{ sd_option('site_nav_icon_prev') }} Prev </a></span>
+            {% endif %}
+            {% if (nextpage == 0) %}
+                 | <span id="page-next"><a href="{{ sd_seturl('','home') }}"> {{ sd_option('post_home_link_text') }} {{ sd_option('site_nav_icon_next') }}</a></span>
+            {% else %}
+                 | <span id="page-next"><a href="{{ output.request_uri }}?page={{ nextpage }}" onclick="return sdAjaxCall(\'page={{ nextpage }}\')" rel="next">Next {{ sd_option('site_nav_icon_next') }}</a></span>
+            {% endif %}
+            </p>
+        {% endif %}
+    </div>
+    {% endif %}
+{% elseif (group == 'stock') %}
+
+    {# original stock/condition production layout #}
+    {% if (output.items_html and not sd_is_get and group == group_settings['group']) %}
+        {{ output.items_html }}
+    {% else %}
+
+        {# stocked layout #}
+        {% if results %}
+            {% set url = sd_seturl() %}
+
+            {% set search_query = get_search_query() %}
+            {% if search_query %}
+                {% set search_query_string = 'q=' ~ search_query ~ '&' %}
+            {% else %}
+                {% set search_query_string = '' %}
+            {% endif %}
+
+            {% set sort_string = get_sort() %}
+            {% if (sort_string == sd_option('site_sort_default')) %}
+                {% set sort_query_string = '' %}
+            {% else %}
+                {% set sort_query_string = 'sort=' ~ sort_string ~ '&' %}
+            {% endif %}
+
+            {% if (not preg_match('/_$/', sort_string)) %}
+                {% set sort = sort_string %}
+                {% set sort_direction = 'ASC' %}
+            {% else %}
+                {% set sort = sort_string|slice(0, -1) %}
+                {% set sort_direction = 'DESC' %}
+            {% endif %}
+
+            {# setup output.sorting #}
+            {% set sortlinks = [] %}
+
+            {% for link in output.sorting %}
+                {% set sortlinks = sortlinks|merge({ link : '<a href="' ~ url ~ '?' ~ search_query_string ~ 'sort=' ~ link ~ '" onclick="return sdAjaxCall(\'' ~ search_query_string ~ 'sort=' ~ link ~ '\')">' ~ output.sorting_labels[link] ~ '</a>'}) %}
+            {% endfor %}
+
+            {% if (sort_direction == 'ASC') %}
+                {% set sortlinks = sortlinks|merge({ sort : '<a class="sort-asc" href="' ~ url ~ '?' ~ search_query_string ~ 'sort=' ~ sort ~ '_" onclick="return sdAjaxCall(\'' ~ search_query_string ~ 'sort=' ~ sort ~ '_\')">' ~ output.sorting_labels[sort] ~ '</a>'}) %}
+            {% else %}
+                {% set sortlinks = sortlinks|merge({ sort : '<a class="sort-desc" href="' ~ url ~ '?' ~ search_query_string ~ 'sort=' ~ sort ~ '" onclick="return sdAjaxCall(\'' ~ search_query_string ~ 'sort=' ~ sort ~ '\')">' ~ output.sorting_labels[sort] ~ '</a>'}) %}
+            {% endif %}
+
+            {# google shopping microdata offer sets #}
+            {% set offerconditions = {'new':'NewCondition', 'used':'UsedCondition', 'refurbished':'RefurbishedCondition', 'damaged':'DamagedCondition'} %}
+            {% set offercurrency = sd_option('site_currency') %}
+
+            {# setup head #}
+        <table rules="all" cellspacing="0" cellpadding="0" id="results-content">
+            <col width="50"/>
+            <col width="50"/>
+            <col width="50"/>
+            <col width="50"/>
+            <col width="400"/>
+            <col width="200"/>
+            <thead>
+            <tr id="results-head">
+                <td>{{ sortlinks['stock'] }}</td>
+                <td>{{ sortlinks['condition'] }}</td>
+                <td>{{ sortlinks['sku'] }}</td>
+                <td>{{ sortlinks['price'] }}</td>
+                <td>{{ sortlinks['title'] }}</td>
+                <td>Pic</td>
+            </tr>
+            </thead>
+            {# get data and setup thumbs #}
+            <tbody>
+            {% for key, row in results %}
+
+                {% if (not is_array(row)) %}
+                    {# continue #}
+                {% else %}
+
+                    {% set sku = row['guid'] ? row['guid'] : row['sku'] %}
+                    {% set media = sd_parsemedia(row['media']) %}
+
+                    {% if (is_image(media[0])) %}
+                        {% set image_url = sd_getmediathumb(sd_securemedia(media[0], true)) %}
+
+                        {% if media[1] %}
+                            {% set alt_text = media[1] %}
+                        {% else %}
+                            {% set alt_text = row['title'] %}
+                        {% endif %}
+
+                        {% if (sd_option('image_thumb_titles') == 'on') %}
+                            {% set alt_text = alt_text ~ '" title="' ~ alt_text %}
+                        {% endif %}
+
+                    {% else %}
+                        {% set image_url = output.icons['no_thumb'] %}
+                        {% set alt_text = '' %}
+                    {% endif %}
+
+                    {% if (rownum != 1) %}
+                        {% set rowclass = 'row-data' %}
+                        {% set rownum = 1 %}
+                    {% else %}
+                        {% set rowclass = 'row-data-x' %}
+                        {% set rownum = 0 %}
+                    {% endif %}
+
+                    {% set itemurl = sd_seturl(row['uri'], 'item') %}
+                    {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
+
+                    {# offer details #}
+                    <tr class="{{ rowclass }}" itemscope itemtype="http://schema.org/Product">
+                        <td class="td-stock">{{ row['total_stock'] }}</td>
+                        <td class="td-condition">{{ row['condition'] }}</td>
+                        <td class="td-sku">{{ sku }}</td>
+                        <td class="td-price{{ discountpricecss }}" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            {{ sd_price(false, true, true, row) }}
+                            <meta itemprop="priceCurrency" content="{{ offercurrency }}"/>
+                            <meta itemprop="price" content="{{ sd_price(false, false, false, row) }}"/>
+                            <meta itemprop="availability" content="InStock" />
+                            {% if (row['total_stock']>0) %}
+                                <meta itemprop="inventoryLevel" content="{{ row['total_stock'] }}" />
+                            {% endif %}
+                            {% if (row['condition'] and offerconditions[row['condition']|lower] is defined ) %}
+                                <meta itemprop="itemCondition" itemtype="http://schema.org/OfferItemCondition" content="{{ offerconditions[row['condition']|lower] }}" />
+                            {% endif %}
+                            <meta itemprop="url" content="{{ sd_seturl(row['uri'], 'item') }}" />
+                        </td>
+                        <td class="td-title">
+                            <a href="{{ itemurl }}">{{ row['title'] }}</a>
+                            {{ sd_cart_details(row, key) }}
+                        </td>
+                        <td>
+                            <a href="{{ itemurl }}"><img alt="{{ alt_text }}" class="row-data-img" src="{{ image_url }}"/></a>
+                            <meta itemprop="name" content="{{ row['title'] }}" />
+                            {% if row['brand'] %}
+                                <meta itemprop="brand" content="{{ row['brand'] }}" />
+                            {% endif %}
+                            {% if (is_image(media[0])) %}
+                                <meta itemprop="image" content="{{ sd_securemedia(media[0], true) }}" />
+                            {% endif %}
+                            {% if row['weight'] > 0 %}
+                                <meta itemprop="weight" content="{{ row['weight'] }}" />
+                            {% endif %}
+                            {% if row['color'] %}
+                                <meta itemprop="color" content="{{ row['color'] }}" />
+                            {% endif %}
+                            {% if row['upc']|length == 12 %}
+                                <meta itemprop="gtin12" content="{{ row['upc'] }}" />
+                            {% endif %}
+                            {% if (row['ean'] is defined and row['ean']) or row['upc']|length == 13 %}
+                                {% set rowean = row['ean'] is defined and row['ean'] ? row['ean'] : row['upc'] %}
+                                <meta itemprop="gtin13" content="{{ rowean }}" />
+                            {% endif %}
+                            {% if (row['gtin'] is defined and row['gtin']) %}
+                                <meta itemprop="gtin14" content="{{ row['gtin'] }}" />
+                            {% endif %}
+                            {% if (row['mpn'] is defined and row['mpn']) %}
+                                <meta itemprop="mpn" content="{{ row['mpn']|escape('html') }}" />
+                            {% endif %}
+                            {% if (row['manufacturer'] is defined and row['manufacturer']) %}
+                                <meta itemprop="manufacturer" content="{{ row['manufacturer']|escape('html') }}" />
+                            {% endif %}
+                            {% if (row['model'] is defined and row['model']) %}
+                                <meta itemprop="model" content="{{ row['model']|escape('html') }}" />
+                            {% endif %}
+                            <meta itemprop="sku" content="{{ row['guid']|escape('html') }}" />
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+
+            {# setup page nav #}
+            {% set pages = sd_page_numbers('array') %}
+
+            {% if (pages['total_pages'] > 1) %}
+            <tbody>
+                <tr class="results-pages">
+                    <td colspan="2">{{ pages['page_of'] }}</td>
+                    <td colspan="2">{{ pages['page_goto'] }}</td>
+                    <td>{{ pages['page_nums_plus'] }}</td>
+                    <td>{{ pages['total_items'] }}</td>
+                </tr>
+            </tbody>
+            {% else %}
+            <tbody>
+                <tr class="results-pages">
+                    <td colspan="5"></td>
+                    <td>{{ pages['total_items'] }}</td>
+                </tr>
+            </tbody>
+            {% endif %}
+        </table>
+        {% elseif (sd_is_search and (not get_search_query())) %}
+            {# html = '' #}
+        {% else %}
+            {# empty results #}
+            <table rules="all" cellspacing="0" cellpadding="0" id="results-empty">
+                <col width="800"/>
+                <tr>
+                    <td>{{ sd_option('results_empty_default') }}</td>
+                </tr>
+            </table>
+        {% endif %}
+    {% endif %}
+{% else %}
+
+    {# default product grid layout #}
+    {% if (output.items_html and not sd_is_get and group == group_settings['group']) %}
+        {{ output.items_html }}
+    {% else %}
+        {% if results %}
+            {% spaceless %}
+            {% set url = sd_seturl() %}
+
+            {% set search_query = get_search_query() %}
+            {% if search_query %}
+                {% set search_query_string = 'q=' ~ search_query ~ '&' %}
+            {% else %}
+                {% set search_query_string = '' %}
+            {% endif %}
+
+            {% set sort_string = get_sort() %}
+
+            {# setup output.sorting #}
+            {% set sortlinks = [] %}
+            {% set sortdefaults = sd_option('site_sort_defaults')|split('*') %}
+            {% set sorticonasc = sd_option('site_sort_icon_asc') %}
+            {% set sorticondesc = sd_option('site_sort_icon_desc') %}
+
+            {# setup grid col count #}
+            {% set colmax = sd_option('product_grid_columns') and is_int(sd_option('product_grid_columns')) ? sd_option('product_grid_columns') : 3 %}
+            {% set colwid = 800 / colmax %}
+
+            {% for link in output.sorting %}
+                {% if link in sortdefaults %}
+                    {% if (sort_string == link) %}
+                        {% set sort_selected = " selected" %}
+                    {% elseif (sort_string == (link ~ '_')) %}
+                        {% set sort_selected_d = " selected" %}
+                    {% else %}
+                        {% set sort_selected = '' %}
+                        {% set sort_selected_d = '' %}
+                    {% endif %}
+
+                    {% set sortlinks = sortlinks|merge(['<option value="' ~ link ~ '"' ~ sort_selected ~ '>' ~ output.sorting_labels[link] ~ ' ' ~ sorticonasc ~ '</option>']) %}
+                    {% set sortlinks = sortlinks|merge(['<option value="' ~ link ~ '_"' ~ sort_selected_d ~ '>' ~ output.sorting_labels[link] ~ ' ' ~ sorticondesc ~ '</option>']) %}
+                {% endif %}
+            {% endfor %}
+
+            {% set sortoptions = '<select name="sort" onchange="sdAjaxForm(this.form)">' ~ (sortlinks|join('')) ~ '</select>' %}
+            {% set grid_sort = '<form action="'~ url ~ '" method="get" id="sort-page-form" name="sort_page_form">' ~ sortoptions %}
+
+            {% if (search_query) %}
+                {% set grid_sort = grid_sort ~ '<input type="hidden" name="q" value="' ~search_query ~ '" />' %}
+            {% endif %}
+
+            {% if (group != group_settings['group']) %}
+                {% set grid_sort = grid_sort ~ '<input type="hidden" name="view" value="' ~ group ~ '" />' %}
+            {% endif %}
+            {% set grid_sort = grid_sort ~ '</form>' %}
+
+            {# offer sets #}
+            {% set offerconditions = {'new':'NewCondition', 'used':'UsedCondition', 'refurbished':'RefurbishedCondition', 'damaged':'DamagedCondition'} %}
+            {% set offercurrency = sd_option('site_currency') %}
+
+            {% endspaceless %}
+            {# setup table #}
+                <table rules="all" cellspacing="0" cellpadding="0" id="results-content">
+                {% for i in 0..colmax %}
+                <col width="{{ colwid }}" />
+                {% endfor %}
+                {% set pages = sd_page_numbers('array') %}
+                {% set pagesheadclass = pages['total_pages']>1 ? 'results-pages' : '' %}
+                <thead>
+                    <tr id="results-head" class="{{ pagesheadclass }}">
+                        {% if (pages['total_pages'] > 1) %}
+                            {% if (colmax >= 3) %}
+                                <td>{{ grid_sort }}</td>
+                                <td colspan="{{ colmax-2 }}">{{ pages['page_nums_plus'] }}</td>
+                                <td>{{ pages['results_of'] }}</td>
+                            {% else %}
+                                <td>{{ grid_sort }} {{ pages['page_nums_plus'] }}</td>
+                            {% endif %}
+                        {% else %}
+                            {% if (colmax > 1) %}
+                                <td colspan="{{ colmax-1 }}">{{ grid_sort }}</td>
+                                <td>{{ pages['total_items'] }}</td>
+                            {% else %}
+                                <td>{{ grid_sort }} {{ pages['total_items'] }}</td>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {# get data and setup thumbs #}
+                {% set colnum = 1 %}
+                {% set colnext = colmax + 1 %}
+                {% for key, row in results %}
+                    {% if (not is_array(row)) %}
+                        {# continue #}
+                    {% else %}
+                        {% spaceless %}
+                        {% set sku = row['guid'] ? row['guid'] : row['sku'] %}
+                        {% set media = sd_parsemedia(row['media']) %}
+
+                        {% if (is_image(media[0])) %}
+                            {% set image_url = sd_getmediathumb(sd_securemedia(media[0], true)) %}
+                            {% set alt_text = media[1] ? media[1]|escape : row['title']|escape %}
+                            {% if (sd_option('image_thumb_titles') == 'on') %}
+                                {% set alt_text = alt_text ~ '" title="' ~ alt_text %}
+                            {% endif %}
+                        {% else %}
+                            {% set image_url = output.icons['no_thumb'] %}
+                            {% set alt_text = '' %}
+                        {% endif %}
+
+                        {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
+
+                        {% if (colnum == 1) %}
+                            {% set rowclass = rownum != 1 ? 'row-data' : 'row-data-x' %}
+                            {% set rownum = rownum != 1 ? 1 : 0 %}
+                            <tr class="{{ rowclass }} row-grid">
+                        {% endif %}
+                                <td itemscope itemtype="http://schema.org/Product">
+                                    <p class="rd-title"><a href="{{ sd_seturl(row['uri'], 'item') }}">{{ row['title'] }}</a></p>
+                                    <p><a href="{{ sd_seturl(row['uri'], 'item') }}"><img alt="{{ alt_text }}" class="row-data-img" src="{{ image_url }}" /></a></p>
+                                    <p class="rd-price{{ discountpricecss }}" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                                        {{ sd_price(false, true, true, row) }}
+                                        <meta itemprop="priceCurrency" content="{{ offercurrency }}" />
+                                        <meta itemprop="price" content="{{ sd_price(false, false, false, row) }}"/>
+                                        <meta itemprop="availability" content="InStock" />
+                                        {% if (row['total_stock']>0) %}
+                                            <meta itemprop="inventoryLevel" content="{{ row['total_stock'] }}" />
+                                        {% endif %}
+                                        {% if (row['condition'] and offerconditions[row['condition']|lower] is defined ) %}
+                                            <meta itemprop="itemCondition" itemtype="http://schema.org/OfferItemCondition" content="{{ offerconditions[row['condition']|lower] }}" />
+                                        {% endif %}
+                                        <meta itemprop="url" content="{{ sd_seturl(row['uri'], 'item') }}" />
+                                    </p>
+                                    <p class="rd-sku">{{ sku }}</p>
+                                    <meta itemprop="name" content="{{ row['title']|escape('html') }}" />
+                                    {% if row['brand'] %}
+                                        <meta itemprop="brand" content="{{ row['brand']|escape('html') }}" />
+                                    {% endif %}
+                                    {% if (is_image(media[0])) %}
+                                        <meta itemprop="image" content="{{ sd_securemedia(media[0], true) }}" />
+                                    {% endif %}
+                                    {% if row['weight'] > 0 %}
+                                        <meta itemprop="weight" content="{{ row['weight'] }}" />
+                                    {% endif %}
+                                    {% if row['color'] %}
+                                        <meta itemprop="color" content="{{ row['color'] }}" />
+                                    {% endif %}
+                                    {% if row['upc']|length == 12 %}
+                                        <meta itemprop="gtin12" content="{{ row['upc'] }}" />
+                                    {% endif %}
+                                    {% if (row['ean'] is defined and row['ean']) or row['upc']|length == 13 %}
+                                        {% set rowean = row['ean'] is defined and row['ean'] ? row['ean'] : row['upc'] %}
+                                        <meta itemprop="gtin13" content="{{ rowean }}" />
+                                    {% endif %}
+                                    {% if (row['gtin'] is defined and row['gtin']) %}
+                                        <meta itemprop="gtin14" content="{{ row['gtin'] }}" />
+                                    {% endif %}
+                                    {% if (row['mpn'] is defined and row['mpn']) %}
+                                        <meta itemprop="mpn" content="{{ row['mpn']|escape('html') }}" />
+                                    {% endif %}
+                                    {% if (row['manufacturer'] is defined and row['manufacturer']) %}
+                                        <meta itemprop="manufacturer" content="{{ row['manufacturer']|escape('html') }}" />
+                                    {% endif %}
+                                    {% if (row['model'] is defined and row['model']) %}
+                                        <meta itemprop="model" content="{{ row['model']|escape('html') }}" />
+                                    {% endif %}
+                                    <meta itemprop="sku" content="{{ row['guid']|escape('html') }}" />
+                                </td>
+                        {% if (colnum == colmax) %}
+                            </tr>
+                        {% endif %}
+                        {% endspaceless %}
+                        {% set colnum = colnum + 1 %}
+                        {% if(colnum == colnext) %}
+                            {% set colnum = 1 %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% if (colnum > 1) %}
+                    {% set colspan = colmax - colnum - 1 %}
+                    {% if (colspan > 1) %}
+                                    <td colspan="{{ colspan }}"></td>
+                                </tr>
+                                {% else %}
+                                    <td></td>
+                                </tr>
+                    {% endif %}
+                {% endif %}
+                </tbody>
+                <tbody>
+                    <tr class="results-pages">
+                        {% if (pages['total_pages'] > 1) %}
+                            {% if (colmax >= 3) %}
+                                <td>{{ pages['page_goto'] }}</td>
+                                <td colspan="{{ colmax-2 }}">{{ pages['page_nums_plus'] }}</td>
+                                <td>{{ pages['results_of'] }}</td>
+                            {% else %}
+                                <td>{{ pages['page_goto'] }} {{ pages['page_nums_plus'] }}</td>
+                            {% endif %}
+                        {% else %}
+                            {% if (colmax > 1) %}
+                                <td colspan="{{ colmax-1 }}">{{ grid_sort }}</td>
+                                <td>{{ pages['total_items'] }}</td>
+                            {% else %}
+                                <td>{{ pages['total_items'] }}</td>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        {% elseif (sd_is_search and (not get_search_query())) %}
+            {# do nothing #}
+        {% else %}
+        {# empty results #}
+        <table rules="all" cellspacing="0" cellpadding="0" id="results-empty">
+            <col width="800"/>
+            <tr>
+                <td>{{ sd_option('results_empty_default') }}</td>
+            </tr>
+        </table>
+        {% endif %}
+    {% endif %}
+{% endif %}

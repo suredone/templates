@@ -1,0 +1,159 @@
+{% set doaction = output.doaction %}
+{% if doaction == 'checkout-shipping' %}
+    {% set checkoutfunction = '' %}
+    {% set checkoutbutton = 'Continue to payment' %}
+{% else %}
+    {% set checkoutfunction = doaction == 'checkout-customer' ? 'return sdValidForm();' : 'return sdValidCC();' %}
+    {% set checkoutbutton = 'Continue to shipping &amp; payment' %}
+{% endif %}
+<form action="{{ output.cart_suri }}" method="post" id="sd-payForm" class="checkbe" name="sd_payForm" onsubmit="{{ checkoutfunction }}">
+    <input type="hidden" name="do" value="{{ doaction }}"/>
+    {% if (sd_option('site_cart_checkout_confirm') == 'on') %}
+        <input type="hidden" id="sd-confirm" name="confirm" value=""/>
+    {% endif %}
+    <input type="hidden" name="sd_js" value="jsoff"/>
+    <div rules="none" cellpadding="0" cellspacing="0" id="sd-payment-info">
+        <div>
+            <div id="sd-cartNotice">
+            {% if (not data['ccerror'])  %}
+                {{ sd_notice(false) }}
+            {% endif %}
+            </div>
+        </div>
+        {# logged in form head #}
+
+
+{% if doaction == 'checkout-customer' %}
+        {% if (sd_is_logged_in) %}
+        <div>
+            <div>
+                <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" name="sdform-vemail" alt=""/>
+                <input type="hidden" name="sd_email" value="{{ data['email'] }}"/>
+                <input type="hidden" name="sd_cemail" value="{{ data['cemail'] }}"/>
+                <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" name="sdform-vcemail" alt=""/>
+            </div>
+        </div>
+        <div class="sd-dataSet clearfix">
+            <div class="sd-payInfo clearfix">
+                <strong id="sd-email-acct"><b>Email</b> {{ data['email'] }}</strong>
+            </div>
+        </div>
+        {% else %}
+        <div class="clearfix">
+            <div class="sd-payInfo clearfix">
+                <div id="sd-emailForm">
+                    {%  include 'form-cartemail-div.htm' with {'data' : data} %}
+                </div>
+                {% if (sd_option('site_accounts') == 'on') %}
+                <div id="sd-passForm">
+                    <input type="checkbox" id="sd-create-acct" name="sd_create_acct" value="yes" {{ data['create_account_check'] }} onclick="sdDoPassword();"/>
+                    <b class="sd-infoBold">CREATE ACCOUNT</b>
+                    <br/>
+                    <img class="sd-formIcon" src="{{ output.icons['vform']['cart_pass'] }}" name="sdform-vpass" alt="Password with 7 or more characters"/>
+                    Password (7 or more characters)<br/>
+                    <input type="password" size="20" maxlength="20" id="sd-password" name="sd_password" value=""/>
+                    <br/>
+                    <input type="checkbox" id="sd-show-password" onclick="sdShowPassword();"/>
+                    Check Password
+                    <br />Already have an account? <a href="{{ output.accounts_uri }}">Login</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {# end email inputs and create account offer #}
+
+        <div class="clearfix">
+            {{ output.buttons['checkout_paypal'] }}
+        </div>
+
+        <div class="clearfix">
+            <div class="sd-payInfo clearfix">
+                <b class="sd-infoBold">BILLING ADDRESS</b>
+                <img src="{{ sd_securemedia(output.icons['required']) }}" alt="Required"/> = REQUIRED
+                <div id="sd-billingForm">
+                    {% include 'form-wwwcartbilling-div.htm' with {'data': data} %}
+                </div>
+            </div>
+        </div>
+
+        {# shipping form #}
+        {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on') %}
+        <div class="clearfix">
+            <div class="sd-payInfo clearfix">
+                <b class="sd-infoBold sd-shipAddrLabel">SHIPPING ADDRESS</b>
+                <br/>
+                <img class="sd-formIcon" src="{{ output.icons['vform']['shiplocation'] }}" name="sdform-vsshiploc" alt="Required ship to location"/>
+                <select tabindex="21" id="sd-ship-location" name="sd_ship_location" onchange="sdShipForm(this,'{{ output.buttons['form_cart_shipping'] }}','sd-shippingForm');">
+                    <option value="BillingAddress" {{ data['select_billing'] }}>Same As Billing Address</option>
+                    <option value="OtherAddress" {{ data['select_other'] }}>Other Address</option>
+                </select>
+
+                <div id="sd-shippingForm">
+                {% if (data['select_other']) %}
+                    {% include 'form-wwwcartshipping-div.htm' with {'data': data} %}
+                {% endif %}
+            </div>
+        </div>
+    </div class="clearfix">
+    {% endif %}
+    {# shipping form end #}
+
+    <div class="clearfix">
+        <div id="sd-submitBlock" colspan="3">
+            <input alt="{{ checkoutbutton }}" class="sd-formButton" type="submit" value="{{ checkoutbutton }}"/>
+        </div>
+    </div>
+{% endif %}
+
+
+{% if doaction == 'checkout-payment' %}
+        <div class="sd-dataSet clearfix">
+            <div class="sd-payInfo clearfix">
+                <strong id="sd-email-acct"><b>Email</b> {{ data['email'] }}</strong>
+            </div>
+            <div class="sd-payInfo clearfix">
+                <strong><b>Ship To</b> {% include 'form-cartshipto.htm' with {'data': data, 'form': 'true'} %}</strong>
+            </div>
+            <div class="sd-payInfo clearfix">
+                <strong><a href="{{ output.cart_suri }}?do=checkout-customer">Change Address</a></strong>
+            </div>
+        </div>
+
+        <div id="sd-emailForm" class="clearfix">
+            <label for="sd-sd-ship-service">Shipping Method</label>
+            {% include 'form-shippingoptions.htm' with {'data': data} %}
+        </div>
+
+    {# credit card country filters #}
+    {% set countryfilters = sd_option('site_cart_card_countries') %}
+    {% if (data['bcountry'] and sd_option('site_cart_card_filters') == 'on' and (countryfilters))  %}
+        {% set cardcountries = countryfilters|split('*') %}
+        {% if ((cardcountries[0] == 'ALL' and data['bcountry'] in cardcountries) or (cardcountries[0] != 'ALL' and data['bcountry'] and not incardcountries))  %}
+        {% set cardnotice = 'Credit cards not accepted from ' ~ sd_countryname(data['bcountry']) %}
+        <div class="clearfix">
+            <div class="sd-payInfo clearfix">
+                <div id="sd-creditcardForm">
+                    <div class="sd-error" id="sd-cardNotice">{{ cardnotice }}</div>
+                    <div>
+                        {{ output.buttons['checkout_paypal'] }}
+                        {{ output.buttons['checkout_google'] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+    {# credit card form and submit #}
+        <div class="clearfix">
+            <div class="sd-payInfo clearfix">
+                <div id="sd-creditcardForm">
+                    {% include 'form-cardcheckout-div.htm' with {'data': data, 'steps': 'true'} %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+
+    </div>
+</form>

@@ -1,0 +1,21 @@
+{# suredone default page index template #}
+{% set pageclassname = output.results[1]['name'] ? output.results[1]['name'] : 'empty' %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div id="sd-site-body" class="{{ pageclassname }}-page-index-body">
+    {% include 'sidebar.htm' %}
+    <h1 class="sd-title">{{ sd_content('title_link') }}</h1>
+    <div id="sd-content">
+    {% if pageclassname == 'blog' %}
+        {# sd_content('newest_blogs') #}
+        {% set results = sd_getnewpages('blog') %}
+        {% set group = 'newest_blogs' %}
+    {% else %}
+        {# sd_content('page_index') #}
+        {% set group = 'page_index' %}
+    {% endif %}
+    {% include 'results.htm' %}
+    </div>
+    {% include 'widgets.htm' %}
+</div>
+{% include 'footer.htm' %}

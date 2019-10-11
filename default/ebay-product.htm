@@ -1,0 +1,106 @@
+<style type="text/css">
+{% set custom_ebay_style = sd_option('ebay' ~ data.instanceid ~ '_description_style') %}
+{% if custom_ebay_style %}
+    {{ custom_ebay_style }}
+{% else %}
+    body{font-family:arial,verdana,tahoma;}
+    a:link,a:visited{background-color:#FFF;color:#00F;text-decoration:none;}
+    a:hover,a:active{background-color:#FFF;color:#CCC;text-decoration:none;}
+    #sd-ebay-listing{margin:0px auto;width:800px;text-align:left;}
+    #sd-ebay-listing-head{color:#00F;font-weight:bold;}
+    #sd-ebay-listing-logo{margin:0px auto;display:block;float:left;}
+    #sd-ebay-listing-contact{padding:10px 5px 5px 5px;display:block;float:right;}
+    #sd-ebay-listing-email{display:block;}#sd-ebay-listing-phone{display:block;}
+    #sd-ebay-listing-title{font-size:24px;font-family:'arial black',arial,verdana,tahoma;clear:both;}
+    #sd-ebay-listing-sku{font-size:18px;font-variant:small-caps;display:inline-block;clear:both;}
+    #sd-ebay-listing-media{margin:0px auto;display:block;clear:both;}
+    #sd-ebay-listing-media p{margin:0px auto;clear:both;}
+    #sd-ebay-listing-media img{max-width:800px;}
+    #sd-ebay-media-gallery{text-align:center;}
+    #sd-ebay-media-gallery img{max-width:195px;}
+    #sd-ebay-listing-description{margin:0px auto;width:600px;}
+    #sd-ebay-listing-categories,#sd-ebay-listing-footer{}
+    #sd-ebay-listing-details{text-align:left;}
+    .sd-ebay-listing-description-label{display:block;color:#00F;text-align:left;text-decoration:none;}
+    .sd-ebay-listing-description-content{text-align:left;white-space:normal;}
+    #sd-ebay-listing-summary{margin:0px auto;border:3px solid #000;width:800px;clear:both;font-weight:bold;}
+    #sd-ebay-listing-summary span{display:block;padding:5px;width:800px;font-size:1.2em;}
+    #sd-ebay-preview-body{display:block;clear:both;font-family:arial,verdana,tahoma;}
+    #sd-ebay-listing-powered{text-align:center;}
+{% endif %}
+</style>
+
+<div id="sd-ebay-listing">
+{% set custom_ebay_header = sd_option('ebay' ~ data.instanceid ~ '_description_header') %}
+{% if custom_ebay_header %}
+    <div id="sd-ebay-listing-header" class="sd-ebay-listing-description-content">
+        {{ custom_ebay_header }}
+    </div>
+{% endif %}
+
+    <div id="sd-ebay-listing-head">
+        <span id="sd-ebay-listing-logo">
+        {% set ebay_store_name = sd_option('ebay' ~ data.instanceid ~ '_store_name') %}
+        {% if ebay_store_name %}
+            <a href="https://www.ebay.com/str/{{ebay_store_name}}">
+        {% endif %}
+                <img alt="{{ ebay_store_name }}" id="sd-ebay-store-logo" src="{{ sd_siteinfo('logo_secure_url') }}" />
+        {% if ebay_store_name %}
+            </a>
+        {% endif %}
+        </span>
+        <span id="sd-ebay-listing-contact">
+            <span id="sd-ebay-listing-phone"></span>
+        </span>
+    </div>
+
+    <div id="sd-ebay-listing-media"><b id="sd-ebay-listing-sku">SKU: [%EBAY_SKU%]</b>[%EBAY_MEDIA%]</div>
+
+{% set custom_ebay_navbar = sd_option('ebay' ~ data.instanceid ~ '_description_navbar') %}
+{% if custom_ebay_navbar %}
+    <div id="sd-ebay-listing-categories">
+        {{ custom_ebay_navbar }}
+    </div>
+{% endif %}
+
+    <div id="sd-ebay-listing-description">
+        <h3 class="sd-ebay-listing-description-label ebay-label-title">ITEM TITLE</h3>
+        <div class="sd-ebay-listing-description-content ebay-content-title">[%EBAY_TITLE%]</div>
+        <div id="sd-ebay-listing-details">[%EBAY_DETAILS%] [%EBAY_LONGDESCRIPTION%]</div>
+    {% set ebay_description_about = sd_option('ebay' ~ data.instanceid ~ '_description_about') %}
+    {% if ebay_description_about %}
+        <h3 class="sd-ebay-listing-description-label ebay-label-description">ABOUT</h3>
+        <div class="sd-ebay-listing-description-content ebay-content-description">{{ ebay_description_about }}</div>
+    {% endif %}
+
+    {% set ebay_policy_payments = sd_option('ebay' ~ data.instanceid ~ '_policy_payments') %}
+    {% if ebay_policy_payments %}
+        <h3 class="sd-ebay-listing-description-label ebay-label-payments">PAYMENTS</h3>
+        <div class="sd-ebay-listing-description-content ebay-content-payments">{{ ebay_policy_payments }}</div>
+    {% endif %}
+
+    {% set ebay_policy_shipping_domestic = sd_option('ebay' ~ data.instanceid ~ '_policy_shipping_domestic') %}
+    {% set ebay_policy_shipping_international = sd_option('ebay' ~ data.instanceid ~ '_policy_shipping_international') %}
+    {% if ebay_policy_shipping_international and ebay_policy_shipping_domestic %}
+        <h3 class="sd-ebay-listing-description-label ebay-label-shipping-domestic">DOMESTIC SHIPPING</h3>
+        <div class="sd-ebay-listing-description-content ebay-content-shipping-domestic">{{ ebay_policy_shipping_domestic }}</div>
+        <h3 class="sd-ebay-listing-description-label ebay-label-shipping-international">INTERNATIONAL SHIPPING</h3>
+        <div class="sd-ebay-listing-description-content ebay-content-shipping-international">{{ ebay_policy_shipping_international }}</div>
+    {% elseif ebay_policy_shipping_domestic %}
+        <h3 class="sd-ebay-listing-description-label ebay-label-shipping-domestic">SHIPPING</h3>
+        <div class="sd-ebay-listing-description-content ebay-content-shipping-domestic">{{ ebay_policy_shipping_domestic }}</div>
+    {% endif %}
+
+    {% set ebay_policy_returns = sd_option('ebay' ~ data.instanceid ~ '_policy_returns') %}
+    {% if ebay_policy_returns %}
+        <h3 class="sd-ebay-listing-description-label ebay-label-returns">RETURNS</h3>
+        <div class="sd-ebay-listing-description-content ebay-content-returns">{{ ebay_policy_returns }}</div>
+    {% endif %}
+
+    {% set custom_ebay_footer = sd_option('ebay' ~ data.instanceid ~ '_description_footer') %}
+    {% if custom_ebay_footer %}
+        <div id="sd-ebay-listing-footer" class="sd-ebay-listing-description-content">{{ custom_ebay_footer }}</div>
+    {% endif %}
+    </div>
+
+</div>

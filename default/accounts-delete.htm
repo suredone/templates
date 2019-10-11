@@ -1,0 +1,12 @@
+<div id="sd-login">
+   <form action="{{ output.accounts_uri }}" method="post" id="sd-loginForm">
+       <input type="hidden" name="do" value="delete-account" />
+       <input type="hidden" name="confirm_delete" value="yes" />
+       <b id="sd-acctTitle">{{ sd_option('business_name') }} Account</b>
+       <span id="sd-acctNotice">{{ sd_notice() }}</span>
+       <input type="image" src="{{ output.icons['delete_acct'] }}" value="Confirm Account Deletion" class="sd-formButton" />
+       <a href="{{ output.accounts_uri }}?do=my-account">
+           <img src="{{ output.icons['keep_acct'] }}" alt="Keep Account" class="sd-formButton" />
+       </a>
+   </form>
+</div>

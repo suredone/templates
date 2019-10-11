@@ -1,0 +1,24 @@
+{# suredone default home page template #}
+{% set customhome = sd_option('site_custom_home') %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div id="sd-site-home">
+    {% include 'sidebar.htm' %}
+    {% if customhome %}
+        {{ sd_swaphome(customhome) }}
+    {% else %}
+        <h1>{{ sd_content('title_link') }}</h1>
+        <div id="sd-newest-blogs">{{ sd_content('newest_blogs') }}</div>
+        <div id="sd-release-preview">{{ sd_content('release_preview') }}</div>
+        <div id="sd-content">
+            {% if sd_is_get %}
+                {# sd_content('results') #}
+                {% include 'results.htm' %}
+            {% elseif sd_option('site_releases_preview_interval') %}
+                <h3><a href="{{ sd_seturl('','home') }}?show" onclick="return sdAjaxCall('show=new')">Show All New Products</a></h3>
+            {% endif %}
+        </div>
+    {% endif %}
+    {% include 'widgets.htm' %}
+</div>
+{% include 'footer.htm' %}

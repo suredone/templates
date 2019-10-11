@@ -1,0 +1,49 @@
+{# suredone default footer #}
+{% set sdfootercustom = sd_option('site_custom_footer') %}
+<div id="sd-footer">
+{% if sdfootercustom %}
+    {{ sd_swaptags('add', sdfootercustom) }}
+{% else %}
+    <div id="foot-bar">
+    {% if sd_option('site_cart_checkout_cards') == 'on' %}
+        <img alt="" src="{{ output.icons['accept_cards'] }}" class="cc-icon" />
+    {% endif %}
+    {% if sd_option('site_cart_card_processor') == 'paypal' or sd_option('site_cart_checkout_paypal') == 'on' %}
+        <a href="https://www.paypal.com" target="_blank" rel="nofollow"><img alt="" src="{{ output.icons['accept_paypal'] }}" class="pp-icon" /></a>
+    {% endif %}
+    {{ sd_siteinfo('twitter') }}{{ sd_siteinfo('facebook') }}{{ output.emaillist_html }}
+    </div>
+    <div id="foot-nav">{{ output.feedback_html }} {{ output.legal_html }} &copy; {{ gmdate('Y') }}</div>
+{% endif %}
+{% if sd_is_secure == false and sd_request_uri != output.cart_uri and sd_option('site_adsense') == 'on' and sd_option('site_adsense_google_account') is not empty %}
+    <div id="foot-ads">
+        <script type="text/javascript"><!--
+            google_ad_client = "ca-pub-{{ sd_siteinfo('google_adsense') }}";
+            google_ad_slot = "8146650125";
+            google_ad_width = 728;
+            google_ad_height = 90;
+            //-->
+        </script>
+        <script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+    </div>
+{% endif %}
+    <div id="foot-pow">{{ sd_siteinfo('version_logo_powered_link') }}</div>
+</div>
+{% if sd_option('site_tracking') == 'on' and sd_option('site_tracking_google_account') is not empty %}
+<script type="text/javascript">
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+{% endif %}
+<!-- colorbox image gallery -->
+<script type="text/javascript">
+    $(".sd-gallery-thumbs").colorbox({rel:'sd-gallery-thumbs', transition:"none", width:"75%", height:"75%", current:'Image {current} of {total}', 'onComplete': function(){
+        //$('#cboxLoadedContent img').wrap('<span style="display:block"></span>').css('display', 'block').parent().zoom();
+    }});
+    $(document).ready(function(){if(document.getElementById('main-image')){sdResetMainImageZoom();}});
+</script>
+</body>
+</html>

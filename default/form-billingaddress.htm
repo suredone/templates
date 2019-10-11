@@ -1,0 +1,68 @@
+{# form BillingAddress #}
+{% if data['billing'] %}
+
+{{ data['billing']['firstname'] }} {{ data['billing']['middlename'] }} {{ data['billing']['lastname'] }}
+{% if data['billing']['company'] %}
+    <br />{{ data['billing']['company'] }}
+{% endif %}
+{% if data['billing']['street1'] %}
+    <br />{{ data['billing']['street1'] }}
+{% endif %}
+{% if data['billing']['street2'] %}
+    <br />{{ data['billing']['street2'] }}
+{% endif %}
+{% if data['billing']['street3'] %}
+    <br />{{ data['billing']['street3'] }}
+{% endif %}
+{% if (data['billing']['country'] == 'US' or data['billing']['country'] == 'CA') %}
+    {%
+        set statename = sd_statename(data['billing']['stateprovince']) ? sd_statename(data['billing']['stateprovince']) : data['billing']['stateprovince']
+    %}
+    <br />{{ data['billing']['city'] }}, {{ statename }} {{ data['billing']['postalcode'] }}
+{% else %}
+    <br />{{ data['szip'] }} {{ data['scity'] }}
+    {% if data['billing']['stateprovince'] %}
+        <br />{{ data['billing']['stateprovince'] }}
+    {% endif %}
+{% endif %}
+{% set countryname = sd_countryname(data['billing']['country']) %}
+{% if countryname %}
+    <br /><span class="sd-scountryname">{{ countryname }}</span>
+{% endif %}
+{% if data['billing']['phone'] %}
+    <br /><span class="sd-sphone">{{ data['billing']['phone'] }}</span>
+{% endif %}
+
+{% else %}
+
+{{ data['bfirstname'] }} {{ data['bminitial'] }} {{ data['blastname'] }}
+{% if data['bbusiness'] %}
+    <br />{{ data['bbusiness'] }}
+{% endif %}
+{% if data['baddress1'] %}
+    <br />{{ data['baddress1'] }}
+{% endif %}
+{% if data['baddress2'] %}
+    <br />{{ data['baddress2'] }}
+{% endif %}
+{% if data['baddress3'] %}
+    <br />{{ data['baddress3'] }}
+{% endif %}
+{% if (data['bcountry'] == 'US' or data['bcountry'] == 'CA') %}
+    {% set statename = data['bstatename'] or sd_statename(data['bstate']) ? data['bstatename'] ? data['bstatename'] : sd_statename(data['bstate']) : data['bstate'] %}
+    <br />{{ data['bcity'] }}, {{ statename }} {{ data['bzip'] }}
+{% else %}
+    <br />{{ data['bzip'] }} {{ data['bcity'] }}
+    {% if data['bstate'] %}
+        <br />{{ data['bstate'] }}
+    {% endif %}
+{% endif %}
+{% set countryname = data['bcountryname'] ? data['bcountryname'] : sd_countryname(data['bcountry']) %}
+{% if countryname %}
+    <br /><span class="sd-scountryname">{{ countryname }}</span>
+{% endif %}
+{% if data['bphone'] %}
+    <br /><span class="sd-sphone">{{ data['bphone'] }}</span>
+{% endif %}
+
+{% endif %}

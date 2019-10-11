@@ -1,0 +1,48 @@
+<div class="table" rules="none" id="sd-emailFormTable">
+{% if (sd_option('site_forms_email_confirm') == 'on') %}
+<div>
+    <div class="sd-emailAddress">
+        <label for="sd-email">Email Address <span>*</span></label>
+        <img class="sd-formIcon" src="{{ output.icons['vform']['email'] }}" name="sdform-vemail" alt="Required email address" />
+    </div>
+    <div>
+        <input placeholder="Email Address" tabindex="15" type="email" maxlength="100" size="40" id="sd-email" name="sd_email" vcard_name="vCard.Email" value="{{ data['email'] }}" required />
+    </div>
+</div>
+<div>
+    <div class="sd-emailAddress">
+        <label for="sd-cemail">Re-nter Email Address <span>*</span></label>
+        <img class="sd-formIcon" src="{{ output.icons['vform']['cemail'] }}" name="sdform-vcemail" alt="Re-enter email address" />
+    </div>
+    <div>
+        <input placeholder="Re-enter Email Address" tabindex="16" type="email" maxlength="100" size="40" id="sd-cemail" name="sd_cemail" value="{{ data['cemail'] }}" required />
+    </div>
+</div>
+<div>
+    <div class="email-input">
+        <input tabindex="17" type="checkbox" id="sd-email-list" name="sd_email_list" value="yes" {{ data['email_list'] }}/>
+    </div>
+    <div class="email-text">
+        <b class="sd-infoBold">Subscribe to {{ sd_siteinfo('business', false) }}</b>
+    </div>
+</div>
+{% else %}
+<div>
+    <div class="sd-emailAddress">
+        <label for="sd-email">Email <span>*</span></label>
+        <img class="sd-formIcon" src="{{ output.icons['vform']['email'] }}" name="sdform-vemail" alt="Required email address" />
+    </div>
+    <div>
+        <input placeholder="Email" tabindex="15" type="email" maxlength="100" size="40" id="sd-email" name="sd_email" vcard_name="vCard.Email" value="{{ data['email'] }}" required />
+    </div>
+</div>
+<div>
+    <div class="email-input">
+        <input tabindex="17" type="checkbox" id="sd-email-list" name="sd_email_list" value="yes" {{ data['email_list'] }}/>
+    </div>
+    <div class="email-text">
+        <b class="sd-infoBold">Subscribe to {{ sd_siteinfo('business', false) }}</b>
+    </div>
+</div>
+{% endif %}
+</div>

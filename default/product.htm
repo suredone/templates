@@ -1,0 +1,33 @@
+{# suredone default product template #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div id="sd-site-body" class="product-{{ sd_identifier() }} sd-products">
+    {% include 'sidebar.htm' %}
+    <div id="sd-product" itemscope itemtype="http://schema.org/Product">
+        {{ sd_content('cat_breadcrumbs') }}
+        <h1 class="sd-title">{{ sd_content('title_link') }}</h1>
+        <div id="sd-details">
+            {{ sd_content('price') }}
+            {{ sd_content('cart_details') }}
+            <div id="sd-social-share">
+                {{ sd_content('twitter_button') }}
+                {{ sd_content('pinterest_button') }}
+                {{ sd_content('facebook_button') }}
+            </div>
+            {{ sd_content('shipping_details') }}
+            {{ sd_content('description_details') }}
+            {# sd_content('description') #}
+            {# sd_content('item_details') #}
+            {{ sd_content('long_description') }}
+            {{ sd_content('tags') }}
+        </div>
+        <div id="sd-media">
+            {{ sd_content('media_main') }}
+            {{ sd_content('media_thumbs') }}
+            {{ sd_content('gallery_link') }}
+        </div>
+        {{ sd_content('content') }}
+    </div>
+    {% include 'widgets.htm' %}
+</div>
+{% include 'footer.htm' %}

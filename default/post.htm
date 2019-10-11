@@ -1,0 +1,26 @@
+{# suredone default post template #}
+{% set datevalue = sd_date(false) %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div id="sd-site-body" class="post-{{ sd_identifier() }} sd-posts">
+    <div id="sd-post">
+        <h1>{{ sd_content('title_link') }}</h1>
+        <p id="sd-post-date"><span class="published" title="{{ sd_date() }}">{{ sd_datetext(datevalue) }}</span></p>
+        <div id="sd-post-body">
+            {{ sd_content('media_images') }}
+            {{ sd_content('content') }}
+        </div>
+        <div id="sd-content">
+            {# sd_content('results') #}
+            {% include 'results.htm' %}
+        </div>
+        <p id="sd-releaseItemsNav">
+        {% if output.prev_url != output.next_url %}
+            <a href="{{ sd_prev_url() }}">{{ sd_option('site_nav_icon_prev')|e }} {{ sd_prev_title() }}</a> | <a href="{{ sd_next_url() }}"> {{ sd_next_title() }} {{ sd_option('site_nav_icon_next')|e }}</a>
+        {% elseif output.prev_url == output.next_url %}
+            <a href="{{ sd_prev_url() }}">{{ sd_option('site_nav_icon_prev')|e }} {{ sd_prev_title() }} {{ sd_option('site_nav_icon_next')|e }}</a>
+        {% endif %}
+        </p>
+    </div>
+</div>
+{% include 'footer.htm' %}

@@ -1,0 +1,153 @@
+{# form PicklistOrder #}
+
+{% set admindash = sd_option('site_admin_dashboard') ? json_decode(sd_option('site_admin_dashboard'),true) : [] %}
+{% set adminv2set = admindash['user_interface']['v2'] ? true : false %}
+{% set adminurlbase = adminv2set ? sd_seturl('#!/orders/edit/','admin','',true) : sd_seturl('orders?do=edit&order=','admin','',true) %}
+{% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'),true) : [] %}
+{% set invoice_fields = is_array(shipopts['invoice_fields']) ? shipopts['invoice_fields'] : [] %}
+{% set uservars = sd_option('user_field_names') ? sd_option('user_field_names')|split('*') : [] %}
+
+{% if order['oid'] %}
+	{% set items = order['items']|split('*') %}
+	{% set names = order['names']|split('*') %}
+	{% set titles = order['titles']|split('*') %}
+	{% set prices = order['prices']|split('*') %}
+	{% set qtys = order['qtys']|split('*') %}
+	{% set imgs = order['media']|split('*') %}
+	{% set uris = order['uris'] ? order['uris']|split('*') : [] %}
+	{% set weights = order['weights']|split('*') %}
+	{% set order_medias = [] %}
+	{% set order_titles = [] %}
+	{% set order_items = [] %}
+	{% set order_invvars = [] %}
+	{% set shipservice = output.shipping_services_labels[order['shipservice']] is defined ? output.shipping_services_labels[order['shipservice']] : order['shipservice'] %}
+
+{# order items begin #}
+{% for i in 0..items|length-1 %}
+	{% set skus = items[i]|split('|') %}
+	{% set media = sd_securemedia(imgs[i]) %}
+	{% set urls = uris[i]|length > 0 ? uris[i]|split('|') : [] %}
+	{% set invoice_fields_data = '' %}
+	{% if sd_is_admin and invoice_fields|length > 0 and order['item'][i] %}
+		{% for inv_field in invoice_fields %}
+			{% if order['item'][i][inv_field] is defined %}
+				{% set order_invvars = order_invvars|merge({(inv_field):order_invvars[inv_field] is defined ? order_invvars[inv_field]~'<hr />'~order['item'][i][inv_field] : order['item'][i][inv_field] }) %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+
+	{% if media %}
+		{% set order_medias = order_medias|merge(['<a href="' ~ sd_getmediafull(media) ~ '" target="_blank"><img class="sd-cartImage" src="' ~ media ~ '" alt="' ~ skus[0] ~ '" /></a>']) %}
+	{% endif %}
+	{% set order_titles = order_titles|merge([titles[i]|escape('html')]) %}
+	{% set order_item_url = adminv2set ? sd_seturl('#!/products/edit/'~skus[0]~'/guid','admin','',true) : sd_seturl('editor?type=items&do=edit&guid='~skus[0],'admin','',true) %}
+	{% set order_items = order_items|merge(['<a href="' ~ order_item_url ~ '" target="_blank">'~skus[0]|escape('html')~'</a>']) %}
+{% endfor %}
+{# order items end #}
+
+{% if get_reqs('view') is empty %}
+	<tr class="sd-cartRow">
+		<td class="sd-cartOrder"><a href="{{ adminurlbase ~ order['oid'] }}">{{ order['order'] }}</a></td>
+		<td class="sd-cartMedia">{{ order_medias|join('<hr />') }}</td>
+		<td class="sd-cartSku">{{ order_items|join('<hr />') }}</td>
+		<td class="sd-cartQty">{{ qtys|join('<hr />') }}</td>
+		<td class="sd-cartTitle">{{ order_titles|join('<hr />') }}</td>
+		<td class="sd-cartWeight">{{ weights|join('<hr />') }}</td>
+		<td class="sd-cartShipservice">{{ shipservice|escape('html') }}</td>
+		<td class="sd-cartCustomer">
+			{% include 'form-shippingaddress.htm' with {'data':order} %}
+			{% if order['comments'] %}
+				<span class="sd-invoiceComments">Comments: {{ order['comments']|escape('html') }}</span>
+			{% endif %}
+		</td>
+		{% for invkey,invvar in order_invvars %}
+		<td class="{{ invkey }}">
+			{{ invvar }}
+		</td>
+		{% endfor %}
+	</tr>
+{% else %}
+	{# custom picklist views #}
+	{% set viewvars = get_reqs('view')|split(',') %}
+	{% for view in viewvars %}
+		{% if view == 'medias' %}
+		<span class="sd-{{ view }}">{{ order_medias|join('<br />') }}</span>
+		{% elseif view == 'items' %}
+		<span class="sd-{{ view }}">{{ order_items|join('<br />') }}</span>
+		{% elseif view == 'shipservice' %}
+		<span class="sd-{{ view }}">{{ shipservice|escape('html') }}</span>
+		{% elseif view == 'customer' %}
+		<span class="sd-{{ view }}">{% include 'form-shippingaddress.htm' with {'data':order} %}</span>
+		{% elseif order_invvars[view] is defined %}
+		<span class="sd-{{ view }}">{{ order_invvars[view] }}</span>
+		{% elseif order[view] is defined %}
+		{% set order_value = order[view]|escape('html') %}
+		<span class="sd-{{ view }}">{{ order_value|replace({'*':'<br />'}) }}</span>
+		{% endif %}
+	{% endfor %}
+{% endif %}
+
+{# orders v3 line item #}
+{% elseif order['itemid'] %}
+	{% if get_reqs('view') is empty %}
+		<tr class="sd-cartRow">
+			<td class="sd-cartOrder"><a href="{{ adminurlbase ~ order['order']['oid'] }}">{{ order['order']['order'] }}</a></td>
+			<td class="sd-cartMedia">
+				{% if (order['media']) %}
+				<a href="{{ sd_getmediafull(order['media']) }}" target="_blank">
+					<img class="sd-cartImage" src="{{ order['media'] }}" alt="{{ order['sku'] }}" />
+				</a>
+				{% endif %}
+			</td>
+			<td class="sd-cartSku">{{ order['sku'] }}</td>
+			<td class="sd-cartQty">{{ order['quantity'] }}</td>
+			<td class="sd-cartTitle">{{ order['title'] }}</td>
+			<td class="sd-cartWeight">{{ order['weight'] }}</td>
+			<td class="sd-cartShipservice">{{ order['order']['shippingservice'] }}</td>
+			<td class="sd-cartCustomer">
+				{% include 'form-shippingaddress.htm' with {'data':order} %}
+				{% if order['order']['comments'] %}
+					<span class="sd-invoiceComments">Comments: {{ order['order']['comments']|escape('html') }}</span>
+				{% endif %}
+			</td>
+			{% for invkey,invvar in order_invvars %}
+			<td class="{{ invkey }}">
+				{{ invvar }}
+			</td>
+			{% endfor %}
+			{% for inv_field in invoice_fields %}
+				<td class="{{ inv_field }}">
+					{{ order['itemdetails']['product'][inv_field] }}
+				</td>
+			{% endfor %}
+		</tr>
+	{% else %}
+		{# custom picklist views #}
+		{% set viewvars = get_reqs('view')|split(',') %}
+		{% for view in viewvars %}
+			{% if view == 'medias' %}
+			<span class="sd-{{ view }}">
+				{% if (order['media']) %}
+				<a href="{{ sd_getmediafull(order['media']) }}" target="_blank">
+					<img class="sd-cartImage" src="{{ order['media'] }}" alt="{{ order['sku'] }}" />
+				</a>
+				{% endif %}
+			</span>
+			{% elseif view == 'items' %}
+			<span class="sd-{{ view }}">{{ order['sku'] }}</span>
+			{% elseif view == 'shippingservice' %}
+			<span class="sd-{{ view }}">{{ order['order']['shippingservice'] }}</span>
+			{% elseif view == 'customer' %}
+			<span class="sd-{{ view }}">{% include 'form-shippingaddress.htm' with {'data':order} %}</span>
+			{% elseif order[view] is defined %}
+			{% set order_value = order[view]|escape('html') %}
+			<span class="sd-{{ view }}">{{ order_value|replace({'*':'<br />'}) }}</span>
+			{% elseif order['order'][view] is defined %}
+			{% set order_value = order['order'][view]|escape('html') %}
+			<span class="sd-{{ view }}">{{ order_value|replace({'*':'<br />'}) }}</span>
+			{% elseif view in invoice_fields %}
+			<span class="sd-{{ view }}">{{ order['itemdetails']['product'][view] }}</span>
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+{% endif %}

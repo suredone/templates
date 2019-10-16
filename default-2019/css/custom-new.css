@@ -1261,6 +1261,9 @@ input[name="sd_remember"] {
 #sd-paymentDone {
     width: 100%;
 }
+#sd-paymentDone .sd-ccSuccess {
+    text-align: center;
+}
 /* paypal checkout page */
 .pp-checkout-custom {
     display: flex;

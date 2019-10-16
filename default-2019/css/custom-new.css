@@ -791,8 +791,6 @@ input[name="sd_remember"] {
 
     .main {
         margin: 0 auto;
-        margin-left: -15px;
-        margin-right: -15px;
         margin-top: 10px;
         min-height: 400px;
         text-align: left;
@@ -971,11 +969,12 @@ input[name="sd_remember"] {
     background-color: transparent;
 }
 .checkout .block .block-title strong span {
-    text-tranform: capitalize;
+    text-transform: capitalize;
     color: black;
 }
 .checkout-wrapper {
     display: flex;
+    justify-content: space-between;
 }
 .checkout .sd-account-info {
     width: 49%;
@@ -993,6 +992,7 @@ input[name="sd_remember"] {
 .checkout .sd-cartItem {
     display: flex;
     margin: 20px 0;
+    justify-content: space-between;
 }
 
 .checkout .sd-cartItem .sd-cartItem-product-image {
@@ -1022,6 +1022,7 @@ input[name="sd_remember"] {
     align-self: center;
     padding: 0 8px;
     font-size: 14px;
+    flex-grow: 1;
 }
 .checkout span.sd-cartSku {
     font-weight: bold;
@@ -1222,6 +1223,8 @@ input[name="sd_remember"] {
 }
 .checkout #sd-shipAsGift label {
     padding-top: 0 !important;
+    padding-left: 0;
+    background-color: transparent;
 }
 .checkout .sd-ccInfo.sd-ship-as-gift label:nth-child(1){
     margin-right: 10px;
@@ -1231,23 +1234,97 @@ input[name="sd_remember"] {
     padding: 0 !important;
     float: left !important;
 }
-.checkout #sd-payment-info label {
-    display: none;
-}
-.checkout #sd-shipAsGift label {
+.checkout #sd-payment-info label {display: none;}
+.checkout #sd-shipAsGift label, #sd-payment-info .ship-service-radio label {
     display: block;
+}
+#sd-payment-info .ship-service-radio{
+    margin-bottom: 10px;
 }
 .checkout #sd-cc-cvv {
     width: 60px !important;
 }
+.checkout .sd-formIcon {
+    display: none;
+}
+.checkout .sd-formIcon[src*="error"], .checkout .sd-formIcon[src*="check"] {
+    display: block;
+}
 #sd-payment-info .sd-formIcon, #sd-accountInfo .sd-formIcon {
     margin: 0;
     position: absolute;
-    right: -10px;
+    right: 20px;
     top: 14px;
     transform: none;
 }
+/* thank you page */
+#sd-paymentDone {
+    width: 100%;
+}
+/* paypal checkout page */
+.pp-checkout-custom {
+    display: flex;
+    justify-content: space-between;
+}
+.pp-checkout-custom #sd-payForm, .pp-checkout-custom #sd-cart-summary {
+    float: none;
+    flex: 0 0 49%;
+}
+.pp-checkout-custom #sd-payForm {
+    order: 1;
+}
+.pp-checkout-custom #sd-cart-summary  {
+    order: 2;
+}
+.pp-checkout-custom #sd-payment-info {
+    float: none;
+    text-align: left;
+}
+.pp-checkout-custom #sd-shipAsGift img {
+    margin: 6px 7px 0 0 !important;
+}
+.pp-checkout-custom .sd-ppField {
+    font-weight: bold;
+}
+.pp-checkout-custom table {
+    background-color: #fafafa;
+}
+.pp-checkout-custom #sd-cart-summary {
+    width: auto;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+}
+
+.pp-checkout-custom #sd-payment-info div:not(:first-child) {
+    padding: 3px 5px;
+    text-align: left;
+}
+.pp-checkout-custom #sd-payment-info > div:nth-child(2),
+.pp-checkout-custom #sd-payment-info > div:nth-child(3),
+.pp-checkout-custom #sd-payment-info > div:nth-child(4) {
+    border: 1px solid #e1e1e1;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.pp-checkout-custom .sd-payInfo textarea{
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+}
 @media all and (max-width: 768px){
+    .pp-checkout-custom {
+        flex-direction: column;
+    }
+    .pp-checkout-custom #sd-payForm, .pp-checkout-custom #sd-cart-summary {
+        flex: 0 0 100%;
+    }
+    .pp-checkout-custom #sd-payForm {
+        order: 2;
+        margin-bottom: 20px;
+    }
+    .pp-checkout-custom #sd-cart-summary  {
+        order: 1;
+        margin-bottom: 20px;
+    }
     .checkout .main {
         padding: 0 20px;
     }
@@ -1257,11 +1334,11 @@ input[name="sd_remember"] {
     .checkout-wrapper * {
         text-align: left;
     }
-    .checkout .sd-account-info {
+    .checkout-wrapper .sd-account-info {
         order: 2;
         width: 100%;
     }
-    .checkout .sd-order-summary-info {
+    .checkout-wrapper .sd-order-summary-info {
         order: 1;
         width: 100%;
         margin-bottom: 20px;

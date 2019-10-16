@@ -13,7 +13,6 @@
             {% else %}
             <div class="ma-main-container col2-layout">
             {% endif %}
-
                     <div class="main">
                         {# cart progress bar #}
                         {% include 'form-cartprogress.htm' with {'data':output.cart} %}
@@ -40,22 +39,20 @@
                         {# end shopping cart #}
 
                         {% elseif sd_is_cart_set and doaction in ['checkout-customer', 'checkout-payment'] %}
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="checkout">
-                                    <div class="row-fluid checkout-wrapper">
-                                        <div class="sd-account-info">
-                                            {% include 'form-checkoutsteps.htm' with {'data': output.form_data} %}
-                                        </div>
-                                        <div class="sd-order-summary-info">
-                                            <div id="checkout-progress-wrapper">
-                                                <div class="block block-progress opc-block-progress">
-                                                    <div class="block-title">
-                                                        <strong><span>Order Summary</span></strong>
-                                                    </div>
-                                                    <div class="block-content">
-                                                        {% include 'form-cartsummary-div.htm' with {'data': output.cart,'steps': 'true'} %}
-                                                    </div>
+                        <div class="col-xs-12">
+                            <div class="checkout">
+                                <div class="row-fluid checkout-wrapper">
+                                    <div class="sd-account-info">
+                                        {% include 'form-checkoutsteps.htm' with {'data': output.form_data} %}
+                                    </div>
+                                    <div class="sd-order-summary-info">
+                                        <div id="checkout-progress-wrapper">
+                                            <div class="block block-progress opc-block-progress">
+                                                <div class="block-title">
+                                                    <strong><span>Order Summary</span></strong>
+                                                </div>
+                                                <div class="block-content">
+                                                    {% include 'form-cartsummary-div.htm' with {'data': output.cart,'steps': 'true'} %}
                                                 </div>
                                             </div>
                                         </div>
@@ -90,15 +87,19 @@
                         </div>
                         {# cart confirm form #}
                         {% elseif sd_is_cart_set and doaction == 'confirm' %}
-                        <div id="sd-checkout-contents">
-                            {% include 'form-cartconfirmed.htm' with {'data': output.form_data} %}
-                            {% include 'form-checkoutconfirmed.htm' with {'data': output.form_data} %}
+                        <div class="col-xs-12">
+                            <div id="sd-checkout-contents">
+                                {% include 'form-cartconfirmed.htm' with {'data': output.form_data} %}
+                                {% include 'form-checkoutconfirmed.htm' with {'data': output.form_data} %}
+                            </div>
                         </div>
                         {# paypal express checkout #}
                         {% elseif sd_setsecure('cart') and sd_function_last == 'paypal-express-checkout' and doaction == 'paypal-checkout' %}
-                        <div id="sd-checkout-contents">
-                            {% include 'form-cartsummary.htm' with {'data': output.cart} %}
-                            {% include 'form-paypalcheckout.htm' with {'data':output.form_data } %}
+                        <div class="col-xs-12">
+                            <div id="sd-checkout-contents" class="pp-checkout-custom">
+                                {% include 'form-cartsummary.htm' with {'data': output.cart} %}
+                                {% include 'form-paypalcheckout.htm' with {'data':output.form_data } %}
+                            </div>
                         </div>
                         {# cart post sale #}
                         {% elseif doaction == 'thank-you' %}

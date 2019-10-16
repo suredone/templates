@@ -4,9 +4,9 @@
     <input type="hidden" name="sd_b_state" value="{{ data['bstate'] }}"/>
     <input type="hidden" name="sd_b_zip" value="{{ data['bzip'] }}"/>
     <input type="hidden" name="sd_b_country" value="{{ data['bcountry'] }}"/>
-    <div rules="none" cellpadding="0" cellspacing="0" id="sd-payment-info">
+    <div id="sd-payment-info">
         <div>
-            <div class="sd-ccError" colspan="2">{{ sd_notice(false) }}</div>
+            <div class="sd-ccError">{{ sd_notice(false) }}</div>
         </div>
         <div>
             <div class="sd-ppField" style="vertical-align:top;">Ship To:</div>
@@ -69,7 +69,7 @@
                 {% set order_comments = sd_option('site_cart_comments_text') %}
             {% endif %}
         <div class="sd-payInfo">
-            <div colspan="2">
+            <div>
                 <textarea rows="4" cols="30" name="sd_order_comments" id="sd-orderComments" onfocus="sdClearValue(this.id);">{{ order_comments }}</textarea>
             </div>
         </div>
@@ -90,7 +90,7 @@
             </div>
         {% endif %}
         <div>
-            <div id="sd-submitBlock" colspan="2">
+            <div id="sd-submitBlock">
                 <span id="sd-formCancelButton">
                     <a href="{{ output.cart_suri }}?do=paypal-checkout&action=cancel">
                         <img alt="Cancel PayPal Transaction" class="sd-formButton" src="{{ sd_securemedia(output.icons['cancel_payment']) }}"/>

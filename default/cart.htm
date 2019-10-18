@@ -1,79 +1,101 @@
 {# suredone default cart template #}
 {% set doaction = output.doaction %}
+
+{% if sd_is_cart_set and doaction in ['checkout-customer', 'checkout-payment'] %}
 {% include 'html-header.htm' %}
-{% include 'header.htm' %}
-<div id="sd-site-body" class="sd-cart-body">
-{# cart progress bar #}
-    {{ sd_formtype('CartProgress', output.cart, FALSE, TRUE) }}
-{# include 'form-cartprogress.htm' with {'data':output.cart} #}
-{# the above can be used and uses divs instead of tables - this version does not have styles applied on default css stylesheet #}
-
-{# shopping cart #}
-{% if doaction == 'view-cart' %}
-    {{ sd_formtype('CartContents', output.cart, TRUE) }}
-    {# include 'form-cartcontents.htm' with {'data': output.cart} #}
-    {# the above can be used and uses divs instead of tables - this version does not have styles applied on default css stylesheet #}
-    <div id="sd-paymentOptions">
-        {{ output.buttons['checkout_cards'] }}
-        {{ output.buttons['checkout_paypal'] }}
-        {{ output.buttons['continue_shopping'] }}
-        {{ output.buttons['create_account'] }}
-        {{ output.buttons['checkout_login'] }}
-    </div>
-    {{ output.buttons['login_form'] }}
-{# end shopping cart #}
-
-                        {% elseif sd_is_cart_set and doaction in ['checkout-customer', 'checkout-payment'] %}
-                        <div class="row-fluid">
-                            <div class="col-main span7">
-                                {% include 'form-checkoutsteps.htm' with {'data': output.form_data} %}
-                            </div>
-                            <div class="col-right sidebar span5">
-                                <div id="checkout-progress-wrapper">
-                                    <div class="block block-progress opc-block-progress">
-                                        <div class="block-title">
-                                            <strong><span>Order Summary</span></strong>
-                                        </div>
-                                        <div class="block-content">
-                                            {% include 'form-cartsummary.htm' with {'data': output.cart,'steps': 'true'} %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <div id="custom-checkout">
+        <div id="mast-brand">
+            <a href="{{ sd_siteinfo('url') }}" title="HOME">
+                {% if sd_is_secure %}
+                    {{ sd_siteinfo('logo_secure') }}
+                {% else %}
+                    {{ sd_siteinfo('logo') }}
+                {% endif %}
+            </a>
+        </div>
+        <div class="row-fluid custom-checkout-wrapper">
+            <div class="col-main span7 custom-checkout-shipping-info">
+                {% include 'form-checkoutsteps.htm' with {'data': output.form_data} %}
+            </div>
+            <div class="col-right sidebar span5 custom-checkout-summary-info">
+                <div id="checkout-progress-wrapper">
+                    <div class="block block-progress opc-block-progress">
+                        <div class="block-content">
+                            {% include 'form-cartsummary-div.htm' with {'data': output.cart,'steps': 'true'} %}
                         </div>
-
-{# cart checkout form #}
-{% elseif sd_is_cart_set and doaction == 'checkout' %}
-    <div id="sd-checkout-contents">
-        {% include 'form-cartsummary.htm' with {'data': output.cart} %}
-    {% if sd_option('site_cart_card_processor') != 'paypaladaptive' %}
-        {{ sd_formtype('CheckoutForm', output.form_data, true) }}
-        {# include 'form-checkoutform.htm' with {'data':output.form_data} #}
-        {# the above can be used - has not been fully tested with mobile #}
-    {% else %}
-        {{ sd_formtype('AdaptiveForm', output.form_data, true) }}
-        {# include 'form-adaptiveform.htm' with {'data':output.cart} #}
-        {# the above can be used and uses divs instead of tables - this version does not have styles applied on default css stylesheet #}
-    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-{# cart confirm form #}
-{% elseif sd_is_cart_set and doaction == 'confirm' %}
-    <div id="sd-checkout-contents">
-        {% include 'form-cartconfirmed.htm' with {'data':output.cart} %}
-        {% include 'form-checkoutconfirmed.htm' with {'data':output.form_data} %}
-    </div>
-
 {# paypal express checkout #}
 {% elseif sd_setsecure('cart') and sd_function_last == 'paypal-express-checkout' and doaction == 'paypal-checkout' %}
-    <div id="sd-checkout-contents">
-        {% include 'form-cartsummary.htm' with {'data': output.cart} %}
-        {% include 'form-paypalcheckout.htm' with {'data':output.form_data } %}
+{% include 'html-header.htm' %}
+<div id="custom-checkout">
+    <div id="mast-brand">
+        <a href="{{ sd_siteinfo('url') }}" title="HOME">
+            {% if sd_is_secure %}
+                {{ sd_siteinfo('logo_secure') }}
+            {% else %}
+                {{ sd_siteinfo('logo') }}
+            {% endif %}
+        </a>
     </div>
-
-{# cart post sale #}
-{% elseif doaction == 'thank-you' %}
-    {% include 'form-cartpostsale.htm' with {'data': output.form_data} %}
-{% endif %}
+    <div id="sd-checkout-contents" class="pp-checkout-custom">
+        {% include 'form-cartsummary-div.htm' with {'data': output.cart} %}
+        {% include 'form-paypalcheckout-div.htm' with {'data':output.form_data } %}
+    </div>
 </div>
-{% include 'footer.htm' %}
+{% else %}
+    {% include 'html-header.htm' %}
+    {% include 'header.htm' %}
+    <div id="sd-site-body" class="sd-cart-body">
+    {# cart progress bar #}
+        {{ sd_formtype('CartProgress', output.cart, FALSE, TRUE) }}
+    {# include 'form-cartprogress.htm' with {'data':output.cart} #}
+    {# the above can be used and uses divs instead of tables - this version does not have styles applied on default css stylesheet #}
+
+    {# shopping cart #}
+    {% if doaction == 'view-cart' %}
+        {{ sd_formtype('CartContents', output.cart, TRUE) }}
+        {# include 'form-cartcontents.htm' with {'data': output.cart} #}
+        {# the above can be used and uses divs instead of tables - this version does not have styles applied on default css stylesheet #}
+        <div id="sd-paymentOptions">
+            {{ output.buttons['checkout_cards'] }}
+            {{ output.buttons['checkout_paypal'] }}
+            {{ output.buttons['continue_shopping'] }}
+            {{ output.buttons['create_account'] }}
+            {{ output.buttons['checkout_login'] }}
+        </div>
+        {{ output.buttons['login_form'] }}
+    {# end shopping cart #}
+
+    {# cart checkout form #}
+    {% elseif sd_is_cart_set and doaction == 'checkout' %}
+        <div id="sd-checkout-contents">
+            {% include 'form-cartsummary.htm' with {'data': output.cart} %}
+        {% if sd_option('site_cart_card_processor') != 'paypaladaptive' %}
+            {{ sd_formtype('CheckoutForm', output.form_data, true) }}
+            {# include 'form-checkoutform.htm' with {'data':output.form_data} #}
+            {# the above can be used - has not been fully tested with mobile #}
+        {% else %}
+            {{ sd_formtype('AdaptiveForm', output.form_data, true) }}
+            {# include 'form-adaptiveform.htm' with {'data':output.cart} #}
+            {# the above can be used and uses divs instead of tables - this version does not have styles applied on default css stylesheet #}
+        {% endif %}
+        </div>
+
+    {# cart confirm form #}
+    {% elseif sd_is_cart_set and doaction == 'confirm' %}
+        <div id="sd-checkout-contents">
+            {% include 'form-cartconfirmed.htm' with {'data':output.cart} %}
+            {% include 'form-checkoutconfirmed.htm' with {'data':output.form_data} %}
+        </div>
+
+    {# cart post sale #}
+    {% elseif doaction == 'thank-you' %}
+        {% include 'form-cartpostsale.htm' with {'data': output.form_data} %}
+    {% endif %}
+    </div>
+    {% include 'footer.htm' %}
+{% endif %}

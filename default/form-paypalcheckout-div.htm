@@ -1,103 +1,100 @@
+{# form PayPalCheckout #}
 <form action="{{ output.cart_suri }}" method="post" id="sd-payForm" name="sd_payForm" onsubmit="return sdValidPP()">
-    <input type="hidden" name="do" value="paypal-checkout"/>
-    <input type="hidden" name="confirm" value="true"/>
-    <input type="hidden" name="sd_b_state" value="{{ data['bstate'] }}"/>
-    <input type="hidden" name="sd_b_zip" value="{{ data['bzip'] }}"/>
-    <input type="hidden" name="sd_b_country" value="{{ data['bcountry'] }}"/>
-    <div id="sd-payment-info">
-        <div>
-            <div class="sd-ccError">{{ sd_notice(false) }}</div>
-        </div>
-        <div>
-            <div class="sd-ppField" style="vertical-align:top;">Ship To:</div>
-            <div class="sd-ppInfo">
-                {% include 'form-shippingaddress.htm' with {'data': data} %}
-            </div>
-        </div>
-        <div>
-            <div class="sd-ppField">Payer Name:</div>
-            <div class="sd-ppInfo">
-                {% include 'form-billingname.htm' with {'data': data} %}
-            </div>
-        </div>
-        <div>
-            <div class="sd-ppField">PayPal Email:</div>
-            <div class="sd-ppInfo">{{ data['email'] }}</div>
-        </div>
+	<input type="hidden" name="do" value="paypal-checkout"/>
+	<input type="hidden" name="confirm" value="true"/>
+	<input type="hidden" name="sd_b_state" value="{{ data['bstate'] }}"/>
+	<input type="hidden" name="sd_b_zip" value="{{ data['bzip'] }}"/>
+	<input type="hidden" name="sd_b_country" value="{{ data['bcountry'] }}"/>
+	<div id="sd-payment-info">
+		<div>
+			<div class="sd-ccError" colspan="2">{{ sd_notice(false) }}</div>
+		</div>
+		<div>
+			<div class="sd-ppField" style="vertical-align:top;">Ship To:</div>
+			<div class="sd-ppInfo">
+				{% include 'form-shippingaddress.htm' with {'data': data} %}
+			</div>
+		</div>
+		<div>
+			<div class="sd-ppField">Payer Name:</div>
+			<div class="sd-ppInfo">
+				{% include 'form-billingname.htm' with {'data': data} %}
+			</div>
+		</div>
+		<div>
+			<div class="sd-ppField">PayPal Email:</div>
+			<div class="sd-ppInfo">{{ data['email'] }}</div>
+		</div>
 
-        {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on' and sd_option('shipping_gift') == 'on')  %}
-        <div id="sd-shipAsGift">
-            <div class="sd-ccField">
-                <label for="sd-ship-as-gift">Ship as Gift</label>
-                <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" alt="" />
-                <div class="sd-ccLVimg">
+		{% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on' and sd_option('shipping_gift') == 'on')  %}
+		<div id="sd-shipAsGift" class="sd-payInfo">
+			<div class="sd-ccField">
+				<label for="sd-ship-as-gift">Ship as Gift</label>
+			</div>
+			<div class="sd-ccInfo">
+				<label class="sd-sag-opt">Yes
+					<input type="radio" id="sd-ship-as-gift" name="sd_ship_as_gift" value="yes"/>
+				</label>
+				<label class="sd-sag-opt">No
+					<input type="radio" id="sd-ship-as-gift" name="sd_ship_as_gift" value="no" checked/>
+				</label>
+				<a href="{{ output.legal_uri }}#shipasgift" target="_blank">
+					<img src="{{ output.icons['q'] }}" alt="questions"/>
+				</a>
+			</div>
+		</div>
+		{% endif %}
 
-                </div>
-            </div>
-            <div class="sd-ccInfo">
-                <label class="sd-sag-opt">Yes
-                    <input type="radio" id="sd-ship-as-gift" name="sd_ship_as_gift" value="yes" {{ sag_check }}/>
-                </label>
-                <label class="sd-sag-opt">No
-                    <input type="radio" id="sd-ship-as-gift"name="sd_ship_as_gift" value="no" {{ sag_nocheck }}/>
-                </label>
-                <a href="{{ output.legal_uri }}#shipasgift" target="_blank">
-                    <img src="{{ sd_securemedia(output.icons['q']) }}" alt="Learn more" title="Learn more" />
-                </a>
-            </div>
-        </div>
-        {% endif %}
+		{% if (sd_option('site_cart_promo_codes') == 'on') %}
+		<div id="sd-customCodes" class="sd-payInfo">
+			<div class="sd-ccField">Promo Code</div>
+			<div class="sd-ccInfo">
+				<input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="15"/>
+				<input type="button" id="sd-apply-code" value="Apply" onclick="sdApplyTotals('discount','sd-order-code');"/>
+				{% if output.legal_uri  %}
+				<a href="{{ output.legal_uri }}" target="_blank" onclick="window.open('{{ output.legal_uri }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">
+					<img src="{{ output.icons['q'] }}" alt="See terms" title="See terms" />
+				</a>
+				{% endif %}
+			</div>
+		</div>
+		{% endif %}
 
-        {% if (sd_option('site_cart_promo_codes') == 'on') %}
-        <div id="sd-customCodes" class="sd-payInfo">
-            <div class="sd-ccField">Promo Code</div>
-            <div class="sd-ccInfo">
-                <input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="15"/>
-                <input type="button" id="sd-apply-code" value="Apply" onclick="sdApplyTotals('discount','sd-order-code');"/>
-                {% if output.legal_uri  %}
-                <a href="{{ output.legal_uri }}" target="_blank" onclick="window.open('{{ output.legal_uri }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">
-                    <img src="{{ sd_securemedia(output.icons['q']) }}" alt="See terms" title="See terms" />
-                </a>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
+		{% if (sd_option('site_cart_comments') == 'on')  %}
+			{% set order_comments = data['comments'] %}
+			{% if not order_comments %}
+				{% set order_comments = sd_option('site_cart_comments_text') %}
+			{% endif %}
+		<div class="sd-payInfo">
+			<div colspan="2">
+				<textarea rows="4" cols="30" name="sd_order_comments" id="sd-orderComments" onfocus="sdClearValue(this.id);">{{ order_comments }}</textarea>
+			</div>
+		</div>
+		{% endif %}
 
-        {% if (sd_option('site_cart_comments') == 'on')  %}
-            {% set order_comments = data['comments'] %}
-            {% if not order_comments %}
-                {% set order_comments = sd_option('site_cart_comments_text') %}
-            {% endif %}
-        <div class="sd-payInfo">
-            <div>
-                <textarea rows="4" cols="30" name="sd_order_comments" id="sd-orderComments" onfocus="sdClearValue(this.id);">{{ order_comments }}</textarea>
-            </div>
-        </div>
-        {% endif %}
-
-        {% if (sd_option('site_cart_checkout_agree') == 'on') %}
-            <div class="sd-payInfo">
-                <div class="sd-ccField">
-                    <img class="sd-formIcon" src="{{ output.icons['vform']['agree'] }}" name="sdform-vagree" alt="Must agree to terms" title="Must agree to terms"/>
-                    <label for="sd-agree">Agree to Terms</label>
-                </div>
-                <div class="sd-ppInfo">
-                    <input AUTOCOMPLETE="off" type="checkbox" id="sd-agree" name="sd_agree" value="true"/>
-                    <a href="{{ output.legal_uri }}" target="_blank" onclick="window.open('{{ output.legal_uri }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">
-                        <img src="{{ sd_securemedia(output.icons['q']) }}" alt="View terms of service" title="View terms of service"/>
-                    </a>
-                </div>
-            </div>
-        {% endif %}
-        <div>
-            <div id="sd-submitBlock">
-                <span id="sd-formCancelButton">
-                    <a href="{{ output.cart_suri }}?do=paypal-checkout&action=cancel">
-                        <img alt="Cancel PayPal Transaction" class="sd-formButton" src="{{ sd_securemedia(output.icons['cancel_payment']) }}"/>
-                    </a>
-                </span>
-                <input alt="Pay Now With PayPal" class="sd-formButton" id="sd-formSubmitButton" type="image" src="{{ sd_securemedia(output.icons['pay_now_paypal']) }}" value="Pay Now With PayPal"/>
-            </div>
-        </div>
-    </div>
+		{% if (sd_option('site_cart_checkout_agree') == 'on') %}
+			<div class="sd-payInfo">
+				<div class="sd-ccField">
+					<img class="sd-formIcon" src="{{ output.icons['vform']['agree'] }}" name="sdform-vagree" alt="Must agree to terms" title="Must agree to terms"/>
+					<label for="sd-agree">Agree to Terms</label>
+				</div>
+				<div class="sd-ppInfo">
+					<input AUTOCOMPLETE="off" type="checkbox" id="sd-agree" name="sd_agree" value="true"/>
+					<a href="{{ output.legal_uri }}" target="_blank" onclick="window.open('{{ output.legal_uri }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">
+						<img src="{{ output.icons['q'] }}" alt="View terms of service" title="View terms of service"/>
+					</a>
+				</div>
+			</div>
+		{% endif %}
+		<div>
+			<div id="sd-submitBlock">
+				<span id="sd-formCancelButton">
+					<a href="{{ output.cart_suri }}?do=paypal-checkout&action=cancel">
+						<img alt="Cancel PayPal Transaction" class="sd-formButton" src="{{ output.icons['cancel_payment'] }}"/>
+					</a>
+				</span>
+				<input alt="Pay Now With PayPal" class="sd-formButton" id="sd-formSubmitButton" type="image" src="{{ output.icons['pay_now_paypal'] }}" value="Pay Now With PayPal"/>
+			</div>
+		</div>
+	</div>
 </form>

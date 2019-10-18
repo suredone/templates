@@ -43,7 +43,7 @@ h4 {
     padding: 0;
 }
 #custom-checkout #sd-ship-location {
-    margin: 0;
+    margin-left: 0;
 }
 #custom-checkout #sd-cart-summary,
 #custom-checkout #sd-payment-info,
@@ -114,17 +114,6 @@ h4 {
     transition: 0.3s ease-in-out;
     cursor: pointer;
 }
-#custom-checkout #sd-payment-info #sd-submitBlock input:hover,
-#custom-checkout #sd-creditcardForm #sd-submitBlock input:hover {
-    border: 1px solid #43b75e !important;
-    background-color: #fff;
-    color: #43b75e;
-}
-#custom-checkout #sd-payment-info input:focus,
-#custom-checkout #sd-payment-info .sd-payInfo select:focus,
-#custom-checkout #sd-payment-info #sd-orderComments:focus {
-    border: 1px solid #43b75e;
-}
 #custom-checkout #sd-orderComments {
     width: 100% !important;
 }
@@ -137,9 +126,22 @@ h4 {
     border: 1px solid #e1e1e1;
     border-radius: 5px;
     box-shadow: none;
-    /* margin-bottom: 12px; */
     padding: 10px;
     width: 100%;
+}
+#custom-checkout #sd-payment-info #sd-submitBlock input:hover,
+#custom-checkout #sd-creditcardForm #sd-submitBlock input:hover {
+    border: 1px solid #43b75e !important;
+    background-color: #fff;
+    color: #43b75e;
+}
+#custom-checkout #sd-payment-info input:focus,
+#custom-checkout #sd-payment-info .sd-payInfo select:focus,
+#custom-checkout #sd-payment-info #sd-orderComments:focus {
+    border: 1px solid #43b75e;
+}
+#custom-checkout #sd-shippingForm div {
+    margin-bottom: 15px;
 }
 #custom-checkout #sd-payment-info input[type='checkbox'] {
     width: auto;

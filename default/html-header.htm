@@ -1,9 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head><title>{{ sd_htmltitle() }}</title>
-{% if sd_is_cart_set and doaction in ['checkout-customer', 'checkout-payment', 'paypal-checkout'] %}
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-{% endif %}
 <meta http-equiv="Content-Type" content="text/html; charset={{ sd_siteinfo('charset') }}" />
 <meta name="generator" content="SureDone {{ sd_siteinfo('version') }}" />
 {% if sd_store_verifications is not empty %}{{ sd_store_verifications }}{% endif %}
@@ -27,6 +24,7 @@
 {{ sd_store_favicons }}
 {{ sd_store_stylesheets }}
 {% if sd_is_cart_set and doaction in ['checkout-customer', 'checkout-payment', 'paypal-checkout'] %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link href="https://assets.suredone.com/684221/css/default-custom-20191015.css" rel="stylesheet">
 {% endif %}
 {{ sd_store_javascripts }}

@@ -82,7 +82,7 @@
             <div class="sd-payInfo clearfix">
                 <h3>Shipping address</h3>
                 <img class="sd-formIcon" src="{{ output.icons['vform']['shiplocation'] }}" name="sdform-vsshiploc" alt="Required ship to location"/>
-                <select tabindex="21" id="sd-ship-location" name="sd_ship_location" onchange="sdShipForm(this,'{{ output.buttons['form_cart_shipping'] }}','sd-shippingForm');">
+                <select tabindex="21" id="sd-ship-location" name="sd_ship_location" onchange="sdShipForm(this,'form-wwwcartshipping-div','sd-shippingForm');">
                     <option value="BillingAddress" {{ data['select_billing'] }}>Same As Billing Address</option>
                     <option value="OtherAddress" {{ data['select_other'] }}>Other Address</option>
                 </select>

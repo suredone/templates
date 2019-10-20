@@ -1,4 +1,5 @@
 {# suredone default footer #}
+{% if not steps %}
 {% set sdfootercustom = sd_option('site_custom_footer') %}
 <div id="sd-footer">
 {% if sdfootercustom %}
@@ -15,7 +16,7 @@
     </div>
     <div id="foot-nav">{{ output.feedback_html }} {{ output.legal_html }} &copy; {{ gmdate('Y') }}</div>
 {% endif %}
-{% if sd_is_secure == false and sd_request_uri != output.cart_uri and sd_option('site_adsense') == 'on' and sd_option('site_adsense_google_account') is not empty %}
+{% if sd_request_uri != output.cart_uri and sd_option('site_adsense') == 'on' and sd_option('site_adsense_google_account') is not empty %}
     <div id="foot-ads">
         <script type="text/javascript"><!--
             google_ad_client = "ca-pub-{{ sd_siteinfo('google_adsense') }}";
@@ -29,6 +30,7 @@
 {% endif %}
     <div id="foot-pow">{{ sd_siteinfo('version_logo_powered_link') }}</div>
 </div>
+{% endif %}
 {% if sd_option('site_tracking') == 'on' and sd_option('site_tracking_google_account') is not empty %}
 <script type="text/javascript">
     (function() {

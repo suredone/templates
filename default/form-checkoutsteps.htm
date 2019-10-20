@@ -69,8 +69,7 @@
 
         <div class="clearfix">
             <div class="sd-payInfo clearfix">
-                <b class="sd-infoBold">BILLING ADDRESS</b>
-                <img src="{{ sd_securemedia(output.icons['required']) }}" alt="Required"/> = REQUIRED
+                <h3>Billing address</h3>
                 <div id="sd-billingForm">
                     {% include 'form-wwwcartbilling-div.htm' with {'data': data} %}
                 </div>
@@ -81,10 +80,9 @@
         {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on') %}
         <div class="clearfix">
             <div class="sd-payInfo clearfix">
-                <b class="sd-infoBold sd-shipAddrLabel">SHIPPING ADDRESS</b>
-                <br/>
+                <h3>Shipping address</h3>
                 <img class="sd-formIcon" src="{{ output.icons['vform']['shiplocation'] }}" name="sdform-vsshiploc" alt="Required ship to location"/>
-                <select tabindex="21" id="sd-ship-location" name="sd_ship_location" onchange="sdShipForm(this,'{{ output.buttons['form_cart_shipping'] }}','sd-shippingForm');">
+                <select tabindex="21" id="sd-ship-location" name="sd_ship_location" onchange="sdShipForm(this,'form-wwwcartshipping-div','sd-shippingForm');">
                     <option value="BillingAddress" {{ data['select_billing'] }}>Same As Billing Address</option>
                     <option value="OtherAddress" {{ data['select_other'] }}>Other Address</option>
                 </select>
@@ -93,9 +91,9 @@
                 {% if (data['select_other']) %}
                     {% include 'form-wwwcartshipping-div.htm' with {'data': data} %}
                 {% endif %}
+                </div>
             </div>
         </div>
-    </div class="clearfix">
     {% endif %}
     {# shipping form end #}
 
@@ -109,19 +107,19 @@
 
 {% if doaction == 'checkout-payment' %}
         <div class="sd-dataSet clearfix">
-            <div class="sd-payInfo clearfix">
-                <strong id="sd-email-acct"><b>Email</b> {{ data['email'] }}</strong>
+            <div class="sd-payInfo sd-cart-email">
+                <div>Email</div>
+                <div id="sd-email-acct">{{ data['email'] }}</div>
             </div>
-            <div class="sd-payInfo clearfix">
-                <strong><b>Ship To</b> {% include 'form-cartshipto.htm' with {'data': data, 'form': 'true'} %}</strong>
-            </div>
-            <div class="sd-payInfo clearfix">
-                <strong><a href="{{ output.cart_suri }}?do=checkout-customer">Change Address</a></strong>
+            <div class="sd-payInfo sd-cart-shipto">
+                <div>Ship To</div>
+                <div class="sd-cart-shiptoaddress">{% include 'form-cartshipto.htm' with {'data': data, 'form': 'true'} %}</div>
+                <a href="{{ output.cart_suri }}?do=checkout-customer">Change</a>
             </div>
         </div>
 
         <div id="sd-emailForm" class="clearfix">
-            <label for="sd-sd-ship-service">Shipping Method</label>
+            <h3>Shipping Method</h3>
             {% include 'form-shippingoptions.htm' with {'data': data} %}
         </div>
 

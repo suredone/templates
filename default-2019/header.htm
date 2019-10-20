@@ -18,7 +18,7 @@
                     <div class="user-nav pull-right col-md-6 col-sm-6 col-xs-12">
                         <ul>
                             <li><a href="{{ output.cart_suri }}" title="Cart">Cart</a></li>
-                            <li><a href="{{ output.cart_suri }}?do=checkout" title="Checkout">Checkout</a></li>
+                            <li><a href="{{ output.cart_suri }}?do=checkout-customer" title="Checkout">Checkout</a></li>
                             {% if sd_is_logged_in %}
                             <li><a href="{{ output.accounts_uri }}?do=sign-out" title="Logout">Logout</a></li>
                             {% else %}
@@ -170,8 +170,8 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ output.cart_suri }}?do=checkout" class="process top-checkout">
-                                                <h3>Process to Checkout </h3>
+                                            <a href="{{ output.cart_suri }}?do=checkout-customer" class="process top-checkout">
+                                                <h3>Proceed to Checkout </h3>
                                             </a>
                                         </li>
                                     </ul>

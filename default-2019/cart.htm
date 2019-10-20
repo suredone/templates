@@ -25,7 +25,7 @@
                                     {% include 'form-cartcontents.htm' with {'data': output.cart} %}
                                     {% if (output.cart['index'] > 0) %}
                                     <div id="sd-paymentOptions">
-                                        {{ output.buttons['checkout_cards'] }}
+                                        {{ output.buttons['checkout_steps'] }}
                                         {{ output.buttons['checkout_paypal'] }}
                                         {{ output.buttons['continue_shopping'] }}
                                         {{ output.buttons['create_account'] }}

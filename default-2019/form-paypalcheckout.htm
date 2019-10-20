@@ -14,6 +14,10 @@
                 {% include 'form-shippingaddress.htm' with {'data': data} %}
             </div>
         </div>
+        <div id="sd-emailForm" class="clearfix shipping-method-custom">
+            <h3>Shipping Method</h3>
+            {% include 'form-shippingoptions.htm' with {'data': data} %}
+        </div>
         <div>
             <div class="sd-ppField">Payer Name:</div>
             <div class="sd-ppInfo">

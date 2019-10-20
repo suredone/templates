@@ -23,9 +23,9 @@
 {{ sd_feed_links }}
 {{ sd_store_favicons }}
 {{ sd_store_stylesheets }}
-{% if sd_is_cart_set and doaction in ['checkout-customer', 'checkout-payment', 'paypal-checkout'] %}
+{% if sd_is_cart_set and output.doaction in ['checkout-customer', 'checkout-payment', 'paypal-checkout'] %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<link href="https://assets.suredone.com/684221/css/default-custom-20191015.css" rel="stylesheet">
+<link href="https://assets.suredone.com/css/default-checkout-steps-20191020.css" rel="stylesheet">
 {% endif %}
 {{ sd_store_javascripts }}
 <script type="text/javascript">

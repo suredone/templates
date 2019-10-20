@@ -97,7 +97,7 @@
                         {% elseif sd_setsecure('cart') and sd_function_last == 'paypal-express-checkout' and doaction == 'paypal-checkout' %}
                         <div class="col-xs-12">
                             <div id="sd-checkout-contents" class="pp-checkout-custom">
-                                {% include 'form-cartsummary.htm' with {'data': output.cart} %}
+                                {% include 'form-cartsummary.htm' with {'data': output.cart, 'steps': true} %}
                                 {% include 'form-paypalcheckout.htm' with {'data':output.form_data } %}
                             </div>
                         </div>

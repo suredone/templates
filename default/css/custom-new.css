@@ -97,7 +97,7 @@ h4 {
     width: 100%;
 }
 #custom-checkout .custom-checkout-summary-info {
-    background-color: #fafafa; 
+    background-color: #fafafa;
     border: 1px solid #e1e1e1;
     border-radius: 5px;
 }
@@ -465,7 +465,6 @@ h4 {
     #custom-checkout .custom-checkout-wrapper {
         flex-direction: column;
     }
-    
     #custom-checkout * {
         text-align: left;
     }

@@ -88,7 +88,7 @@
                 </select>
 
                 <div id="sd-shippingForm">
-                    {% if (data['select_other']) %}
+                {% if (data['select_other']) %}
                     {% include 'form-wwwcartshipping-div.htm' with {'data': data} %}
                 {% endif %}
                 </div>

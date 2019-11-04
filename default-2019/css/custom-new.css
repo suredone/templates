@@ -1102,7 +1102,7 @@ input[name="sd_remember"] {
     width: 49%;
 }
 .checkout #sd-payment-info #sd-submitBlock input,
-.checkout #sd-creditcardForm #sd-submitBlock input {
+.checkout #sd-creditcardForm #sd-submitBlock input, #sd-shipForm button {
     border: 1px solid #fff !important;
     outline: none;
     color: white;
@@ -1111,6 +1111,22 @@ input[name="sd_remember"] {
     background: none;
     background-color: #43b75e;
     transition: 0.3s ease-in-out;
+}
+#sd-submitBlock a {
+    border: 1px solid #fff !important;
+    outline: none;
+    color: white;
+    padding: 15px !important;
+    border-radius: 5px;
+    background: none;
+    color: #43b75e;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+#sd-ship-service-estimate-postalcode {
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    padding: 10px;
 }
 .checkout #sd-payment-info #sd-submitBlock input:hover,
 .checkout #sd-creditcardForm #sd-submitBlock input:hover {

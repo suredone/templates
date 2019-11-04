@@ -103,7 +103,7 @@ h4 {
 }
 
 #custom-checkout #sd-payment-info #sd-submitBlock input,
-#custom-checkout #sd-creditcardForm #sd-submitBlock input {
+#custom-checkout #sd-creditcardForm #sd-submitBlock input, #sd-shipForm button {
     border: 1px solid #fff !important;
     outline: none;
     color: white;
@@ -113,6 +113,22 @@ h4 {
     background-color: #43b75e;
     transition: 0.3s ease-in-out;
     cursor: pointer;
+}
+#sd-submitBlock a {
+    border: 1px solid #fff !important;
+    outline: none;
+    color: white;
+    padding: 15px !important;
+    border-radius: 5px;
+    background: none;
+    color: #43b75e;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+#sd-ship-service-estimate-postalcode {
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    padding: 10px;
 }
 #custom-checkout #sd-orderComments {
     width: 100% !important;

@@ -47,7 +47,7 @@
                 {% if (sd_option('site_accounts') == 'on') %}
                 <div id="sd-passForm">
                     <input type="checkbox" id="sd-create-acct" name="sd_create_acct" value="yes" {{ data['create_account_check'] }} onclick="sdDoPassword();"/>
-                    <b class="sd-infoBold">CREATE ACCOUNT</b>
+                    <b class="sd-infoBold">CREATE ACCOUNT</b> (optional)
                     <br/>
                     <img class="sd-formIcon" src="{{ output.icons['vform']['cart_pass'] }}" name="sdform-vpass" alt="Password with 7 or more characters"/>
                     Password (7 or more characters)<br/>
@@ -99,6 +99,8 @@
 
     <div class="clearfix">
         <div id="sd-submitBlock" colspan="3">
+            <a href="{{ output.cart_suri }}" class="sd-formButton">Return to cart</a>
+
             <input alt="{{ checkoutbutton }}" class="sd-formButton" type="submit" value="{{ checkoutbutton }}"/>
         </div>
     </div>

@@ -130,9 +130,8 @@
 
     {# credit card country filters #}
     {% set countryfilters = sd_option('site_cart_card_countries') %}
-    {% if (data['bcountry'] and sd_option('site_cart_card_filters') == 'on' and (countryfilters))  %}
-        {% set cardcountries = countryfilters|split('*') %}
-        {% if ((cardcountries[0] == 'ALL' and data['bcountry'] in cardcountries) or (cardcountries[0] != 'ALL' and data['bcountry'] and not incardcountries))  %}
+    {% set cardcountries = countryfilters|split('*') %}
+    {% if (sd_option('site_cart_card_filters') == 'on' and countryfilters and data['bcountry'] and ((cardcountries[0] == 'ALL' and data['bcountry'] in cardcountries) or (cardcountries[0] != 'ALL' and data['bcountry'] not in cardcountries)))  %}
         {% set cardnotice = 'Credit cards not accepted from ' ~ sd_countryname(data['bcountry']) %}
         <div class="clearfix">
             <div class="sd-payInfo clearfix">
@@ -145,7 +144,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
     {% else %}
     {# credit card form and submit #}
         <div class="clearfix">

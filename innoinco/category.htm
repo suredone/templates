@@ -1,0 +1,23 @@
+{# suredone default category template #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+{% include 'sidebar.htm' %}
+<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 col-right-1">
+	<div class="col-main">
+
+		<div class="breadcrumbs">{{ sd_content('cat_breadcrumbs') }}</div>
+		<div class="page-title category-title"><h1>{{ sd_content('title_link') }}</h1></div>
+		<div class="category-image">{{ sd_content('media_images') }}</div>
+        <div>
+            {{ sd_content('long_description') }}
+            {{ sd_content('cat_children') }}
+            {{ sd_content('content') }}
+        </div>
+		<div class="category-products" id="sd-content">
+            {% include 'results.htm' %}
+            {# sd_content('results') #}
+        </div>
+    {% include 'widgets.htm' %}
+	</div>
+</div>
+{% include 'footer.htm' %}

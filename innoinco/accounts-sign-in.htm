@@ -1,0 +1,44 @@
+<div id="sd-myaccount">
+   <div id="sd-acctNav">
+       {{ output.buttons['logout_account'] }}
+       {{ output.buttons['delete_account'] }}
+       {{ output.buttons['edit_account'] }}
+       {{ output.buttons['checkout_steps'] | trim }} {{ output.buttons['checkout_paypal'] }}
+   </div>
+   <div id="sd-acctHome">
+       <div id="sd-acctTitle">ACCOUNT INFORMATION</div>
+       <div id="sd-acctUser">
+           <span class="sd-acctAddr">
+               <img src="{{ output.icons['welcome'] }}" alt="" />
+           </span>
+           <span class="sd-acctAddr">
+               <b>{{ output.form_data['email'] }}</b>
+           </span>
+           <span class="sd-acctAddr">{{ output.verified_html }}</span>
+       </div>
+       <div id="sd-billAddr">
+           <span class="sd-acctAddr"><b class="sd-infoBold">Billing Address</b></span>
+           <span class="sd-acctAddr">{{ sd_formtype('BillingAddress', output.form_data) }}</span>
+       </div>
+       {% if sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on' %}
+       <div id="sd-shipAddr">
+           <span class="sd-acctAddr">
+               <b class="sd-infoBold">Shipping Address</b>
+           </span>
+           <span class="sd-acctAddr">
+               {{ output.form_data['ship_location'] == 'BillingAddress' ? 'SAME AS BILLING ADDRESS' : sd_formtype('ShippingAddress', output.form_data) }}
+           </span>
+       </div>
+       {% endif %}
+   </div>
+   <div id="sd-storeHome">
+       <div id="sd-storeNotice">{{ sd_notice() }}</div>
+       <div id="sd-storeDisplay">{{ sd_option('site_accounts_custom_home') }}</div>
+   </div>
+</div>
+<div id="sd-content">
+   {# sd_content('orders_results') #}
+   {% set group = 'orders_default' %}
+   {% set results = output.orders %}
+   {% include 'results.htm' %}
+</div>

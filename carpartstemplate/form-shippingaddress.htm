@@ -1,0 +1,39 @@
+{{ data['sfirstname'] }} {{ data['sminitial'] }} {{ data['slastname'] }}
+
+{% if data['sbusiness'] %}
+	<br /> {{ data['sbusiness'] }}
+{% endif %}
+
+{% if data['saddress1'] %}
+	<br /> {{ data['saddress1'] }}
+{% endif %}
+
+{% if data['saddress2'] %}
+	<br /> {{ data['saddress2'] }}
+{% endif %}
+
+{% if data['saddress3'] %}
+	<br /> {{ data['saddress3'] }}
+{% endif %}
+
+{% if (data['scountry'] == 'US' or data['scountry'] == 'CA') %}
+	{% set sstatename = data['sstatename'] ? data['sstatename'] : sd_statename(data['sstate']) %}
+	<br />
+	{{ data['scity'] }} {{ sstatename }} {{ data['szip'] }}
+{% else %}
+	<br />
+	{{ data['szip'] }} {{ data['scity'] }}
+	{% if data['sstate'] %}
+		<br />{{ data['sstate'] }}
+	{% endif %}
+{% endif %}
+
+{% set scountryname = data['scountryname'] ? data['scountryname'] : sd_countryname(data['scountry']) %}
+
+{% if scountryname %}
+	<br /><span class="sd-scountryname">{{ scountryname }}</span>
+{% endif %}
+
+{% if data['sphone'] %}
+	<br /><span class="sd-sphone">{{ data['sphone'] }}</span>
+{% endif %}

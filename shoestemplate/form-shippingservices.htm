@@ -1,0 +1,136 @@
+{# form ShippingServices #}
+{% if (sd_option('site_shipping') == 'on' and sd_option('shipping_mode') != 'fixed' and sd_cartdimensions()) %}
+    {% set cartdimensions = sd_cartdimensions() %}
+    {% if (get_reqs('sd_ship_location') == 'OtherAddress') %}
+        {% set data = data|merge({'select_other': 'selected'}) %}
+    {% endif %}
+
+    {% if get_reqs('ship_form') %}
+        {% set ship_form = get_reqs('ship_form') %}
+    {% else %}
+        {% set ship_form = output.buttons['form_cart_shipping'] %}
+    {% endif %}
+
+    {% if get_reqs('bill_form') %}
+        {% set bill_form = get_reqs('bill_form') %}
+    {% else %}
+        {% set bill_form = output.buttons['form_cart_billing'] %}
+    {% endif %}
+
+    {% if get_reqs('sd_country') %}
+        {% set country = get_reqs('sd_country') %}
+    {% else %}
+        {% if (data['select_other']) %}
+            {% set country = data['scountry'] %}
+        {% else %}
+            {% set country = data['bcountry'] %}
+        {% endif %}
+    {% endif %}
+
+    {% if (not country and not sd_is_ajax) %}
+        {% set country = sd_option('site_country') %}
+    {% endif %}
+
+    {% if (country == 'USCA') %}
+        {%  set country = '' %}
+    {% endif %}
+
+    {% set default_dom = sd_option('shipping_service_default_domestic') %}
+    {% set default_int = sd_option('shipping_service_default_international') %}
+    {% set carriers = sd_option('shipping_carriers_enabled')|split('*') %}
+
+    {% if (sd_option('business_country') == 'US') %}
+        {% if (((country and country != 'US') or (ship_form == 'INTLCartShipping' and data['select_other']) or (bill_form == 'INTLCartBilling' and not data['select_other'])) and sd_option('shipping_services_international')|length > 1) %}
+            {% set custom_shipping_services_international = sd_option('shipping_services_international')|split('*') %}
+            {% set custom_shipping_services_labels = sd_option('shipping_services_labels')|split('*') %}
+
+            {% set new_custom_shipping_services_labels = [] %}
+            {% for key, service in custom_shipping_services_labels %}
+                {% set new_custom_array = service|split('|') %}
+                {% set new_custom_row = {(new_custom_array[0]) : (new_custom_array[1])} %}
+                {% set new_custom_shipping_services_labels = new_custom_shipping_services_labels + new_custom_row %}
+            {% endfor %}
+        <form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
+            <input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="international"/>
+            <select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
+            {% for service in custom_shipping_services_international if service==default_int or cartdimensions.weight>0 %}
+                {% if (service == default_int) %}
+                    {% set selected = ' selected' %}
+                {% else %}
+                    {% set selected = '' %}
+                {% endif %}
+                {% for carrier in carriers %}
+                    {% if carrier|lower in service|lower %}
+                    <option id="sd-shipint-{{ service }}" value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            </select>
+            <input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>
+        </form>
+        {% elseif ((country == 'US' or (ship_form == 'USCACartShipping' and data['select_other']) or (bill_form == 'USCACartBilling' and not data['select_other'])) and sd_option('shipping_services_domestic')|length > 1) %}
+            {% set custom_shipping_services_domestic = sd_option('shipping_services_domestic')|split('*') %}
+            {% set custom_shipping_services_labels = sd_option('shipping_services_labels')|split('*') %}
+
+            {% set new_custom_shipping_services_labels = [] %}
+            {% for key, service in custom_shipping_services_labels %}
+                {% set new_custom_array = service|split('|') %}
+                {% set new_custom_row = {(new_custom_array[0]) : (new_custom_array[1])} %}
+                {% set new_custom_shipping_services_labels = new_custom_shipping_services_labels + new_custom_row %}
+            {% endfor %}
+        <form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
+            <input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="domestic"/>
+            <select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
+            {% for service in custom_shipping_services_domestic if service==default_dom or cartdimensions.weight>0 %}
+                {% if (service == default_dom) %}
+                    {% set selected = ' selected' %}
+                {% else %}
+                    {% set selected = '' %}
+                {% endif %}
+                {% for carrier in carriers %}
+                    {% if carrier|lower in service|lower %}
+                    <option id="sd-shipdom-{{ service }}" value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            </select>
+            <input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>
+        </form>
+        {% else %}
+            {# sd_form = null #}
+        {% endif %}
+    {% else %}
+            {% if ((bill_form == 'WWWCartBilling' or ((ship_form == 'INTLCartShipping' or ship_form == 'USCACartShipping') and data['select_other'])
+            or ((bill_form == 'INTLCartBilling' or bill_form == 'USCACartBilling') and not data['select_other'])) and sd_option('shipping_services_international')|length > 1) %}
+            {% set custom_shipping_services_international = sd_option('shipping_services_international')|split('*') %}
+            {% set custom_shipping_services_labels = sd_option('shipping_services_labels')|split('*') %}
+
+            {% set new_custom_shipping_services_labels = [] %}
+            {% for key, service in custom_shipping_services_labels %}
+                {% set new_custom_array = service|split('|') %}
+                {% set new_custom_row = {(new_custom_array[0]) : (new_custom_array[1])} %}
+                {% set new_custom_shipping_services_labels = new_custom_shipping_services_labels + new_custom_row %}
+            {% endfor %}
+            <form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
+                <input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="international"/>
+                <select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
+                {% for service in custom_shipping_services_international if service==default_int or cartdimensions.weight>0 %}
+                    {% if (service == default_int) %}
+                        {% set selected = ' selected' %}
+                    {% else %}
+                        {% set selected = '' %}
+                    {% endif %}
+                    {% for carrier in carriers %}
+                        {% if carrier|lower in service|lower %}
+                        <option value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                </select>
+                <input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>
+            </form>
+            {% else %}
+                {# sd_form = null #}
+            {% endif %}
+    {% endif %}
+{% endif %}

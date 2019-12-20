@@ -1,0 +1,38 @@
+{# suredone default category template #}
+{% include 'html-header.htm' with {'classpage': 'catalog-category-view'} %}
+{% include 'header.htm' %}
+<div class="ma-main-container col3-layout">
+    <div id="no_show">category-{{ sd_identifier() }}</div>
+	<div class="main">
+		<div class="breadcrumbs">
+			<ul>
+				{% set cat_breadcrumbs = sd_content('cat_breadcrumbs', false)|replace({'&gt;':'/'}) %}
+				{{ cat_breadcrumbs }}
+			</ul>
+		</div>
+		<div class="row-fluid">
+			{% include 'sidebar.htm' %}
+			<div class="col-wrapper span9">
+				<div class="row-fluid">
+                    <div class="col-main">
+                        {{ sd_content('cat_breadcrumbs') }}
+                        <div class="page-title category-title">
+                            <h1>{{ sd_title() }}</h1>
+                        </div>
+                        {{ sd_content('media_images') }}
+                        <p>
+                            {{ sd_content('long_description') }}
+                            {{ sd_content('cat_children') }}
+                            {{ sd_content('content') }}
+                        </p>
+
+                        <div id="sd-content" class="category-products">
+                            {% include 'results.htm' %}
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% include 'footer.htm' %}

@@ -1,0 +1,19 @@
+{% set site_url = sd_siteinfo('url', false) %}
+{% set site_logo = sd_siteinfo('logo_secure_url', false) %}
+<html>
+<head>
+	<title>{{ sd_siteinfo('business', false) }} Account Verification</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+	<a href="{{ site_url }}">
+		<img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}" style="border:0px none;"/>
+	</a>
+	<br/><br/>
+	Hello and thank you for creating an account with us!<br/><br/>
+	Please click the link below or copy and paste it into your browser to verify your account:<br/><br/>
+	<a href="{{ data['url'] }}">{{ data['url'] }}</a>
+	<br/><br/>
+	{{ sd_option('email_signature') }}
+</body>
+</html>

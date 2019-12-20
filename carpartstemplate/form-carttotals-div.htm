@@ -1,0 +1,119 @@
+{% set totals = sd_carttotals() %}
+{% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'), true) : [] %}
+<div class="sd-cartTotalsWrapper">
+    {% if (sd_shipnotice()) %}
+        <div>
+            <div id="sd-shipNotice">{{ sd_shipnotice() }}</div>
+        </div>
+    {% endif %}
+    <div class="sd-cartSubTotal">
+        <div class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel('subtotal') }}
+        </div>
+        <div class="sd-cartTotals">
+            {{ sd_currency(false) ~ (totals['item']|number_format(2)) }}
+        </div>
+    </div>
+{% for key, total in totals %}
+    {% if (key == 'shipping' and sd_option('site_shipping') == 'on')  %}
+    <div class="sd-cartTotalsShipTotal">
+        <div class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </div>
+        <div class="sd-cartTotals">
+            {% set cartshiptotal = shipopts['combine_handling'] == 'on' ? (totals['handling'] + total) : total %}
+            {{ sd_currency(false) ~ cartshiptotal|number_format(2) }}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if (key == 'handling' and total > 0 and shipopts['combine_handling'] != 'on')  %}
+    <div class="sd-cartTotalsHandlingTotal">
+        <div class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </div>
+        <div class="sd-cartTotals">{{ sd_currency(false) ~ total|number_format(2) }}</div>
+    </div>
+    {% endif %}
+
+    {% if (key == 'tax' and total > 0)  %}
+    <div class="sd-cartTotalsTaxTotal">
+        <div class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </div>
+        <div class="sd-cartTotals">{{ sd_currency(false) ~ total|number_format(2) }}</div>
+    </div>
+    {% endif %}
+
+    {% if (key == 'discount' and total > 0)  %}
+    <div class="sd-cartTotalsDiscountTotal">
+        <div class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </div>
+        <div class="sd-cartDiscounts">-{{ sd_currency(false) ~ total|number_format(2) }}</div>
+    </div>
+    {% endif %}
+
+    {% if (key == 'total') %}
+    <div class="sd-cartTotalsTotal">
+        <div class="sd-cartTotalsLabel">
+            {{ sd_carttotalslabel(key) }}
+        </div>
+        <div class="sd-cartTotals">{{ sd_currency(false) ~ total|number_format(2) }}</div>
+    </div>
+    {% endif %}
+{% endfor %}
+</div>
+
+{% if (sd_option('site_cart_checkout_confirm') == 'on') %}
+<div id="sd-confirm-totals">
+    <h3>Please Confirm Totals:</h3>
+    <p>
+        {{ sd_carttotalslabel('subtotal') }}:
+        {{ sd_currency(false) ~ totals['item']|number_format(2) }}
+    </p>
+
+    {% for key, total in totals %}
+        {% if (key == 'shipping' and sd_option('site_shipping') == 'on') %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {% set cartshiptotal = shipopts['combine_handling'] == 'on' ? (totals['handling'] + total) : total %}
+            {{ sd_currency(false) ~ cartshiptotal|number_format(2) }}
+        </p>
+        {% endif %}
+
+        {% if (key == 'handling' and total > 0 and shipopts['combine_handling'] != 'on') %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {{ sd_currency(false) ~ total|number_format(2) }}
+        </p>
+        {% endif %}
+
+        {% if (key == 'tax' and total > 0) %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {{ sd_currency(false) ~ total|number_format(2) }}
+        </p>
+        {% endif %}
+
+        {% if (key == 'discount' and total > 0) %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {{ sd_currency(false) ~ total|number_format(2) }}
+        </p>
+        {% endif %}
+
+        {% if (key == 'total') %}
+        <p>
+            {{ sd_carttotalslabel(key) }}:
+            {{ sd_currency(false) ~ total|number_format(2) }}
+        </p>
+        {% endif %}
+    {% endfor %}
+
+    <span>
+        <img class="sd-formButton close" src="{{ sd_securemedia(output.icons['cancel']) }}"/>
+        <img class="sd-formButton close" src="{{ sd_securemedia(output.icons['confirm']) }}" onclick="sdConfirmCheckout(true);"/>
+    </span>
+</div>
+{% endif %}

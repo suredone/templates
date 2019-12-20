@@ -1,0 +1,35 @@
+{% if sd_option('site_shipping') == 'on' and data['shiplocation'] == 'OtherAddress' and not sd_samebillship(data) %}
+<tr class="sd-cartHeader">
+	<td align="center">BILL TO:</td>
+	<td align="center">SHIP TO:</td>
+</tr>
+<tr>
+	<td align="center">
+		{% include 'form-billingaddress.htm' with {'data':data} %}
+		<br/>{{ data['email'] }}
+	</td>
+	<td align="center">
+		{% include 'form-shippingaddress.htm' with {'data':data} %}
+	</td>
+</tr>
+{% elseif (sd_option('site_shipping') == 'on') %}
+<tr class="sd-cartHeader">
+	<td align="center" colspan="2">BILL / SHIP TO:</td>
+</tr>
+<tr>
+	<td align="center" colspan="2">
+		{%  include 'form-billingaddress.htm' with {'data':data} %}
+		<br/>{{ data['email'] }}
+	</td>
+</tr>
+{% else %}
+<tr class="sd-cartHeader">
+	<td align="center" colspan="2">BILL TO:</td>
+</tr>
+<tr>
+	<td align="center" colspan="2">
+		{% include 'form-billingaddress.htm' with {'data':data} %}
+		<br/>{{ data['email'] }}
+	</td>
+</tr>
+{% endif %}

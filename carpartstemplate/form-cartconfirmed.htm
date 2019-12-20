@@ -1,0 +1,47 @@
+{% if (data['index'] > 0)  %}
+<table id="sd-cart-summary" rules="all"><col width="50" /><col width="150" /><col width="25" /><col width="75" />
+	<tr class="sd-cartHeader"><td colspan="4">Order Summary</td></tr>
+	{% for i in range(low=1, high=data['index'], step=1) %}
+		{% if (data[i]['qty'] == 0)  %}
+			{# continue #}
+		{% else %}
+			{% if (data[i]['guid']) %}
+				{% set sku = data[i]['guid'] %}
+			{% else %}
+				{% set sku = data[i]['sku'] %}
+			{% endif %}
+
+			{% if (data[i]['secure_media'])  %}
+				{% set media = data[i]['secure_media'] %}
+			{% else %}
+				{% set media = data[i]['media'] %}
+			{% endif %}
+
+			{% set totalprice = (data[i]['qty'] * data[i]['sdprice']) %}
+		<tr>
+			<td>
+				<img alt="{{ data[i]['title'] }}" src="{{ media }}" />	
+			</td>
+			<td>
+				{{ data[i]['title'] }}
+				<br/>
+				{{ sku }}
+			</td>
+			<td>{{ data[i]['qty'] }}</td>
+			<td>{{ sd_currency(false) ~ (totalprice|number_format(2)) }}</td></tr>
+		{% endif %}
+		{% endfor %}
+		<tr>
+			<td colspan="4" class="sd-cartTotalsLabel">
+				<div id="sd-cart-totals">
+					{% include 'form-carttotals.htm' %}
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4" id="sd-cartCustom">
+				{{ sd_option('site_cart_notice_text') }}
+			</td>
+		</tr>
+</table>
+{% endif %}

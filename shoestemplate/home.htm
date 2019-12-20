@@ -1,0 +1,287 @@
+{% set customhome = sd_option('site_custom_home') %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' with {'var':'home'} %}
+    <div id="content-wrapper">
+        {% if customhome %}
+        {{ sd_swaphome(customhome) }}
+        {% else %}
+        <section id="content" class="clearfix">
+            <!-- Slideshow -->
+
+            <div id="home-slideshow" class="home-slideshow-wrapper" style="height:100px;overflow:hidden;">
+
+                <div class="home-slideshow-loader"><i class="fa fa-spinner fa-pulse fa-2x"></i></div>
+                <div class="home-slideshow-inner">
+                    <div class="home-slideshow" style="opacity:0">
+                        <ul class="slides">
+
+                            <li>
+                                <img src="//s3.amazonaws.com/assets.suredone.com/2496/images/slide-image-1.jpg" alt="slide-image-1.jpg" />
+                                <div class="caption-text caption01-text-1" data-jemiz-animate="slideInDown" data-jemiz-text="Summer Collection 2015" style="color:#000000" ></div>
+                                <div class="caption-text caption02-text-1" data-jemiz-animate="slideInLeft" data-jemiz-text="Footwear" style="color:#000000" ></div>
+                                <div class="caption-text action caption03-text-1" data-jemiz-animate="rollIn" data-jemiz-text="Shop the Collection" style="color:#000000" ><a href="/collections/coats-jackets"></a></div>
+                            </li>
+
+
+                            <li>
+                                <img src="//s3.amazonaws.com/assets.suredone.com/2496/images/slide-image-2.jpg" alt="slide-image-2.jpg" />
+                                <div class="caption-text caption01-text-2" data-jemiz-animate="slideInLeft" data-jemiz-text="sport collection 2015" style="color:#000000" ></div>
+                                <div class="caption-text caption02-text-2" data-jemiz-animate="slideInRight" data-jemiz-text="Dream Grils" style="color:#000000" ></div>
+                                <div class="caption-text action caption03-text-2" data-jemiz-animate="flipInX" data-jemiz-text="SHOP THE COLLECTION" style="color:#000000" ><a href="/collections/t-shirts-shirts"></a></div>
+                            </li>
+
+                            <li>
+                                <img src="//s3.amazonaws.com/assets.suredone.com/2496/images/slide-image-3.jpg" alt="slide-image-3.jpg" />
+                                <div class="caption-text caption01-text-3" data-jemiz-animate="slideInRight" data-jemiz-text="Summer Collection 14" style="color:#000000" ></div>
+                                <div class="caption-text caption02-text-3" data-jemiz-animate="rollIn" data-jemiz-text="FASHION STREET" style="color:#000000" ></div>
+                                <div class="caption-text action caption03-text-3" data-jemiz-animate="flipInY" data-jemiz-text="SHOP THE COLLECTION" style="color:#ffffff" ><a href="/collections/t-shirts-shirts"></a></div>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="group-content-center">
+                <div class="container">
+                    <!-- TopList of the Week -->
+                            {% set featured = sd_getresults('featured:=1') %}
+                            {% if featured %}
+                                <div class="toplist-block">
+                                    <h1 class="toplist-title">Toplist of the Week</h1>
+                                    <span class="dash-line"></span>
+                                    <div class="toplist-content">
+                                        <!-- Megnor Start-->
+                                            {% for key, row in featured %}
+                                                {% if (key == 'all' or key == 'time') %}
+                                                    {# continue #}
+                                                {% else %}
+                                                    {% spaceless %}
+                                                        {% if row['guid'] %}
+                                                            {% set sku = row['guid'] %}
+                                                        {% else %}
+                                                            {% set sku = row['sku'] %}
+                                                        {% endif %}
+
+                                                        {% set media = sd_parsemedia(row['media']) %}
+
+                                                        {% if (is_image(media[0])) %}
+                                                            {% set image_url = sd_securemedia(media[0]) %}
+
+                                                            {% if media[1] %}
+                                                                {% set alt_text = media[1]|escape %}
+                                                            {% else %}
+                                                                {% set alt_text = row['title']|escape %}
+                                                            {% endif %}
+
+                                                            {% if (sd_option('image_thumb_titles') == 'on') %}
+                                                                {#
+                                                                {% set alt_text = alt_text ~ '" title="' ~ alt_text %}
+                                                                #}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% set image_url = output.icons['no_thumb'] %}
+                                                            {% set alt_text = '' %}
+                                                        {% endif %}
+
+                                                        {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
+
+                                                    {% endspaceless %}
+                                                    <div class="toplist-small">
+                                                        <div class="product-item-wrapper">
+                                                            <div class="row-container list-unstyled clearfix">
+                                                                <div class="row-left">
+                                                                    <a href="{{ sd_seturl(row['uri'], 'item') }}" class="hoverBorder container_item">
+                                                                        <div class="hoverBorderWrapper">
+                                                                            <img src="{{ image_url }}" alt="{{ alt_text }}" class="not-rotation img-responsive front" />
+                                                                            <div class="mask"></div>
+                                                                        </div>
+                                                                    </a>
+                                                                    <div class="hover-mask">
+                                                                        <div class="group-mask">
+                                                                            <div class="inner-mask">
+                                                                                <div class="effect-ajax-cart">
+                                                                                    <input type="hidden" name="quantity" value="1" />
+                                                                                    <button class="btn btn-1 select-option" type="button" onclick="window.location='{{ sd_seturl(row['uri'], 'item') }}';"><i class="fa fa-bars"></i>View Details</button>
+                                                                                </div>
+                                                                            </div><!--inner-mask-->
+                                                                        </div><!--Group mask-->
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row-right animMix" style="padding-left: 10px; padding-right: 10px;">
+                                                                    <a class="title-5" href="{{ sd_seturl(row['uri'], 'item') }}" title="{{ alt_text }}">{{ row['title'] }}</a>
+                                                                    <div class="product-price">
+                                                                        <span class="price">
+                                                                          {{ sd_price(false, true, true, row) }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="for-toplist-big">
+                                                                            <div class="effect-ajax-cart">
+                                                                                <input type="hidden" name="quantity" value="1" />
+                                                                                <button class="btn btn-1 select-option" type="button" onclick="window.location='{{ sd_seturl(row['uri'], 'item') }}';"><i class="fa fa-bars"></i> View Details</button>
+                                                                            </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                </div>
+                <div class="home-collections">
+                    <!-- Collection Carousel -->
+                    <div id="home-collections">
+                        <div class="home-collections-content">
+                             <div class="home-collections-links collection-list">
+                                 {% set catsMenu = sd_categories() %}
+                                 {% set newCats = [] %}
+                                 {% set newChilds = [] %}
+                                 {% for cat in catsMenu %}
+                                     {% if cat.level < 2 %}
+                                         {% set newCat = {(cat.cid) : (cat.navorder)} %}
+                                         {% set newCats = newCats + newCat %}
+                                     {% else %}
+                                         {% if newChilds[(cat.parenturi)] %}
+                                             {% set temp = newChilds[(cat.parenturi)] %}
+                                             {% set temp = temp + ({(cat.cid) ~ '' : (cat.navorder)})%}
+                                             {% set newChilds = newChilds|merge({(cat.parenturi): temp}) %}
+                                         {% else %}
+                                             {% set newChilds = newChilds + ({(cat.parenturi) : ({(cat.cid) ~ '' : (cat.navorder)})}) %}
+                                         {% endif %}
+                                     {% endif %}
+                                 {% endfor %}
+                                 {% for catID, val in newCats|sort %}
+                                 
+                                <div class="link-element first">
+                                    <div class="mask-hover"></div>
+                                    <a href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}" class="link-img">
+                                      <img src="{{ catsMenu[catID].media }}" alt="{{ catsMenu[catID].title }}" /> 
+ 
+                                    </a>
+                                    <div class="group_element">
+                                        <div class="link-mask-content">
+                                            <div class="inner-mask">
+                                                <span class="link-icon"><img src="//s3.amazonaws.com/assets.suredone.com/2496/images/t-shirts-shirts.png" alt="" /></span>
+                                                <h2 class="link-title"><a href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">{{ catsMenu[catID].title }}</a></h2>
+                                                <div class="link-url"><a href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">Show Now <i class="fa fa-caret-right"></i></a></div>
+                                            </div><!--/inner mask-->
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <!-- New Arrival -->
+                    <div class="new-arrival">
+                        <h1 class="new-arrival-title">New Arrival</h1>
+                        <span class="dash-line"></span>
+                            {#{% set featured = sd_getresults('date:>='~gmdate('Y-m-d H:i:s',strtotime('-30 day'))~'') %}#}
+                        {% set featured = sd_getresults("date:>="~data.date|date_modify("-30 day")|date("m/d/Y")~"") %}
+                       
+                            {% if featured %}
+                                <div class="new-arrival-content">
+                                    {% for key, row in featured %}
+                                        {% if (key == 'all' or key == 'time') %}
+                                            {# continue #}
+                                        {% else %}
+                                            {% spaceless %}
+                                                {% if row['guid'] %}
+                                                    {% set sku = row['guid'] %}
+                                                {% else %}
+                                                    {% set sku = row['sku'] %}
+                                                {% endif %}
+
+                                                {% set media = sd_parsemedia(row['media']) %}
+
+                                                {% if (is_image(media[0])) %}
+                                                    {% set image_url = sd_securemedia(media[0]) %}
+
+                                                    {% if media[1] %}
+                                                        {% set alt_text = media[1]|escape %}
+                                                    {% else %}
+                                                        {% set alt_text = row['title']|escape %}
+                                                    {% endif %}
+
+                                                    {% if (sd_option('image_thumb_titles') == 'on') %}
+                                                        {#
+                                                        {% set alt_text = alt_text ~ '" title="' ~ alt_text %}
+                                                        #}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% set image_url = output.icons['no_thumb'] %}
+                                                    {% set alt_text = '' %}
+                                                {% endif %}
+                                                {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
+                                            {% endspaceless %}
+                                            <div class="element">
+                                                <div class="product-item-wrapper">
+                                                    <div class="row-container list-unstyled clearfix">
+                                                        <div class="row-left">
+                                                            <a href="{{ sd_seturl(row['uri'], 'item') }}" class="hoverBorder container_item">
+                                                                <div class="hoverBorderWrapper">
+                                                                    <img src="{{ image_url }}" class="not-rotation img-responsive front" alt="{{ alt_text }}" />
+                                                                    <div class="mask"></div>
+
+                                                                </div>
+                                                            </a>
+                                                            <div class="hover-mask">
+                                                                <div class="group-mask">
+                                                                    <div class="inner-mask">
+                                                                        <div class="effect-ajax-cart">
+                                                                            <input type="hidden" name="quantity" value="1" />
+                                                                            <button class="btn btn-1 select-option" type="button" onclick="window.location='{{ sd_seturl(row['uri'], 'item') }}';"><i class="fa fa-bars"></i>View Details</button>
+                                                                        </div>
+                                                                    </div><!--inner-mask-->
+                                                                </div><!--Group mask-->
+                                                            </div>
+                                                        </div>
+                                                        <div class="row-right animMix" style="padding-left: 10px; padding-right: 10px;">
+                                                            <a class="title-5" href="{{ sd_seturl(row['uri'], 'item') }}">{{ row['title'] }}</a>
+                                                            <div class="product-price">
+                                            <span class="price">
+                                              {{ sd_price(false, true, true, row) }}
+                                            </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="saleoff-hotnew">
+                        <div class="hotnew col-md-12">
+                            <h1 class="hotnew-title">Hot News</h1>
+                            <span class="dash-line"></span>
+                            <div class="hotnew-blog-wrapper">
+                            {% set results = sd_getnewpages('blog') %}
+                            {% set group = 'newest_blogs' %}
+                                {% include 'results.htm' with {'var':'home-blog'} %}
+                                <div class="view-more">
+                                    <a class="btn btn-3" href="/blog">View more Post <i class="fa fa-caret-right"></i></a>
+                                </div>
+                            </div><!--end hotnew-blog-wrapper-->
+                        </div>
+
+                    </div>
+                </div>
+            </div><!--Group-content-center-->
+        </section>
+        {% endif %}
+    </div>
+{% include 'footer.htm' with {'var':'home_footer','popup': 'true' } %}

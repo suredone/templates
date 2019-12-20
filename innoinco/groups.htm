@@ -1,0 +1,137 @@
+{# suredone groupings #}
+{# editable per user (with permission guards) #}
+
+{% if (group == 'orders_other') %}
+    {% if results %}
+        
+        {% set url = output.accounts_uri %}
+		{# need info #}
+		{% set sort_string = get_accounts_sort() %}
+
+		{% if (sort_string == sd_option('site_accounts_sort_default')) %}
+			{% set sort_query_string = '' %}
+		{% else %}
+			{% set sort_query_string = 'sort=' ~ sort_string ~ '&' %}
+		{% endif %}
+        
+        {% if (not preg_match('/_$/', sort_string)) %}
+	        {% set sort = sort_string %}
+	        {% set sort_direction = 'ASC' %}
+        {% else %}
+	        {% set sort = sort_string|slice(0, -1) %}
+	        {% set sort_direction = 'DESC' %}
+        {% endif %}
+
+		{# output.accounts_sorting = ['order','payment','shiptracking','shipdate','total','titles','date','oid'] #}
+
+		{# setup sorting #}
+		{% set sortlinks = [] %}
+
+		{% for link in output.accounts_sorting %}
+			{% set sortlinks = sortlinks|merge({link : '<a href="' ~ url ~ '?sort=' ~ link ~ '" onclick="return sdAjaxCall(\'sort=' ~ link ~ '\')">' ~ output.accounts_sorting_labels[link] ~ '</a>'}) %}
+		{% endfor %}
+        
+        {% if (sort_direction == 'ASC') %}
+            {% set sortlinks = sortlinks|merge({ sort : '<a class="sort-asc" href="' ~ url ~ '?sort=' ~ sort ~ '_" onclick="return sdAjaxCall(\'sort=' ~ sort ~ '_\')">' ~ output.accounts_sorting_labels[sort] ~ '</a>'}) %}
+        {% else %}
+	        {% set sortlinks = sortlinks|merge({ sort : '<a class="sort-desc" href="' ~ url ~ '?sort=' ~ sort ~ '" onclick="return sdAjaxCall(\'sort=' ~ sort ~ '\')">' ~ output.accounts_sorting_labels[sort] ~ '</a>'}) %}
+        {% endif %}
+
+		{# get data and setup thumbs #}
+		{% set small = sd_option('image_size_id_small') %}
+		{% set image_sizes = [sd_option('image_size_id_medium'), sd_option('image_size_id_large')] %}
+		
+		{# setup head #}
+		<div id="sd-acctOrdersTitle">{{ sd_siteinfo('business', false) }} Orders</div>
+		<table rules="all" cellspacing="0" cellpadding="0" id="sd-acctOrders">
+			{#
+			<thead>
+			<tr>
+				<td colspan="7" id="sd-acctOrdersTitle">{{ sd_siteinfo('business', false) }} Orders</td>
+			</tr>
+			</thead>
+			#}
+			<col width="100"/>
+			<col width="150"/>
+			<col width="150"/>
+			<col width="100"/>
+			<col width="50"/>
+			<col width="150"/>
+			<col width="100"/>
+			<thead>
+			<tr id="results-head">
+				<td>{{ sortlinks['date'] }}</td>
+				<td>{{ sortlinks['order'] }}</td>
+				<td>{{ sortlinks['titles'] }}</td>
+				<td>{{ sortlinks['items'] }}</td>
+				<td>QTYS</td>
+				<td>{{ sortlinks['shiptracking'] }}</td>
+				<td>{{ sortlinks['total'] }}</td>
+			</tr>
+			</thead>
+			<tbody>
+		{% for key, row in results %}
+			{% if (key == 'all' or key == 'time') %}
+				{# continue #}
+			{% else %}
+				{% set page_total = page_total + row['total'] %}
+				{% if (is_image(row['media'])) %}
+					{% if (small) %}
+						{# need info image_sizes #}
+						{% set image_url = row['media']|replace({image_sizes: small}) %}
+					{% else %}
+						{% set image_url = row['media'] %}
+					{% endif %}
+
+					{% set alt_text = row['title'] %}
+				{% else %}
+					{% set image_url = output.icons['no_thumb'] %}
+					{% set alt_text = '' %}
+				{% endif %}
+
+				{% if (rownum != 1) %}
+					{% set rowclass = 'sd-otd' %}
+					{% set rownum = 1 %}
+				{% else %}
+					{% set rowclass = 'sd-otd-x' %}
+					{% set rownum = 0 %}
+				{% endif %}
+				<tr class="{{ rowclass }}">
+					<td class="acct-order-time">{{ row['date'] }}</td>
+					<td class="acct-order-number">
+						<a href="{{ url }}?do=invoice&order={{ row['order'] }}" target="_blank">{{  row['order'] }}</a>
+					</td>
+					<td class="acct-order-titles">{{ row['titles']|replace({'*': '<br />'}) }}</td>
+					<td class="acct-order-items">{{ row['items']|replace({'*': '<br />'}) }}</td>
+					<td class="acct-order-qtys">{{ row['qtys']|replace({'*': '<br />'}) }}</td>
+					<td class="acct-order-tracking">{{ row['shiptracking'] }}</td>
+					<td class="acct-order-totals">{{ sd_currency(false) ~ row['total'] }}</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+			</tbody>
+
+		{# setup page nav #}
+		{# format=NULL,$results_all=NULL,$limit=NULL,$page=NULL)#}
+		{% set pages = sd_page_numbers('array', results['all'], sd_option('site_accounts_orders_limit')) %}
+			<tfoot>
+		{% if (pages['total_pages'] > 1) %}
+				<tr class="results-pages">
+					<td>{{ pages['page_of'] }}<br/>{{ pages['total_items'] }}</td>
+					<td>{{ pages['page_goto'] }}</td>
+					<td colspan="3">{{ pages['page_nums_plus'] }}</td>
+					<td colspan="2">Page Total: {{ sd_currency(false) ~ page_total }}</td>
+				</tr>
+		{% else %}
+			<tr class="results-pages">
+				<td colspan="6"></td>
+				<td>{{ pages['total_items'] }}</td>
+			</tr>
+		{% endif %}
+		</tfoot>
+	</table>
+	{% else %}
+		{# empty results #}
+		{# html = '' #}
+	{% endif %}
+{% endif %}

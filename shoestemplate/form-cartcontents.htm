@@ -1,0 +1,137 @@
+
+            <div id="sd-cart-contents">
+                {% if data['message'] %}
+                    {{ data['message'] }}
+                {% endif %}
+                <table>
+                    <thead>
+                        <tr class="sd-cartHeader">
+                            <th class="image">Product Name</th>
+                            <th class="price">Price</th>
+                            <th class="qty">Quantity</th>
+                            <th class="total">Total</th>
+                            <th class="remove">Remove</th>
+                        </tr>
+                    </thead>
+
+                            {% if (data['index'] > 0) %}
+                            {% set rmv_item_button = sd_securemedia(output.icons['remove_item']) %}
+                            {% set itemtotal = 0 %}
+
+                            {% for i in range(low=1, high=data['index'], step=1) %}
+
+                            {% if (data[i]['qty'] == 0) %}
+                            {#&#123;&#35; continue &#35;&#125;#}
+                            {% else %}
+
+                            {% if data[i]['guid'] %}
+                                {%  set sku = data[i]['guid'] %}
+                            {% else %}
+                                {%  set sku = data[i]['sku'] %}
+                            {% endif %}
+
+                            {% if data[i]['secure_media'] %}
+                                {% set media = data[i]['secure_media'] %}
+                            {%  else %}
+                                {%  set media = data[i]['media'] %}
+                            {% endif %}
+
+                            {% set totalprice = (data[i]['qty'] * data[i]['sdprice']) %}
+                    {#<tr>#}
+
+                    <tbody>
+
+                    <tr>
+                        <td class="image">
+                            <div class="product_image">
+                                {% if data[i]['galleryuri'] %}
+                                <a href="{{ sd_seturl(data[i]['galleryuri'], 'gallery', 'absolute') }}">
+                                    <img src="{{ media }}"  alt="{{ data[i]['title'] }}" />
+                                </a>
+                                {% else %}
+                                    <img alt="{{ data[i]['title'] }}" class="sd-cartImage" src="{{ media }}" />
+                                {% endif %}
+                            </div>
+                            <div class="product_name">
+                                <a href="{{ sd_seturl(data[i]['uri'], 'item') }}">
+                                    <strong>{{ data[i]['title'] }}</strong>
+
+                                </a>
+                            </div>
+                        </td>
+                        <td class="price">
+                            {% if (data[i]['sdprice'] != data[i]['price']) %}
+                                <span class="cart-price">
+                                    <span class="sd-cartPriceRegular">{{ sd_currency(false) ~ data[i]['price']|number_format(2) }}</span>
+                                    <span>{{ sd_currency(false) ~ data[i]['sdprice']|number_format(2) }}</span>
+                                </span>
+                            {% else %}
+                                <span class="cart-price"><span class="price">{{ sd_currency(false) ~ data[i]['sdprice']|number_format(2) }}</span></span>
+                            {% endif %}
+                        </td>
+                        <td class="qty">
+                            <div class="quantity-wrapper">
+                                <div class="wrapper" data-rwd-label="Qty">
+                          <span class="qty-down btooltip decrease"  data-toggle="tooltip" data-placement="top" title="Decrease" data-src="#sd-cartQty{{ i }}">
+                            <i class="fa fa-minus"></i>
+                          </span>
+                                    <input type="text" size="4"  id="sd-cartQty{{ i }}" value="{{ data[i]['qty'] }}" class="tc item-quantity" />
+                          <span class="qty-up btooltip increase"  data-toggle="tooltip" data-placement="top" title="Increase" data-src="#sd-cartQty{{ i }}">
+                            <i class="fa fa-plus"></i>
+                          </span>
+
+                                    <script type="text/javascript">
+                                        function qtyDown(id){
+                                            var qty_el = document.getElementById('sd-cartQty'+id);
+                                            var qty = qty_el.value;
+                                            if( !isNaN( qty ) && qty > 1 ){
+                                                qty_el.value--;
+                                            }
+                                            return false;
+                                        }
+
+                                        function qtyUp(id){
+                                            var qty_el = document.getElementById('sd-cartQty'+id);
+                                            var qty = qty_el.value;
+                                            if( !isNaN( qty )) {
+                                                qty_el.value++;
+                                            }
+                                            return false;
+                                        }
+                                    </script>
+                                </div><!--End wrapper-->
+                            </div><!--End quantily wrapper-->
+                            <ul class="cart-links">
+                                <li><a href="{{ output.cart_uri }}?do=update&item={{ i }}&qty={{ data[i]['qty'] }}" onclick="return sdAjaxCart('do=update&item={{ i }}&qty=' + $('#sd-cartQty{{ i }}').val())">Edit</a></li>
+                            </ul>
+                        </td>
+                        <td class="total title-1">{{ sd_currency(false) ~ totalprice|number_format(2) }}</td>
+                        <td class="remove"><a href="{{ output.cart_uri }}?do=remove&item={{ i }}" onclick="return sdAjaxCart('do=remove&item={{ i }}')" class="cart"><i class="fa fa-trash"></i></a></td>
+                    </tr>
+                    {% set itemtotal = itemtotal + totalprice %}
+                {% endif %}
+                {% endfor %}
+                    <tr class="summary">
+                        <td class="total" colspan="2">{{ sd_carttotalslabel('subtotal') }}</td>
+                        <td class="price" colspan="3"><span class="total"><strong>{{ sd_currency(false) ~ itemtotal|number_format(2) }}</strong></span></td>
+                    </tr>
+                            {% else %}
+                                <tr><td colspan="6" id="sd-cart-empty">{{ sd_option('site_cart_empty_text') }}</td></tr>
+                            {% endif %}
+                    </tbody>
+
+                </table>
+                {#<div class="col-md-6">
+                    <div class="checkout-buttons row">
+                        <label for="note">Add a note for seller</label>
+                        <textarea id="note" name="note" rows="10" cols="50"></textarea>
+                    </div>
+                </div>#}
+                {% if sd_notice(false) %}
+                    <div id="sd-cartNotice">{{ sd_notice(false) }}</div>
+                {% endif %}
+            </div>
+        <!--End row-->
+
+
+

@@ -1,0 +1,22 @@
+{# suredone default 404 template #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div class="ma-main-container col2-right-layout">
+	<div class="main">
+		<div class="row-fluid">
+			<div class="col-main span9">
+				<div class="std">
+					<div class="page-title">
+						<h1>Nothing Here</h1>
+					</div>
+                    <div>
+                        <p>The page you have requested does not exist.</p>
+                        {{ sd_siteinfo('site_search') }}
+                        <p>Back to {{ sd_siteinfo('business_url') }}</p>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% include 'footer.htm' %}

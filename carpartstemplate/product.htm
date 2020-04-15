@@ -97,6 +97,9 @@
 						<ul class="product-tabs">
 							<li id="product_tabs_description" class=" active first"><a href="#">Product Description</a></li>
 							<li id="product_tabs_details" class=""><a href="#">Details</a></li>
+							{% if sd_epidfitment(data, 'array') %}
+							<li id="product_tabs_fitment"><a href="#">Fitment</a></li>
+							{% endif %}
 							{% if sd_content('tags', false) %}
 							<li id="product_tabs_tags" class=""><a href="#">Tags</a></li>
 							{% endif %}
@@ -110,6 +113,52 @@
 						<div class="product-tabs-content" id="product_tabs_details_contents" style="display: none;">
 							<div class="std">{{ sd_content('item_details') }}</div>
 						</div>
+						{% if sd_epidfitment(data, 'array') %}
+						<div class="product-tabs-content" id="product_tabs_fitment_contents" style="display: none;">
+							<table id="sd_product_fitment-filter">
+								<thead>
+									<tr>
+										<th class="sd_product_fitment-filter-heading" colspan="6">Filter the results by:</th>
+									</tr>
+									<tr>
+										<th width="55"><input id="year" class="search-key" type="number" placeholder="Year"></th>
+										<th width="80"><input id="make" class="search-key" type="text" placeholder="Make"></th>
+										<th width="80"><input id="model" class="search-key" type="text" placeholder="Model"></th>
+										<th><input id="engine" class="search-key" type="text" placeholder="Engine"></th>
+										<th><input id="trim" class="search-key" type="text" placeholder="Trim"></th>
+										<th><input id="notes" class="search-key" type="text" placeholder="Notes"></th>
+									</tr>
+								</thead>
+							</table>
+							<table id="sd_product_fitment">
+								<thead>
+									<tr>
+										<th>Year</th>
+										<th>Make</th>
+										<th>Model</th>
+										<th>Engine</th>
+										<th>Trim</th>
+										<th>Notes</th>
+									</tr>
+								</thead>
+								<tbody id="sd_product_fitment-data">
+								{% set fitment_data = sd_epidfitment(data, 'array') %}
+								{% for key, all_data in fitment_data %}
+									{% for key, data_value in all_data %}
+									<tr>
+										<td data-input="year">{{ all_data[0] }}</td>
+										<td data-input="make">{{ all_data[1] }}</td>
+										<td data-input="model">{{ all_data[2] }}</td>
+										<td data-input="engine">{{ all_data[3] }}</td>
+										<td data-input="trim">{{ all_data[4] }}</td>
+										<td data-input="notes">{{ all_data[5] }}</td>
+									</tr>
+									{% endfor %}
+								{% endfor %}
+								</tbody>
+							</table>
+						</div>
+						{% endif %}
 						{% if sd_content('tags', false) %}
 						<div class="product-tabs-content" id="product_tabs_tags_contents" style="display: none;">
 							<div class="std">{{ sd_content('tags') }}</div>
@@ -138,7 +187,7 @@
 								});
 							});
 						</script>
-						
+						<!--
 						<script type="text/javascript">
 							//<![CDATA[
 							Varien.Tabs = Class.create();
@@ -173,10 +222,10 @@
 							new Varien.Tabs('.product-tabs');
 							//]]>
 						</script>
-						
+						-->
 					</div>
 				</div>
-				
+				<!--
 				<script type="text/javascript" src="//s3.amazonaws.com/assets.suredone.com/2439/js/jquery.fancybox.js"></script>
 				<script type="text/javascript">
 					function initLightbox() {
@@ -205,7 +254,7 @@
 						});
 					}
 				</script>
-				
+				-->
 			</div>
 		</div>
 	</div>

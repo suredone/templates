@@ -1,0 +1,109 @@
+{# suredone default cart template #}
+{% set doaction = output.doaction %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div>
+    <div class="title-breadcrumb">
+        <div class="container">
+            <div class="col-md-12">
+                <!-- Collection Listing Title -->
+                <div class="collection-listing-title">
+                    <h2 class="collection-title">{{ sd_title() }}</h2>
+                </div>
+                <!-- Begin breadcrumb -->
+                <div class="breadcrumb clearfix">
+                    {{ sd_content('cat_breadcrumbs') }}
+                    {# <span class="arrow-space"><i class="fa fa-angle-right"></i></span> <strong>Page 1 of 1</strong>#}
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="container">
+            <div class="col-md-12">
+                <div class="row">
+                    <div id="sd-site-body" class="sd-cart-body cart display-single-price col-md-12">
+
+    {# cart progress bar #}
+
+    {% include 'form-cartprogress.htm' with {'data':output.cart} %}
+
+    {# shopping cart #}
+    {% if doaction == 'view-cart' %}
+    <div id="cart">
+        {% include 'form-cartcontents.htm' with {'data': output.cart} %}
+        {% if (output.cart['index'] > 0) %}
+        <div class="col-md-12 cart-buttons">
+            <div class="buttons row">
+                {{ output.buttons['checkout_cards'] }}
+                {{ output.buttons['checkout_paypal'] }}
+                {{ output.buttons['continue_shopping'] }}
+                {{ output.buttons['create_account'] }}
+                {{ output.buttons['checkout_login'] }}
+             </div>
+         </div>
+        {% endif %}
+    </div>
+        {{ output.buttons['login_form'] }}
+
+    {# end shopping cart #}
+
+    {# cart checkout form #}
+    {% elseif sd_is_cart_set and doaction == 'checkout' %}
+        <div id="sd-checkout-contents">
+            <div class="row">
+                <div class="col-md-6">
+                {% if sd_option('site_cart_card_processor') != 'paypaladaptive' %}
+                    {% include 'form-checkoutform.htm' with {'data': output.form_data} %}
+                {% else %}
+                    {% include 'form-adaptiveform.htm' with {'data': output.form_data} %}
+                {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {% include 'form-cartsummary.htm' with {'data': output.cart} %}
+                </div>
+             </div>
+        </div>
+
+    {# cart confirm form #}
+    {% elseif sd_is_cart_set and doaction == 'confirm' %}
+        <div id="sd-checkout-contents">
+            {% include 'form-cartconfirmed.htm' with {'data': output.form_data} %}
+            {% include 'form-checkoutconfirmed.htm' with {'data': output.form_data} %}
+        </div>
+
+    {# paypal express checkout #}
+    {% elseif sd_setsecure('cart') and sd_function_last == 'paypal-express-checkout' and doaction == 'paypal-checkout' %}
+        <div id="sd-checkout-contents">
+            {% include 'form-cartsummary.htm' with {'data': output.cart} %}
+            {% include 'form-paypalcheckout.htm' with {'data':output.form_data } %}
+        </div>
+
+    {# cart post sale #}
+    {% elseif doaction == 'thank-you' %}
+        {% include 'form-cartpostsale.htm' with {'data': output.form_data} %}
+    {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="//maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        if(jQuery().gMap){
+            if($('#contact_map').length){
+                $('#contact_map').gMap({
+                    zoom: 17,
+                    scrollwheel: true,
+                    maptype: 'ROADMAP',
+                    markers:[
+                        {
+                            address: '{{ sd_option('business_street') }}  {{ sd_option('business_city') }},{{ sd_option('business_country_name') }}',
+                            html: '_address'
+                        }
+                    ]
+                });
+            }
+        }
+    )}
+    </script>
+{% include 'footer.htm'%}

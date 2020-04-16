@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>{{ sd_htmltitle() }}</title>
+<meta http-equiv="Content-Type" content="text/html; charset={{ sd_siteinfo('charset') }}" />
+<meta name="generator" content="SureDone {{ sd_siteinfo('version') }}" />
+<meta name="robots" content="noindex,nofollow" /><meta name="GOOGLEBOT" content="noindex,nofollow" />
+<meta name="description" content="" />
+{{ sd_siteinfo('favicon') }}
+{{ sd_siteinfo('stylesheet') }}
+{{ sd_siteinfo('jquery') }}
+{{ sd_siteinfo('javascript') }}
+{{ sd_siteinfo('jqueryui') }}
+{{ sd_siteinfo('javascript_admin') }}
+{% if sd_option('site_custom_htmlhead') is not empty %}
+{{ sd_swaptags('add',sd_option('site_custom_htmlhead')) }}
+{% endif %}
+</head>
+<body id="sd-body-invoice" data-shipping-units="{{ sd_option('shipping_units') }}">
+
+<style type="text/css" media="print" id="print"></style>
+{% if sd_is_admin and (get_do() == 'packing' or get_do() == 'picklist') %}
+{% set invoiceclass = get_do() == 'packing' ? 'sd-packing' : 'sd-picklist' %}
+{% endif %}
+
+<div id="sd-invoices" class="{{ invoiceclass }}">
+{% if sd_is_admin and (get_do() == 'packing' or get_do() == 'picklist') %}
+	{% if get_do() == 'packing' %}
+		{% include 'form-packingslips.htm' with {'data': orders} %}
+	{% else %}
+		{% include 'form-picklist.htm' with {'data': orders} %}
+	{% endif %}
+{% else %}
+	{% include 'form-orderinvoice.htm' with {'data': orders[1]} %}
+{% endif %}
+
+{% include 'form-invoicenav.htm' %}
+</div>
+
+{# suredone thermal printer functionality start #}
+{% if get_do() != 'picklist' %}
+<script type="text/javascript" src="https://{{ sd_server_name }}/qz-print/js/spin.min.js"></script>
+<script type="text/javascript">
+var wcppPingDelay_ms = 3000;
+
+function wcppDetectOnSuccess(){
+	// WCPP utility is installed at the client side
+    // redirect to WebClientPrint sample page
+    $('#msgInProgress').hide();
+    // get WCPP version
+    var wcppVer = arguments[0];
+    if(wcppVer.substring(0, 1) == "2")
+		console.log("WCPP loaded successfully");
+    else //force to install WCPP v2.0
+        wcppDetectOnFailure();
+}
+
+function wcppDetectOnFailure() {
+    // It seems WCPP is not installed at the client side
+    // ask the user to install it
+    console.log("WCPP is not loaded");
+    $('#msgInProgress').hide();
+    $('#msgInstallWCPP').show();
+}
+
+$(function() {
+if ( $('#sd-shipping_options_printer_sets_invoice').val() == "raw" )
+{
+	$.get( "https://{{ sd_server_name }}/qz-print/WebClientPrintLauncher.php?filename=PrintProcess.php", function( data ) {
+		  $('head').append(data);
+		});
+	$('#sd-invoices').prepend("<div id='msgInProgress'><div id='mySpinner' style='width:32px;height:32px'></div><br />Detecting WCPP utility at client side...<br />Please wait a few seconds...<br /></div><div id='msgInstallWCPP' style='display:none;'><h3>#1 Install WebClientPrint Processor (WCPP)!</h3><a href='http://www.neodynamic.com/downloads/wcpp/' target='_blank'>Download and Install WCPP from Neodynamic website</a><br /></div>");
+	// Create the Spinner with options (http://fgnass.github.io/spin.js/)
+	var spinner = new Spinner({
+	    lines: 12,
+	    length: 7,
+	    width: 3,
+	    radius: 10,
+	    color: '#336699',
+	    speed: 1,
+	    trail: 60
+	}).spin($('#mySpinner')[0]);
+}
+
+	{% if get_do() == 'packing' %}
+		
+		$('.sd-invoice-nav button').first().text("Process All Shipment");
+		$('.sd-invoice-nav button').first().attr("style","padding: 7px 10px !important;margin:3px !important;padding: 5px;float: left;border: solid 2px #eee;border-radius: 5px;-moz-border-radius: 5px;-webkit-border-radius: 5px;-moz-box-shadow: inset 0 1px 1px #bfbfbf;-webkit-box-shadow: inset 0 1px 1px #bfbfbf;box-shadow: inset 0 1px 1px #bfbfbf;font: 14px Arial,Helvetica,sans-serif;background: #2b2b2b !important;color: #fff;font-weight: bold;border: 0 !important;cursor: pointer;");
+		$('.sd-invoice-nav').first().append('<input type="button" id="printAll" value="Print All Labels" style="padding: 7px 10px !important;margin:3px !important;padding: 5px;float: left;border: solid 2px #eee;border-radius: 5px;-moz-border-radius: 5px;-webkit-border-radius: 5px;-moz-box-shadow: inset 0 1px 1px #bfbfbf;-webkit-box-shadow: inset 0 1px 1px #bfbfbf;box-shadow: inset 0 1px 1px #bfbfbf;font: 14px Arial,Helvetica,sans-serif;background: #2b2b2b !important;color: #fff;font-weight: bold;border: 0 !important;cursor: pointer;"/><input type="button" id="printAllInvoices" value="Print All Invoices" style="padding: 7px 10px !important;background: #2b2b2b !important;color: #fff;font-weight: bold;border: 0 !important;cursor: pointer;margin:3px !important;padding: 5px;float: left;border: solid 2px #eee;border-radius: 5px;-moz-border-radius: 5px;-webkit-border-radius: 5px;-moz-box-shadow: inset 0 1px 1px #bfbfbf;-webkit-box-shadow: inset 0 1px 1px #bfbfbf;box-shadow: inset 0 1px 1px #bfbfbf;font: 14px Arial,Helvetica,sans-serif;font-weight: bold;"/>');
+		$('.sd-invoice-nav').last().html($('.sd-invoice-nav').first().html());
+
+	$(document).on('click','input[name=print_label]', function(e) {
+		var uri = $(this).attr('data-uri');
+
+		if ( $('#sd-shipping_options_printer_sets_invoice').val() == "raw" )
+		{
+			$.post( "https://{{ sd_server_name }}/qz-print/FileProcess.php", { session: "{{sd_session_id}}" ,label: uri }, function( data ) {
+				console.log("label sent to WCPP");
+				jsWebClientPrint.print('labelPrinterName=' + encodeURIComponent($('#sd-shipping_options_printer_sets_label').val()) + '&label=' + encodeURIComponent(data.label) );
+			}, "json");
+		}
+		else
+		{
+			$('#print').text("");
+			
+			var str = $(this).closest('.sd-ship-label').find('input[name=sd_ship_label_document]').val(); 
+			var res = str.match(/carrier=UPS/g);
+			if (res == "carrier=UPS")
+			{
+				if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+				{
+					var rnd = new Date().getUTCMilliseconds();
+					var div = $("<div name='img_div' id='" + rnd + "' style='overflow:hidden;width:571px; height:840px;'></div>");
+					$('body').append(div);
+					var img = $("<img name='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' width='970' height='561' style='-moz-transform-origin: left;-moz-transform: translate(2.97in, -2.91in) rotate(90deg);-webkit-transform-origin: left;-webkit-transform: translate(2.97in, -2.91in) rotate(90deg); transform-origin: left;transform: translate(2.97in, -2.91in) rotate(90deg); -o-transform-origin: left;-o-transform: translate(2.97in, -2.91in) rotate(90deg);top:0px;left:0px;display:block;overflow:hidden;' >");
+					$("#"+rnd).append(img);
+					$('#print').text('@page { size: 6in 4in portrait; margin: 1px; page-break-before: avoid; page-break-after: avoid;} body,html{width:99% !important; height:99% !important;} #sd-invoices{display:none;}');
+
+				}
+				else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+				{
+					var rnd = new Date().getUTCMilliseconds();
+					var div = $("<div name='img_div' id='" + rnd + "' style='-webkit-transform: translate(1.3in, 0.6in);-o-transform: translate(1.3in, 0.6in);-moz-transform: translate(1.3in, 0.6in);transform: translate(1.3in, 0.6in);overflow:hidden;height:600px;width:933px;'></div>");
+					$('body').append(div);
+					var img = $("<img name='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='580' width='962' style='display:block;overflow:hidden;' >");
+					$("#"+rnd).append(img);
+					$('#print').text('@page { size: 6in 4in portrait; margin: 1px; page-break-before: avoid; page-break-after: avoid;} body,html{width:99% !important; height:99% !important;} #sd-invoices{display:none;}');
+				}				
+			}
+			var res = str.match(/carrier=FEDEX/g);
+			if (res == "carrier=FEDEX")
+			{
+				if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+				{
+					var img = $("<img id='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='830' width='558' style='max-height:100%;max-width:100%;' >");
+					$('body').append(img);
+					$('#print').text('@page { size: 6in 4in portrait; margin: 3px; page-break-before: avoid; page-break-after: avoid;} body, html{height:99%} #sd-invoices{display:none;} #img_print { display:block; margin-top:10px;} ');
+				}
+				else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+				{
+					var img = $("<img id='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='816' width='520' style='max-height:100%;max-width:100%;-webkit-transform-origin: left; -webkit-transform: translate(5.3in, 1.8in) rotate(270deg);-moz-transform-origin: left;-moz-transform: translate(5.3in, 1.8in) rotate(270deg);transform-origin: left;transform: translate((5.3in, 1.8in) rotate(270deg);-o-transform-origin: left;-o-transform: translate(5.3in, 1.8in) rotate(270deg);display:block;overflow:hidden;' >");
+					$('body').append(img);
+					$('#print').text('@page { size:A4 portrait; margin: 1px; page-break-before: avoid; page-break-after: avoid;} body,html{height:99% !important;} #sd-invoices{display:none;}');
+
+				}
+			}
+			var res = str.match(/carrier=USPS/g);
+			if(res == "carrier=USPS")
+			{
+				if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+				{
+					var img = $("<img id='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='840' width='568' style='max-height:100%;max-width:100%;' >");
+					$('body').append(img);
+					$('#print').text('@page { size: 6in 4in portrait; margin: 3px; page-break-before: avoid; page-break-after: avoid;} body, html{height:99%} #sd-invoices{display:none;} #img_print { display:block;} ');
+				}
+				else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+				{
+					var img = $("<img id='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='816' width='520' style='max-height:100%;max-width:100%;-webkit-transform-origin: left; -webkit-transform: translate(5in, 1.8in) rotate(270deg);-moz-transform-origin: left;-moz-transform: translate(5in, 1.8in) rotate(270deg);transform-origin: left;transform: translate((5in, 1.8in) rotate(270deg);-o-transform-origin: left;-o-transform: translate(5in, 1.8in) rotate(270deg);display:block;overflow:hidden;' >");
+					$('body').append(img);
+					$('#print').text('@page { size:A4 portrait; margin: 1px; page-break-before: avoid; page-break-after: avoid;} body,html{height:99% !important;} #sd-invoices{display:none;}');
+				}		
+			}
+			window.print();
+			$('img[name=img_print]').remove();
+			$('#img_print').remove();
+			$("#"+rnd).remove();
+		}       
+	});
+
+	$(document).on('click','input[name=print_invoice]', function(e) {
+		var selected_invoices_div = $("<div id='inv_print'></div>");
+		$('body').append(selected_invoices_div);
+		$(this).closest('.sd-invoice').clone().appendTo('#inv_print');
+		$('#print').text("");
+		$('#print').text('@page { size:A4 portrait; margin: 0px; page-break-before: avoid; page-break-after: avoid;} html,body{width:99% !important;height:99% !important} #sd-invoices{display:none;} .sd-invoices,.sd-invlabelContent{page-break-after:always;} .sd-invoice-nav,.sd-ship-rater,.sd-ship-label,.sd-invlabelHead{display:none;} .sd-ship-gift{background:url(../base/icon/gift-box.gif) no-repeat 80% 80% !important;color:#FFF !important;} td.sd-ship-gift .sd-order-totals,td.sd-ship-gift .sd-cartPrice,td.sd-ship-gift .sd-cartPriceTotal{color:#FFF !important;}');
+		window.print();
+		$('#inv_print').remove();
+	});
+
+	$(document).on('click','#printAll',function(e) {
+		var uris = [];
+		$( 'input[name=print_label]' ).each(function() {
+			var uri = $(this).attr('data-uri');
+			if (uri != "")
+				uris.push(uri);
+		});
+
+		if ( $('#sd-shipping_options_printer_sets_invoice').val() == "raw" )
+		{
+			$.post( "https://{{ sd_server_name }}/qz-print/FileProcess.php", { session: "{{ sd_session_id }}" ,labels: uris }, function( data ) {	  	
+				console.log("labels sent to WCPP");
+				jsWebClientPrint.print('labelPrinterName=' + encodeURIComponent($('#sd-shipping_options_printer_sets_label').val()) + '&labels=' + encodeURIComponent(data.labels) );
+				window.print(); 	
+			}, "json");
+		}
+		else
+		{
+			$(".sd-ship-label-image-invoice").each(function() {
+				var str = $(this).children(":first").attr("src"); 
+				var res = str.match(/carrier=UPS/g);
+				if (res == "carrier=UPS")
+				{
+					if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+					{
+						var rnd = new Date().getUTCMilliseconds();
+						var div = $("<div name='img_div' id='" + rnd + "' style='overflow:hidden;width:571px; height:840px;'></div>");
+						$('body').append(div);
+						var img = $("<img name='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' width='970' height='561' style='-moz-transform-origin: left;-moz-transform: translate(2.97in, -2.91in) rotate(90deg);-webkit-transform-origin: left;-webkit-transform: translate(2.97in, -2.91in) rotate(90deg); transform-origin: left;transform: translate(2.97in, -2.91in) rotate(90deg); -o-transform-origin: left;-o-transform: translate(2.97in, -2.91in) rotate(90deg);top:0px;left:0px;display:block;overflow:hidden;' >");
+						$("#"+rnd).append(img);
+					}
+					else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+					{
+						var rnd = new Date().getUTCMilliseconds();
+						var div = $("<div name='img_div' id='" + rnd + "' style='-webkit-transform: translate(1.3in, 0.6in);-o-transform: translate(1.3in, 0.6in);-moz-transform: translate(1.3in, 0.6in);transform: translate(1.3in, 0.6in);overflow:hidden;height:600px;width:933px;'></div>");
+						$('body').append(div);
+						var img = $("<img name='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='580' width='962' style='margin-bottom:50px;display:block;overflow:hidden;' >");
+						$("#"+rnd).append(img);
+					}
+				}
+				var res = str.match(/carrier=FEDEX/g);
+				if (res == "carrier=FEDEX")
+				{
+					if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+					{
+						var img = $("<img name='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='830' width='558' style='max-height:100%;max-width:100%;margin-top:20px;' >");
+						$('body').append(img);
+					}
+					else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+					{
+						var img = $("<img name='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='816' width='520' style='margin-bottom:50px;max-height:100%;max-width:100%;-webkit-transform-origin: left; -webkit-transform: translate(5.3in, 1.8in) rotate(270deg);-moz-transform-origin: left;-moz-transform: translate(5.3in, 1.8in) rotate(270deg);transform-origin: left;transform: translate((5.3in, 1.8in) rotate(270deg);-o-transform-origin: left;-o-transform: translate(5.3in, 1.8in) rotate(270deg);display:block;overflow:hidden;' >");
+						$('body').append(img);
+					}
+				}
+				var res = str.match(/carrier=USPS/g);
+				if(res == "carrier=USPS")
+				{
+					if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+					{
+						var img = $("<img name='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='840' width='568' style='max-height:100%;max-width:100%;' >");
+						$('body').append(img);
+					}
+					else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+					{
+						var img = $("<img name='img_print' src='" + $(this).closest('.sd-ship-label').find('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='816' width='520' style='margin-bottom:50px;max-height:100%;max-width:100%;-webkit-transform-origin: left; -webkit-transform: translate(5in, 1.8in) rotate(270deg);-moz-transform-origin: left;-moz-transform: translate(5in, 1.8in) rotate(270deg);transform-origin: left;transform: translate((5in, 1.8in) rotate(270deg);-o-transform-origin: left;-o-transform: translate(5in, 1.8in) rotate(270deg);display:block;overflow:hidden;' >");
+						$('body').append(img);
+					}
+				}
+			});
+			$('#print').text("");
+			if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+				$('#print').text('@page { size: 6in 4in portrait; margin: 2px; page-break-before: avoid; page-break-after: avoid;} body, html{height:99%} #sd-invoices{display:none;}');
+			else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+				$('#print').text('@page { size:LETTER portrait; margin: 0px; page-break-before: avoid; page-break-after: avoid;} body,html{height:99% !important;} #sd-invoices{display:none;}');
+			window.print();
+
+			$('img[name=img_print]').each(function() {
+				$(this).remove();
+			});
+
+			$('div[name=img_div]').each(function() {
+				$(this).remove();
+			});
+		}
+
+	});
+
+	$(document).on('click','#printAllInvoices',function(e) {
+		$('#print').text("");
+		$('#print').text('@page { size:A4 portrait; margin: 0px; page-break-before: avoid; page-break-after: avoid;} html,body{height:99%} .sd-invoice,.sd-invlabelContent{page-break-after:always;} .sd-invoice-nav,.sd-ship-rater,.sd-ship-label,.sd-invlabelHead{display:none;} .sd-ship-gift{background:url(../base/icon/gift-box.gif) no-repeat 80% 80% !important;color:#FFF !important;} td.sd-ship-gift .sd-order-totals,td.sd-ship-gift .sd-cartPrice,td.sd-ship-gift .sd-cartPriceTotal{color:#FFF !important;}');
+		window.print();
+	});	
+ 	
+	{% else %}
+		$('.sd-invoice-nav').last().html("");
+		$(document).on('click', 'input[name=print_label]', function(e) {
+
+		var uri = $(this).attr('data-uri');
+
+		if ( $('#sd-shipping_options_printer_sets_invoice').val() == "raw" )
+		{
+			$.post( "https://{{ sd_server_name }}/qz-print/FileProcess.php", { session: "{{ sd_session_id }}" ,label: uri }, function( data ) {
+				console.log("label sent to WCPP");
+				jsWebClientPrint.print('labelPrinterName=' + encodeURIComponent($('#sd-shipping_options_printer_sets_label').val()) + '&label=' + encodeURIComponent(data.label) );
+			}, "json");
+		}
+		else
+		{
+			$('#print').text("");
+			
+			var str = $('input[name=sd_ship_label_document]').val(); 
+			var res = str.match(/carrier=UPS/g);
+			if (res == "carrier=UPS")
+			{
+				if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+				{
+					var div = $("<div id='img_div' style='overflow:hidden;width:571px; height:840px;'></div>");
+					$('body').append(div);
+					var img = $("<img id='img_print' src='" + $('.sd-ship-label-image-invoice').children(":first").attr("src") + "' width='970' height='561' style='-moz-transform-origin: left;-moz-transform: translate(2.97in, -2.91in) rotate(90deg);-webkit-transform-origin: left;-webkit-transform: translate(2.97in, -2.91in) rotate(90deg); transform-origin: left;transform: translate(2.97in, -2.91in) rotate(90deg); -o-transform-origin: left;-o-transform: translate(2.97in, -2.91in) rotate(90deg);top:0px;left:0px;display:block;overflow:hidden;' >");
+					$('#img_div').append(img);
+					$('#print').text('@page { size: 6in 4in portrait; margin: 1px; page-break-before: avoid; page-break-after: avoid;} body,html{width:99% !important; height:99% !important;} #sd-invoices{display:none;}');
+				}
+				else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+				{
+					var div = $("<div id='img_div' style='-webkit-transform: translate(1.3in, 0.6in);-o-transform: translate(1.3in, 0.6in);-moz-transform: translate(1.3in, 0.6in);transform: translate(1.3in, 0.6in);overflow:hidden;height:600px;width:933px;'></div>");
+					$('body').append(div);
+					var img = $("<img id='img_print' src='" + $('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='580' width='962' style='display:block;overflow:hidden;' >");
+					$('#img_div').append(img);
+					$('#print').text('@page { size:A4 portrait; margin: 1px; page-break-before: avoid; page-break-after: avoid;} body,html{width:99% !important;height:99% !important;} #sd-invoices{display:none;}');
+				}
+			}
+			var res = str.match(/carrier=FEDEX/g);
+			if (res == "carrier=FEDEX")
+			{
+				if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+				{
+					var img = $("<img id='img_print' src='" + $('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='830' width='558' style='max-height:100%;max-width:100%;' >");
+					$('body').append(img);
+					$('#print').text('@page { size: 6in 4in portrait; margin: 3px; page-break-before: avoid; page-break-after: avoid;} body, html{height:99%} #sd-invoices{display:none;} #img_print { display:block; margin-top:10px;} ');
+				}
+				else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+				{
+					var img = $("<img id='img_print' src='" + $('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='816' width='520' style='max-height:100%;max-width:100%;-webkit-transform-origin: left; -webkit-transform: translate(5.3in, 1.8in) rotate(270deg);-moz-transform-origin: left;-moz-transform: translate(5.3in, 1.8in) rotate(270deg);transform-origin: left;transform: translate((5.3in, 1.8in) rotate(270deg);-o-transform-origin: left;-o-transform: translate(5.3in, 1.8in) rotate(270deg);display:block;overflow:hidden;' >");
+					$('body').append(img);
+					$('#print').text('@page { size:A4 portrait; margin: 1px; page-break-before: avoid; page-break-after: avoid;} body,html{height:99% !important;} #sd-invoices{display:none;}');
+				}
+			}
+			var res = str.match(/carrier=USPS/g);
+			if(res == "carrier=USPS")
+			{
+				if ($('#sd-shipping_options_printer_sets_invoice').val()=="thermal")
+				{
+					var img = $("<img id='img_print' src='" + $('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='840' width='568' style='max-height:100%;max-width:100%;' >");
+					$('body').append(img);
+					$('#print').text('@page { size: 6in 4in portrait; margin: 3px; page-break-before: avoid; page-break-after: avoid;} body, html{height:99%} #sd-invoices{display:none;} #img_print { display:block;} ');
+				}
+				else if ( $('#sd-shipping_options_printer_sets_invoice').val()=="post" )
+				{
+					var img = $("<img id='img_print' src='" + $('.sd-ship-label-image-invoice').children(":first").attr("src") + "' height='816' width='520' style='max-height:100%;max-width:100%;-webkit-transform-origin: left; -webkit-transform: translate(5in, 1.8in) rotate(270deg);-moz-transform-origin: left;-moz-transform: translate(5in, 1.8in) rotate(270deg);transform-origin: left;transform: translate((5in, 1.8in) rotate(270deg);-o-transform-origin: left;-o-transform: translate(5in, 1.8in) rotate(270deg);display:block;overflow:hidden;' >");
+					$('body').append(img);
+					$('#print').text('@page { size:A4 portrait; margin: 1px; page-break-before: avoid; page-break-after: avoid;} body,html{height:99% !important;} #sd-invoices{display:none;}');
+				}
+			}
+			window.print();
+			$('#img_print').remove();
+			$('#img_div').remove();
+		}    
+	});
+
+	$(document).on('click', 'input[name=print_invoice]', function(e) {
+		$('#print').text("");
+		$('#print').text('@page { size:A4 portrait; margin: 0px; page-break-before: avoid; page-break-after: avoid;} html,body{height:99%} .sd-invoice,.sd-invlabelContent{page-break-after:always;} .sd-invoice-nav,.sd-ship-rater,.sd-ship-label,.sd-invlabelHead{display:none;} .sd-ship-gift{background:url(../base/icon/gift-box.gif) no-repeat 80% 80% !important;color:#FFF !important;} td.sd-ship-gift .sd-order-totals,td.sd-ship-gift .sd-cartPrice,td.sd-ship-gift .sd-cartPriceTotal{color:#FFF !important;}');
+		  window.print();
+	});
+
+	{% endif %}
+});
+</script>
+{% endif %}
+{# suredone thermal printer functionality end #}
+
+</body>
+</html>

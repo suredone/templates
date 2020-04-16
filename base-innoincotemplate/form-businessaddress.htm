@@ -1,0 +1,12 @@
+<b>{{ sd_siteinfo('business', false) }}</b>
+<br />{{ sd_option('business_street') }}<br />{{ sd_option('business_street_2') }}
+
+{% if (sd_option('business_country') == 'US' or sd_option('business_country') == 'CA') %}
+<br />{{ sd_option('business_city') }}, {{ sd_option('business_state' )}} {{ sd_option('business_zip') }}
+{% else %}
+<br />{{ sd_option('business_zip') }} {{ sd_option('business_city') }}<br />{{ sd_option('business_state') }}
+{% endif %}
+
+<br />{{ sd_option('business_country_name') }}
+<br />{{ sd_option('business_phone') }}
+<br /><a href="mailto:{{ sd_option('business_email') }}">{{sd_option('business_email') }}</a>

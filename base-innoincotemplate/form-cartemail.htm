@@ -1,0 +1,54 @@
+<table cellspacing="0" cellpadding="0" class="table" rules="none" id="sd-emailFormTable">
+    <colgroup>
+        <col width="100">
+        <col width="280">
+    </colgroup>
+    <tbody>
+{% if (sd_option('site_forms_email_confirm') == 'on') %}
+<tr>
+    <td>
+        <img class="sd-formIcon" src="{{ output.icons['vform']['email'] }}" name="sdform-vemail" alt="Required email address"/>
+        <label for="sd-email">Email Address</label>
+    </td>
+    <td>
+        <input tabindex="15" type="text" maxlength="100" size="40" id="sd-email" name="sd_email" vcard_name="vCard.Email" value="{{ data['email'] }}"/>
+    </td>
+</tr>
+<tr>
+    <td>
+        <img class="sd-formIcon" src="{{ output.icons['vform']['cemail'] }}" name="sdform-vcemail" alt="Re-enter email address"/>
+        <label for="sd-cemail">Re-nter Email Address</label>
+    </td>
+    <td>
+        <input tabindex="16" type="text" maxlength="100" size="40" id="sd-cemail" name="sd_cemail" value="{{ data['cemail'] }}"/>
+    </td>
+</tr>
+<tr>
+    <td>
+        <input tabindex="17" type="checkbox" id="sd-email-list" name="sd_email_list" value="yes" {{ data['email_list'] }} />
+    </td>
+    <td>
+        <b class="sd-infoBold">Subscribe to {{ sd_siteinfo('business', false) }}</b>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td>
+        <img class="sd-formIcon" src="{{ output.icons['vform']['email'] }}" name="sdform-vemail" alt="Required email address"/>
+        <label for="sd-email">Email</label>
+    </td>
+    <td>
+        <input tabindex="15" type="text" maxlength="100" size="40" id="sd-email" name="sd_email" vcard_name="vCard.Email" value="{{ data['email'] }}"/>
+    </td>
+</tr>
+<tr>
+    <td>
+        <input tabindex="17" type="checkbox" id="sd-email-list" name="sd_email_list" value="yes" {{ data['email_list'] }} />
+    </td>
+    <td>
+        <b class="sd-infoBold">Subscribe to {{ sd_siteinfo('business', false) }}</b>
+    </td>
+</tr>
+{% endif %}
+        </tbody>
+</table>

@@ -1,0 +1,97 @@
+
+<form action="{{ output.accounts_uri }}" method="post" id="sd-loginForm" onsubmit="return sdEmptyLogin(this.form)">
+    <div id="bodyBox">
+        <ul class="control-container customer-accounts list-unstyled">
+            <li class="clearfix">
+                <label for="customer_email_box" class="control-label">Email Address <span class="req">*</span></label>
+                <input type="email" value="{{ data['email'] }}" name="customer[email]" id="customer_email_box" class="form-control" />
+            </li>
+
+            <li class="clearfix">
+                <label for="customer_password_box" class="control-label">Password <span class="req">*</span></label>
+                <input type="password" value="" name="customer[password]" id="customer_password_box" class="form-control password" />
+            </li>
+
+            <li class="clearfix">
+                <span class="required field">*required field</span>
+            </li>
+            <li class="clearfix">
+                <a href="{{ output.accounts_uri }}?do=forgot-password"><span class="red">?</span> Forgot your password</a>
+            </li>
+            <li class="clearfix">
+                <button type="submit"  title="Login" name="send" id="send2" class="btn btn-3" >Login<i class="fa fa-caret-right"></i></button>
+            </li>
+            <li class="clearfix">
+                <button class="btn btn-3" type="button" title="Create an Account" class="btn btn-3" onclick="window.location='{{ output.accounts_uri }}?do=create-account';">Create an account<i class="fa fa-caret-right"></i></button>
+            </li>
+        </ul>
+    </div>
+	{#<div class="col2-set">
+		<div class="col-2 registered-users">
+			<div class="content">
+				<h2>Registered Customers</h2>
+				<p>If you have an account with us, please log in.</p>
+				<input type="hidden" name="do" value="sign-in"/>
+				<b id="sd-acctTitle">{{ sd_siteinfo('business', false) }} Account</b>
+				<ul class="form-list">
+					<li>
+						<label for="user-email">Email Address</label>
+						<div class="input-box">
+							<input class="input-text" type="text" size="45" maxlength="100" id="user-email" name="sd_user" vcard_name="vCard.Email" value="{{ data['email'] }}"/>
+						</div>
+					</li>
+					<li>
+						<label for="user-password">Password</label>
+						<div class="input-box">
+							<input class="input-text" type="password" size="45" maxlength="100" id="user-password" name="sd_pass" value=""/>
+						</div>
+					</li>
+				</ul>
+
+				<br/>
+				<input type="checkbox" name="sd_remember" value="yes"/>Remember Me
+				<br/>
+			</div>
+		</div>
+	</div>
+	<div class="col2-set">
+		<div class="col-1 new-users">
+			<div class="buttons-set">
+				<button type="button" title="Create an Account" class="button" onclick="window.location='{{ output.accounts_uri }}?do=create-account';"><span><span>Create an Account</span></span></button>
+			</div>
+		</div>
+		<div class="col-2 registered-users">
+			<div class="buttons-set">
+				<a href="{{ output.accounts_uri }}?do=forgot-password" class="f-left">Forgot Your Password?</a>
+				<button type="submit" class="button" title="Login" name="send" id="send2"><span><span>Login</span></span></button>
+			</div>
+		</div>
+	</div>#}{#
+    <form action="{{ output.accounts_uri }}" method="post" id="sd-loginForm" onsubmit="return sdEmptyLogin(this.form)">
+        <div id="bodyBox">
+            <ul class="control-container customer-accounts list-unstyled">
+                <li class="clearfix">
+                    <label for="customer_email_box" class="label">Email Address <span class="req">*</span></label>
+                    <input type="email" value="{{ data['email'] }}" name="customer[email]" id="customer_email_box" class="text" />
+                </li>
+
+                <li class="clearfix">
+                    <label for="customer_password_box" class="label">Password <span class="req">*</span></label>
+                    <input type="password" value="" name="customer[password]" id="customer_password_box" class="text" />
+                </li>
+
+                <li class="clearfix">
+                    <span class="required field">*required field</span>
+                </li>
+                <li class="clearfix">
+                    <a href="{{ output.accounts_uri }}?do=forgot-password"><span class="red">?</span> Forgot your password</a>
+                </li>
+                <li class="clearfix">
+                    <button type="submit"  title="Login" name="send" id="send2" class="btn btn-3" >Login<i class="fa fa-caret-right"></i></button>
+                </li>
+                <li class="clearfix">
+                    <button class="btn btn-3" type="button" title="Create an Account" class="btn btn-3" onclick="window.location='{{ output.accounts_uri }}?do=create-account';">Create an account<i class="fa fa-caret-right"></i></button>
+                </li>
+            </ul>
+        </div>#}
+</form>

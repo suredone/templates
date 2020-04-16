@@ -1,0 +1,150 @@
+{% spaceless %}
+{% set applycountry = [] %}
+{% set applystate = [] %}
+
+{% if (sd_option('site_cart_card_filters') == 'on' and sd_option('site_cart_card_countries')) %}
+	{% set applycountry = applycountry|merge(["'cardfilter'"]) %}
+{% endif %}
+
+{% if (output.shipping_services_domestic|length > 1 or (sd_option('international_shipping_locations') and 'CA' in ['*', sd_option('international_shipping_locations')]) or sd_option('shipping_surcharge_locations')) %}
+	{% set applystate = applystate|merge(["'shipping'"]) %}
+{% endif %}
+
+{% if (sd_option('site_cart_tax') == 'on' and sd_option('site_cart_tax_by') == 'state') %}
+	{% set applystate = applystate|merge(["'tax'"]) %}
+{% endif %}
+
+{% if applystate %}
+	{% set applybstate = " onchange=\"sdApplyTotals([" ~ (applystate|join(',')) ~ "],'sd-b-state');\"" %}
+{% endif %}
+
+{% endspaceless %}
+<table rules="none" cellpadding="0" cellspacing="0">
+	<col width="185"/>
+	<col width="10"/>
+	<col width="185"/>
+	<tr>
+		<td colspan="3">
+		{% if (sd_option('international_shipping') == 'on' or sd_option('site_forms_location_default') == 'INTL')  %}
+			<input type="radio" id="sd-bill-form" name="sd_bill_form" value="USCACartBilling" onclick="sdShipForm(this,'USCACartBilling','sd-billingForm');" tabindex="1"  checked/>
+			US / Canada Billing Address<br/>
+			<input type="radio" id="sd-bill-form" name="sd_bill_form" value="INTLCartBilling" onclick="sdShipForm(this,'INTLCartBilling','sd-billingForm');"/>
+			International Billing Address
+		{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img class="sd-formIcon" src="{{ output.icons['vform']['bfirstname'] }}" name="sdform-vfname" alt="Required first name" />
+			First Name
+		</td>
+		<td>
+			<img class="sd-formIcon" src="{{ output.icons['vform']['bminitial'] }}" name="sdform-vminit" alt="" />
+			MI
+		</td>
+		<td>
+			<img class="sd-formIcon" src="{{ output.icons['vform']['blastname'] }}" name="sdform-vlname" alt="Required last name" />
+			Last Name
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input tabindex="2" type="text" size="20" maxlength="70" id="sd-b-firstname"  name="sd_b_firstname" vcard_name="vCard.FirstName" value="{{ data['bfirstname'] }}" />
+		</td>
+		<td>
+			<input tabindex="3" type="text" size="1" maxlength="1" id="sd-b-minitial" name="sd_b_minitial" value="{{ data['bminitial'] }}" />
+		</td>
+		<td>
+			<input tabindex="4" type="text" size="19" maxlength="70" id="sd-b-lastname" name="sd_b_lastname" vcard_name="vCard.LastName" value="{{ data['blastname'] }}" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['bbusiness'] }}" name="sdform-vbname" alt="" />
+			Business Name / Care Of
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="5" type="text" size="45" maxlength="90" id="sd-b-business" name="sd_b_business" vcard_name="vCard.Company" value="{{ data['bbusiness'] }}" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['baddress1'] }}" name="sdform-vstreet1" alt="Required street address" />
+			Street Address
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="6" type="text" size="45" maxlength="90" id="sd-b-address-1" name="sd_b_address_1" vcard_name="vCard.Home.StreetAddress" value="{{ data['baddress1'] }}" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['baddress2'] }}" name="sdform-vstreet2" alt="Additional address information" /> \
+			Apartment / Building / Floor / Room / Suite #
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="7" type="text" size="45" maxlength="90" id="sd-b-address-2" name="sd_b_address_2" vcard_name="vCard.Home.StreetAddress" value="{{ data['baddress2'] }}" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['bcity'] }}" name="sdform-vcity" alt="Required city" />
+			City
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="8" type="text" size="45" maxlength="80" id="sd-b-city" name="sd_b_city" vcard_name="vCard.Home.City" value="{{ data['bcity'] }}" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['bstate'] }}" name="sdform-vstate" alt="Required state or province or territory" />
+			State / Province / Territory
+		</td>
+		<td>
+			<img class="sd-formIcon" src="{{ output.icons['vform']['bzip'] }}" name="sdform-vzip" alt="Required zip or postal code" />
+			ZIP / Postal Code
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<input type="hidden" id="sd-b-country" name="sd_b_country" value="USCA"/>
+			<select tabindex="9" id="sd-b-state" name="sd_b_state" {{ applybstate }}>
+				<option value="">Select One</option>
+				{% include 'form-stateprovoptions.htm' with {'data': {'country': 'US', 'state': data['bstate'], 'statename':	data['bstatename']} } %}
+				{% include 'form-stateprovoptions.htm' with {'data': {'country': 'CA'} } %}
+			</select>
+		</td>
+		<td>
+			<input tabindex="10" type="text" size="15" maxlength="20" id="sd-b-zip" name="sd_b_zip" vcard_name="vCard.Home.Zipcode" value="{{ data['bzip'] }}" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['bphone'] }}" name="sdform-vphone" alt="Required phone number" />
+			Primary Phone<br/>Example: 123-555-5555
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="11" type="text" size="45" maxlength="20" id="sd-b-phone" name="sd_b_phone" vcard_name="vCard.Cellular" value="{{ data['bphone'] }}" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['bphone2'] }}" name="sdform-vphone2" alt="Additional phone extension or alternate number" />
+			Extension # / Alternate Phone
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="12" type="text" size="45" maxlength="20" id="sd-b-phone-2" name="sd_b_phone_2" vcard_name="vCard.Home.Phone" value="{{ data['bphone2'] }}" />
+		</td>
+	</tr>
+</table>

@@ -1,0 +1,29 @@
+{# suredone default category template #}
+{% include 'html-header.htm' with {'classpage': 'catalog-category-view'} %}
+{% include 'header.htm' %}
+<div class="ma-main-container col3-layout">
+	<div class="main">
+		<div class="breadcrumbs">
+			<ul>
+				{% set cat_breadcrumbs = sd_content('cat_breadcrumbs', false)|replace({'&gt;':'/'}) %}
+				{{ cat_breadcrumbs }}
+			</ul>
+		</div>
+		<div class="row-fluid">
+			{% include 'sidebar.htm' %}
+			<div class="col-wrapper span9">
+				<div class="row-fluid">
+					<div class="col-main">
+						<div class="page-title category-title">
+							<h1>{{ sd_title() }}</h1>
+						</div>
+						<div id="sd-content" class="category-products">
+							{% include 'results.htm' %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% include 'footer.htm' %}

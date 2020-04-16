@@ -1,0 +1,118 @@
+<table rules="none" cellpadding="0" cellspacing="0">
+	<col width="185"/>
+	<col width="10"/>
+	<col width="185"/>
+	<tr>
+		<td colspan="3">
+		{% if (sd_option('international_shipping') == 'on' or sd_option('site_forms_location_default') == 'INTL')  %}
+			<input type="radio" id="sd-ship-form" name="sd_ship_form" value="USCAUserShipping" onclick="sdAjaxCall('form=USCAUserShipping','sd-shippingForm');" tabindex="21" checked />
+			US / Canada Shipping Address<br />
+			<input type="radio" id="sd-ship-form" name="sd_ship_form" value="INTLUserShipping" onclick="sdAjaxCall('form=INTLUserShipping','sd-shippingForm');" />
+			International Shipping Address
+		{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img class="sd-formIcon" src="{{ output.icons['vform']['sfirstname'] }}" name="sdform-vsfname" alt="Required first name"/>
+			First Name
+		</td>
+		<td>
+			<img class="sd-formIcon" src="{{ output.icons['vform']['sminitial'] }}" name="sdform-vsminit" alt=""/> 
+			MI
+		</td>
+		<td>
+			<img class="sd-formIcon" src="{{ output.icons['vform']['slastname'] }}" name="sdform-vslname" alt="Required last name"/>
+			Last Name
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input tabindex="22" type="text" size="20" maxlength="70" id="sd-s-firstname" name="sd_s_firstname" value="{{ data['sfirstname'] }}"/>
+		</td>
+		<td>
+			<input tabindex="23" type="text" size="1" maxlength="1" id="sd-s-minitial" name="sd_s_minitial" value="{{ data['sminitial'] }}"/>
+		</td>
+		<td>
+			<input tabindex="24" type="text" size="19" maxlength="70" id="sd-s-lastname" name="sd_s_lastname" value="{{ data['slastname'] }}"/>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['sbusiness'] }}" name="sdform-vsbname" alt=""/>
+			Business Name / Care Of
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="25" type="text" size="45" maxlength="90" id="sd-s-business" name="sd_s_business" value="{{ data['sbusiness'] }}"/>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['saddress1'] }}" name="sdform-vsstreet1" alt="Required street address"/>
+			Street Address
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="26" type="text" size="45" maxlength="90" id="sd-s-address-1" name="sd_s_address_1" value="{{ data['saddress1'] }}"/>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['saddress2'] }}" name="sdform-vsstreet2" alt="Additional address information"/>
+			Apartment / Building / Floor / Room / Suite #
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="27" type="text" size="45" maxlength="90" id="sd-s-address-2" name="sd_s_address_2" value="{{ data['saddress2'] }}"/>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['scity'] }}" name="sdform-vscity" alt="Required city"/>
+			City
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="28" type="text" size="45" maxlength="80" id="sd-s-city" name="sd_s_city" value="{{ data['scity'] }}"/>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['sstate'] }}" name="sdform-vsstate" alt="Required state or province or territory"/>
+			State / Province / Territory
+		</td>
+		<td>
+			<img class="sd-formIcon" src="{{ output.icons['vform']['szip'] }}" name="sdform-vszip" alt="Required zip or postal code"/>
+			ZIP / Postal Code
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<input type="hidden" id="sd-s-country" name="sd_s_country" value="USCA"/>
+			<select tabindex="29" id="sd-s-state" name="sd_s_state">
+				<option value="">Select One</option>
+				{% include 'form-stateprovoptions.htm' with {'data': {'country': 'US', 'state': data['sstate'], 'statename':	data['sstatename']} } %}
+				{% include 'form-stateprovoptions.htm' with {'data': {'country': 'CA'} } %}
+			</select>
+		</td>
+		<td>
+			<input tabindex="30" type="text" size="15" maxlength="20" id="sd-s-zip" name="sd_s_zip" value="{{ data['szip'] }}"/>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<img class="sd-formIcon" src="{{ output.icons['vform']['sphone'] }}" name="sdform-vsphone" alt="Required phone number"/>
+			Shipping Phone<br/>Example: 123-555-5555
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input tabindex="31" type="text" size="45" maxlength="25" id="sd-s-phone" name="sd_s_phone" value="{{ data['sphone'] }}"/>
+		</td>
+	</tr>
+</table>

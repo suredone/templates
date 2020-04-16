@@ -1,0 +1,5 @@
+{# suredone custom widgets #}
+{% set sdwidgetscustom = sd_option('site_custom_widgets') %}
+{% if sdwidgetscustom %}
+	{{ sd_swaptags('add',sdwidgetscustom) }}
+{% endif %}

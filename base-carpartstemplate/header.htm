@@ -1,0 +1,227 @@
+{# suredone default headers #}
+<div class="header">
+	{% set sdheadercustom = sd_option('site_custom_header') %}
+	{% if sdheadercustom %}
+		{{ sd_swaptags('add', sdheadercustom) }}
+	{% else %}
+	<div class="row-fluid">
+		<div class="span5">
+			<h1 class="logo">
+			<a href="{{ sd_siteinfo('url') }}" title="HOME" class="logo">
+				<table style="" width="100%" border="0" cellpadding="0" cellspacing="0" height="100%">
+					 <tbody>
+						<tr>
+						    <td style="vertical-align: middle; text-align: center;" valign="center" width="100%" align="center">
+						      	{% if sd_is_secure %}
+								{{ sd_siteinfo('logo_secure') }}
+							{% else %}
+								{{ sd_siteinfo('logo') }}
+							{% endif %}
+						    </td>
+						</tr>
+					</tbody>
+				</table>
+			</a>
+			</h1>
+		</div>
+		<div class="span7">
+			<div class="quick-access">
+				<div class="quick-access-left">
+					<ul class="links">
+						<li class="first"><a href="{{ sd_acct_uri_ssl }}" title="My Account" class="top-link-cart">My Account</a></li>
+						<li><a href="/pages/about-us" title="About Us" class="top-link-cart">About Us</a></li>
+						<li><a href="/contact" title="Contact Us" class="top-link-cart">Contact Us</a></li>
+						<li><a href="{{ sd_cart_uri_ssl }}" title="My Cart" class="top-link-cart">My Cart</a></li>
+						<li><a href="{{ sd_cart_uri_ssl }}?do=checkout" title="Checkout" class="top-link-cart">Checkout</a></li>
+					</ul>
+					{% set search = output.search_html|replace({'onsubmit="return sdAjaxForm(this)">':'onsubmit="return sdAjaxForm(this)"><div class="form-search">'}) %}
+					{% set search = search|replace({'</form>':'</div></form>'}) %}
+					{% set search = search|replace({'id="search-box-input"':'id="search-box-input" placeholder="Search entire store here..."'}) %}
+					{{ search }}
+				</div>
+				<div class="quick-access-right">
+					<div class="top-cart-wrapper">
+						<div class="top-cart-contain">
+							<!--
+							<script type="text/javascript">
+								$jq(document).ready(function () {
+									var enable_module = $jq('#enable_module').val();
+									if (enable_module == 0) return false;
+								})
+							</script>
+							-->
+							<div id="mini_cart_block">
+								<div class="block-cart mini_cart_ajax">
+									<div class="block-cart">
+										<span class="top-cart-title"></span>
+										{% set totals = sd_carttotals() %}
+										{% if totals %}
+											<a href="{{ sd_cart_uri_ssl }}">
+                                                <span class="top-cart-price">
+                                                    {% if output.cart and output.cart['index'] %}
+                                                        {{ output.cart['index'] }}
+                                                    {% else %}
+                                                        0
+                                                    {% endif %}
+                                                     - items(s)
+                                                </span>
+                                            </a>
+										{% else %}
+                                            <a href="{{ sd_cart_uri_ssl }}">
+                                                <span class="top-cart-price">0 - items</span>
+                                            </a>
+										{% endif %}
+										<div class="top-cart-content">
+											{% if output.cart %}
+											{% set itemtotal = 0 %}
+												<ol id="cart-sidebar" class="mini-products-list">												
+												{% for i in range(low=1, high=output.cart['index'], step=1) %}
+													{% if (output.cart[i]['qty'] == 0) %}
+														{# continue #}
+													{% else %}
+														{% if output.cart[i]['guid'] %}
+															{%  set sku = output.cart[i]['guid'] %}
+														{% else %}
+															{%  set sku = output.cart[i]['sku'] %}
+														{% endif %}
+					
+														{% if output.cart[i]['secure_media'] %}
+															{% set media = output.cart[i]['secure_media'] %}
+														{%  else %}
+															{%  set media = output.cart[i]['media'] %}
+														{% endif %}
+					
+														{% set totalprice = (output.cart[i]['qty'] * output.cart[i]['sdprice']) %}
+														<li class="item">
+															{% if output.cart[i]['galleryuri'] %}
+																<a href="{{ sd_seturl(output.cart[i]['galleryuri'], 'gallery', 'absolute') }}" title="{{ sku }} Gallery">
+																	<img alt="{{ output.cart[i]['title'] }}" src="{{ media }}" width="50" height="50" />
+																</a>
+															{% else %}
+																<img alt="{{ output.cart[i]['title'] }}" src="{{ media }}" width="50" height="50" />
+															{% endif %}
+															<div class="product-details">
+																<p class="product-name"><a href="{{ sd_seturl(output.cart[i]['uri'], 'item') }}">{{ output.cart[i]['title'] }}</a></p>
+																x <strong>{{ output.cart[i]['qty'] }}</strong>
+																<span class="price">{{ sd_currency(false) ~ totalprice|number_format(2) }}</span>
+															</div>
+														</li>
+														{% set itemtotal = itemtotal + totalprice %}
+													{% endif %}
+												{% endfor %}
+												</ol>
+												<div class="top-subtotal">{{ sd_carttotalslabel('subtotal') }}: <span class="price">{{ sd_currency(false) ~ itemtotal|number_format(2) }}</span></div>
+												<div class="actions">
+													<a class="view-details" href="{{ sd_cart_uri_ssl }}?do=checkout">
+                                                        <span>Checkout</span>
+                                                    </a>
+												</div>
+												{% else %}
+												<p class="empty">You have no items in your shopping cart.</p>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="ma-nav-mobile-container hidden-desktop">
+	<div class="navbar">
+		<div id="navbar-inner" class="navbar-inner navbar-inactive">
+			<a class="btn btn-navbar">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+			<span class="brand">Category</span>
+			<ul id="ma-mobilemenu" class="mobilemenu nav-collapse collapse">
+				{% set catsMenu = sd_categories() %}
+
+				{% set newCats = [] %}
+				{% set newChilds = [] %}
+				{% for cat in catsMenu %}
+					{% if cat.level < 2 %}
+						{% set newCat = {(cat.cid) : (cat.navorder)} %}
+						{% set newCats = newCats + newCat %}
+					{% else %}
+						{% if newChilds[(cat.parenturi)] %}
+							{% set temp = newChilds[(cat.parenturi)] %}
+							{% set temp = temp + ({(cat.cid) ~ '' : (cat.navorder)})%}
+							{% set newChilds = newChilds|merge({(cat.parenturi): temp}) %}
+						{% else %}
+							{% set newChilds = newChilds + ({(cat.parenturi) : ({(cat.cid) ~ '' : (cat.navorder)})}) %}
+						{% endif %}
+					{% endif %}
+				{% endfor %}
+			
+			
+				{% for catID, val in newCats|sort %}
+				<li class="level-{{ catsMenu[catID].cid }}">
+					<a href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">
+						<span>{{ catsMenu[catID].navtitle ? catsMenu[catID].navtitle : catsMenu[catID].title }}</span>
+					</a>
+					{% if newChilds[(catsMenu[catID].uri)] %}
+					<ul class="menu-sub-cat-header">
+						<li class="level-{{ catsMenu[catID].cid }}">
+						{% for catChildID, val in newChilds[(catsMenu[catID].uri)]|sort %}
+							<a href="{{ sd_seturl(catsMenu[catChildID].uri, 'category') }}"><span>{{ catsMenu[catChildID].navtitle ? catsMenu[catChildID].navtitle : catsMenu[catChildID].title }}</span></a>
+						{% endfor %}
+						</li>
+					</ul>
+					<span class="head">
+						<a href="javascript:void(0)"></a>
+					</span>
+					{% endif %}
+				</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+</div>
+<div class="ma-nav-container visible-desktop">
+	<ul id="nav">
+		<li class="home"><a href="{{ sd_siteinfo('url') }}" title="Home"><span>Home</span></a></li>
+		{% set catsMenu = sd_categories() %}
+
+		{% set newCats = [] %}
+		{% set newChilds = [] %}
+		{% for cat in catsMenu %}
+			{% if cat.level < 2 %}
+				{% set newCat = {(cat.cid) : (cat.navorder)} %}
+				{% set newCats = newCats + newCat %}
+			{% else %}
+				{% if newChilds[(cat.parenturi)] %}
+					{% set temp = newChilds[(cat.parenturi)] %}
+					{% set temp = temp + ({(cat.cid) ~ '' : (cat.navorder)})%}
+					{% set newChilds = newChilds|merge({(cat.parenturi): temp}) %}
+				{% else %}
+					{% set newChilds = newChilds + ({(cat.parenturi) : ({(cat.cid) ~ '' : (cat.navorder)})}) %}
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	
+	
+		{% for catID, val in newCats|sort %}
+		<li class="level-{{ catsMenu[catID].cid }}">
+			<a href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">
+				<span>{{ catsMenu[catID].navtitle ? catsMenu[catID].navtitle : catsMenu[catID].title }}</span>
+			</a>
+			{% if newChilds[(catsMenu[catID].uri)] %}
+			<ul class="menu-sub-cat-header">
+				<li class="level-{{ catsMenu[catID].cid }}">
+				{% for catChildID, val in newChilds[(catsMenu[catID].uri)]|sort %}
+					<a href="{{ sd_seturl(catsMenu[catChildID].uri, 'category') }}"><span>{{ catsMenu[catChildID].navtitle ? catsMenu[catChildID].navtitle : catsMenu[catChildID].title }}</span></a>
+				{% endfor %}
+				</li>
+			</ul>
+			{% endif %}
+		</li>
+		{% endfor %}
+	</ul>
+{% endif %}
+</div>

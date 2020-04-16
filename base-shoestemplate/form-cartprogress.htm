@@ -1,0 +1,11 @@
+{% if data.progress == 1 %}
+{% elseif data.progress == 2 %}
+<div class="page-title title-buttons">
+	<h1>Checkout</h1>
+</div>
+{% elseif data.progress == 3 %}
+<div class="page-title title-buttons">
+	<h1>Order Complete</h1>
+</div>
+{% else %}
+{% endif %}

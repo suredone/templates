@@ -1,0 +1,126 @@
+{% set site_url = sd_siteinfo('url', false) %}
+{% set site_logo = sd_siteinfo('logo_secure_url', false) %}
+
+{% if data['oid'] %}
+	{% set items = data['items']|split('*') %}
+	{% set names = data['names']|split('*') %}
+	{% set titles = data['titles']|split('*') %}
+	{% set prices = data['prices']|split('*') %}
+	{% set qtys = data['qtys']|split('*') %}
+	{% set imgs = data['media']|split('*') %}
+
+	{% if (data['uris']) %}
+		{% set uris = data['uris']|split('*') %}
+	{% endif %}
+
+	{% set weights = data['weights']|split('*') %}
+	{% set order_titles = [] %}
+	{% set order_medias = [] %}
+	{% set order_items = [] %}
+	{% set order_invvars = [] %}
+
+	{% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'), true) : [] %}
+	{% set uservars = sd_option('user_field_names') ? sd_option('user_field_names')|split('*') : [] %}
+
+	
+	{% for i in range(low=0, high=(items|length - 1), step=1) %}
+		
+		{% set skus = items[i]|split('|') %}
+		{% set sku = skus[1] ? skus[1] : skus[0] %}
+		{% set guid = skus[1] ? true : false %}
+		{% set media = sd_securemedia(imgs[i]) %}
+
+		{% if (uris) %}
+			{% set urls = uris[i]|split('|') %}
+			{% set url = sd_seturl(urls[0], 'item', 'absolute') %}
+		
+			{% if urls[1] %}
+				{% set gurl = sd_seturl(urls[1], 'gallery', 'absolute') %}
+			{% endif %}
+
+		{% endif %}
+
+		{# custom fields #}
+		{% if ((data['shipauth'] or data['shiplabs']) and shipopts['invoice_fields'] and data['item'][i]) %}
+			{% for ifr in shipopts['invoice_fields'] %}
+				{% set order_invvars = order_invvars|merge([ { name: ifr, value: data['item'][i][ifr] } ]) %}
+			{% endfor %}
+		{% endif %}
+
+		{# media #}
+		{% if gurl %}
+			{% set order_medias = order_medias|merge(['<a href="' ~ gurl ~ '" target="_blank"><img class="sd-cartImage" src="' ~ media~ '" alt="' ~ sku ~'" /></a>']) %}
+		{% elseif media %}
+			{% set order_medias = order_medias|merge(['<a href="' ~ sd_getmediafull(media) ~ '" target="_blank"><img class="sd-cartImage" src="' ~ media ~ '" alt="' ~ sku ~ '" /></a>']) %}
+		{% endif %}
+
+		{# titles #}
+		{% if (url) %}
+			{% set order_titles = order_titles|merge(['<a href="' ~ url ~ '" target="_blank">' ~ titles[i] ~ '</a>']) %}
+		{% else %}
+			{% set order_titles = order_titles|merge(titles[i]) %}
+		{% endif %}
+
+		{% set editorurl = guid ? sd_seturl('editor?type=items&do=edit&guid=' ~ sku, 'admin', '', true) : sd_seturl('editor?type=items&do=edit&sku=' ~ sku, 'admin', '', true) %}
+		{% set order_items = order_items|merge(['<a href="' ~ editorurl ~ '">' ~ sku ~ '</a>']) %}
+	{% endfor %}
+
+	{# need info #}
+	{# $tracking_label #}
+	{% if (data['carrier'] and data['tracking']) %}
+		{% set tracking_label = '<div class="sd-invoiceTracking">Tracking: ' ~ (data['carrier']|upper) ~ ' ' ~ data['tracking'] ~ '</div>' %}
+	{% endif %}
+
+	{% set shipservice = (output.shipping_services_labels[data['shipservice']]) ? output.shipping_services_labels[data['shipservice']] : data['shipservice'] %}
+
+	{% if not get_reqs('view') %}
+	<tr class="sd-cartRow">
+		<td class="sd-cartOrder">
+			<a href="{{ sd_seturl('orders?do=edit&order=' ~ data['order'], 'admin', '', true) }}">
+				{{ data['order'] }}
+			</a>
+		</td>
+		<td class="sd-cartMedia">{{ order_medias|join('<hr />') }}</td>
+		<td class="sd-cartSku">{{ order_items|join('<hr />') }}</td>
+		<td class="sd-cartQty">{{ qtys|join('<hr />') }}</td>
+		<td class="sd-cartTitle">{{ order_titles|join('<hr />') }}</td>
+		<td class="sd-cartWeight">{{ weights|join('<hr />') }}</td>
+		<td class="sd-cartShipservice">{{ shipservice }}</td>
+		<td class="sd-cartCustomer">
+			{% include 'form-shippingaddress.htm' with{'data':data} %}
+			{% if data['comments'] %}
+			<span class="sd-invoiceComments">Comments: {{ data['comments'] }}</span>
+			{% endif %}
+		</td>
+		<td>
+			{% for invvar in order_invvars %}
+				{{ invvar.value|join('<hr />') }}
+			{% endfor %}
+		</td>
+	</tr>
+	{% else %}
+		{# custom picklist views #}
+		{% set viewvars = get_reqs('view')|split(',') %}
+		{% for view in viewvars %}
+			{% if view in ['medias', 'items'] %}
+				{% if view == 'medias' %}
+					<span class="sd-{{ view }}">{{ order_medias|join('<br />') }}</span>
+				{% else %}
+					<span class="sd-{{ view }}">{{ order_items|join('<br />') }}</span>
+				{% endif %}
+			{% elseif data[view] %}
+				{% if view == 'shipservice' %}
+					<span class="sd-{{ view }}">{{ ( output.shipping_services_labels[data[view]] ? output.shipping_services_labels[data[view]] : data[view]) }}</span>
+				{% else %}
+					<span class="{{ view }}">{{ data[view]|replace({'*': '<br />'}) }}</span>
+				{% endif %}
+			{% elseif order_invvars[view] %}
+				<span class="sd-{{ view }}">{{ order_invvars[view]|join('<br />') }}</span>
+			{% elseif view == 'customer' %}
+				<span class="sd-{{ view }}">
+					{% include 'form-shippingaddress.htm' with {'data': data} %}
+				</span>
+			{% endif %}
+		{% endfor %}x
+	{% endif %}
+{% endif %}

@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+    <title>{{ sd_htmltitle() }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset={{ sd_siteinfo('charset') }}" />
+    <meta name="generator" content="SureDone {{ sd_siteinfo('version') }}" />
+    {% if sd_store_verifications is not empty %}{{ sd_store_verifications }}{% endif %}
+    <meta name="robots" content="{{ sd_metarobots() }}" />
+    <meta name="GOOGLEBOT" content="{{ sd_metarobots() }}" />
+    <meta name="description" content="{{ sd_metadescription() }}" />
+    <link rel="canonical" href="{{ sd_canonical() }}" />
+    {{ sd_feed_links }}
+    {{ sd_store_favicons }}
+    {{ sd_store_stylesheets }}
+    {{ sd_store_javascripts }}
+    <script type="text/javascript">
+{% if is_secure_services %}
+{# cross site functionality between custom domain and suredone #}
+var sdcross_cart='{{ sd_cart_uri_ssl }}';
+var sdcross_acct='{{ sd_acct_uri_ssl }}';
+{% endif %}
+{# fix ssl warning on chrome with forms pointing to non ssl search #}
+{% if sd_search_uri != sd_search_uri_ssl %}
+var sdsearch_uri='{{ sd_search_uri }}';
+var sdsearch_ssl='{{ sd_search_uri_ssl }}';
+{% endif %}
+{% if is_custom_icon %}
+{# custom icon directory #}
+var sdicons_location = '{{ sd_option('icon_directory') }}';
+var sdicons_extension = '{{ sd_option('icon_extension') }}';
+{% endif %}
+{% if sd_option('site_cart_card_countries') is not empty %}
+var sdcards_countries = "{{ sd_option('site_cart_card_countries') }}".split('*');
+var sdcards_checkoutpaypal = '{{ output.buttons['checkout_paypal'] }}';
+{% endif %}
+{% if sd_option('image_size_id_small') != '-tms' %}
+var sdimage_small = '{{ sd_option('image_size_id_small') }}';
+{% endif %}
+{% if sd_option('image_size_id_medium') != '-pics' %}
+var sdimage_small = '{{ sd_option('image_size_id_medium') }}';
+{% endif %}
+{% if sd_option('image_size_id_large') != '-photos' %}
+var sdimage_small = '{{ sd_option('image_size_id_large') }}';
+{% endif %}
+    </script>
+    {% if sd_option('site_tracking') == 'on' and sd_option('site_tracking_google_account') is not empty  %}
+    {% set gaDomain = is_ga_suredone ? 'suredone.com' : 'auto' %}
+    <script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-{{ sd_siteinfo('google_analytics') }}', '{{ gaDomain }}');
+ga('set', 'forceSSL', true);
+ga('require', 'displayfeatures');
+ga('require', 'ec');{{ sd_ga_tracking_code }}
+ga('send', 'pageview');
+    </script>
+    {% endif %}
+    {% if sd_option('site_custom_htmlhead') is not empty %}
+    {{ sd_swaptags('add',sd_option('site_custom_htmlhead')) }}
+    {% endif %}
+    {% if output.request_uri == '/' %}
+    <script type="application/ld+json">
+        {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "url": "{{ sd_seturl('','home') }}",
+        "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ sd_seturl(sd_option('site_uri_search'),'service') }}?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+        }
+        }
+    </script>
+    {% endif %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/sd-style-white.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/jquery.bxslider.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/bootstrap.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/bootstrap-theme.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/font-awesome.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/styles.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/megamenu.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/vmegamenu.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/print.css" media="print" />
+
+    <!--<script type="text/javascript" src="//s3.amazonaws.com/assets.suredone.com/2294/scripts/noconflict.js"></script>-->
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/bootstrap.js"></script>
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/jquery.bxslider.js"></script>
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/jquery.ddslick.min.js"></script>
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/megamenu.js"></script>
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/themevast.js"></script>
+
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/jquery.flexslider-min.js"></script>
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/jquery.nivo.slider.js"></script>
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/styles-ie.css" media="all" />
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/html5shiv.js"></script>
+    <script type="text/javascript" src="https://s3.amazonaws.com/assets.suredone.com/2294/scripts/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/mobileresponsive.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/imageslider.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/mobileresponsive.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/custom.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.suredone.com/2294/css/branding.css" />
+</head>
+<body>
+{% if is_ie_check %}
+<script type="text/javascript">
+$(document).ready(function () {
+    if (typeof $.cookie != undefined && !$.cookie('sdie_check')){
+        $.cookie('sdie_check', '1');
+        var url = 'https://{{ sd_option('site_user') }}.suredone.com/contact';
+        $('body').append('<iframe src="'+url+'" frameborder="0" width="1" height="1" scrolling="no"></iframe>');
+    }
+});
+</script>
+{% endif %}
+{% if is_sd_preview %}
+<div id="sd-site-preview" style="text-align:center;font-weight:bold;font-size:16px;background-color:black;color:red;height:20px;padding:10px;border:solid 1px #DEDEDE;border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px 6px;-moz-box-shadow:inset 0 -2px 15px #E0E0E0;-webkit-box-shadow:inset 0 -2px 15px #E0E0E0;box-shadow:inset 0 -2px 15px #E0E0E0;">THIS IS A PREVIEW ONLY</div>
+{% endif %}
+<div class="wrapper">
+	<noscript>
+		<div class="global-site-notice noscript">
+			<div class="notice-inner">
+				<p>
+					<strong>JavaScript seems to be disabled in your browser.</strong><br />
+					You must have JavaScript enabled in your browser to utilize the functionality of this website.                </p>
+			</div>
+		</div>
+	</noscript>
+	<div class="page">
+		<div class="container">
+			<div class="container-inner">

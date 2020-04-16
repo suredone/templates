@@ -1,0 +1,9 @@
+<div id="sd-login">
+   <div class="page-title">
+      <h1>{{ sd_option('business_name') }} Account</h1>
+   </div>
+   <span id="sd-acctNotice">{{ sd_notice() }}</span>
+   <a href="{{ output.accounts_uri }}">
+       <img src="{{ sd_is_secure ? sd_securemedia(output.icons['next']) : output.icons['next'] }}" alt="Continue" class="sd-formButton" />
+   </a>
+</div>

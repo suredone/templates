@@ -1,0 +1,53 @@
+{# suredone default account/login template #}
+{% set doaction = output.doaction %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div id="customer-login">
+    <div class="title-breadcrumb">
+        <div class="container">
+            <div class="col-md-12">
+                <div class="page-listing-title">
+                    <h2 class="title">{{ sd_title('page') }}</h2>
+                    <!-- Begin breadcrumb -->
+                </div>
+                <div class="breadcrumb clearfix">
+                    {{ sd_content('cat_breadcrumbs') }}
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="container">
+           <div class="row">
+
+                {# create or edit account #}
+                {% if doaction == 'create-account' or (doaction == 'edit-account' and sd_is_logged_in) %}
+                    {% include 'accounts-edit-create.htm' %}
+
+                    {# signed-in #}
+                {% elseif doaction == 'sign-in' and sd_is_logged_in %}
+                    {% include 'accounts-sign-in.htm' %}
+
+                    {# account created #}
+                {% elseif doaction == 'account-created' %}
+                    {% include 'accounts-created.htm' %}
+
+                    {# verify email #}
+                {% elseif doaction == 'verify' %}
+                    {% include 'accounts-verify.htm' %}
+
+                    {# forgot password #}
+                {% elseif doaction == 'forgot-password' %}
+                    {% include 'accounts-recover.htm' %}
+
+                    {# delete account #}
+                {% elseif doaction == 'delete-account' and sd_is_logged_in %}
+                    {% include 'accounts-delete.htm' %}
+
+                    {# account login #}
+                {% else %}
+                    {% include 'accounts-login.htm' %}
+                {% endif %}
+            </div>
+    </div>
+</div>
+{% include 'footer.htm'  %}

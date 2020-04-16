@@ -1,0 +1,95 @@
+{% if (sd_option('site_shipping') == 'on' and sd_option('shipping_mode') != 'fixed' and sd_cartdimensions()) %}
+	{% if (get_reqs('sd_ship_location') == 'OtherAddress') %}
+		{% set data = data|merge({'select_other': 'selected'}) %}
+	{% endif %}
+    
+	{% if get_reqs('ship_form') %}
+		{% set ship_form = get_reqs('ship_form') %}
+    {% else %}
+        {% set ship_form = output.buttons['form_cart_shipping'] %}
+    {% endif %}
+        
+        {% if get_reqs('bill_form') %}
+	        {% set bill_form = get_reqs('bill_form') %}
+	    {% else %}
+            {% set bill_form = output.buttons['form_cart_billing'] %}
+        {% endif %}
+
+
+	    {% if get_reqs('sd_country') %}
+		    {% set country = get_reqs('sd_country') %}
+	    {% else %}
+		    {% if (data['select_other']) %}
+			    {% set country = data['scountry'] %}
+		    {% else %}
+			    {% set country = data['bcountry'] %}
+		    {% endif %}
+	    {% endif %}
+
+        {% if (not country and not sd_is_ajax) %}
+            {% set country = sd_option('site_country') %}
+        {% endif %}
+        
+        {% if (country == 'USCA') %}
+            {%  set country = '' %}
+        {% endif %}
+
+	{% set default_dom = sd_option('shipping_service_default_domestic') %}
+	{% set default_int = sd_option('shipping_service_default_international') %}
+
+	{% if (sd_option('business_country') == 'US') %}
+		{% if (((country and country != 'US') or (ship_form == 'INTLCartShipping' and data['select_other']) or (bill_form == 'INTLCartBilling' and not data['select_other'])) and output.shipping_services_international|length > 1) %}
+		<form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
+			<input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="international"/>
+			<select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
+			{% for service in output.shipping_services_international %}
+				{% if (service == default_int) %}
+					{% set selected = ' selected' %}
+				{% else %}
+					{% set selected = '' %}
+				{% endif %}
+				<option id="sd-shipint-{{ service }}" value="{{ service }}" {{ selected }}>{{ output.shipping_services_labels[service] }}</option>
+			{% endfor %}
+			</select>
+			<input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>
+		</form>
+		{% elseif ((country == 'US' or (ship_form == 'USCACartShipping' and data['select_other']) or (bill_form == 'USCACartBilling' and not data['select_other'])) and output.shipping_services_domestic|length > 1) %}
+		<form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
+			<input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="domestic"/>
+			<select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
+				{% for service in output.shipping_services_domestic %}
+					{% if (service == default_dom) %}
+						{% set selected = ' selected' %}
+					{% else %}
+						{% set selected = '' %}
+					{% endif %}
+					<option id="sd-shipdom-{{ service }}" value="{{ service }}" {{ selected }}>{{ output.shipping_services_labels[service] }}</option>
+				{% endfor %}
+			</select>
+			<input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>
+		</form>
+		{% else %}
+			{# sd_form = null #}
+		{% endif %}
+	{% else %}
+			{% if ((bill_form == 'WWWCartBilling' or ((ship_form == 'INTLCartShipping' or ship_form == 'USCACartShipping') and data['select_other'])
+			or ((bill_form == 'INTLCartBilling' or bill_form == 'USCACartBilling') and not data['select_other'])) and output.shipping_services_international|length > 1) %}
+			<form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
+				<input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="international"/>
+				<select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
+				{% for service in output.shipping_services_international %}
+					{% if (service == default_int) %}
+						{% set selected = ' selected' %}
+					{% else %}
+						{% set selected = '' %}
+					{% endif %}
+					<option value="{{ service }}" {{ selected }}>{{ output.shipping_services_labels[service] }}</option>
+				{% endfor %}
+				</select>
+				<input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>
+			</form>
+			{% else %}
+				{# sd_form = null #}
+			{% endif %}
+	{% endif %}
+{% endif %}

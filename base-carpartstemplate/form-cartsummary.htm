@@ -1,0 +1,55 @@
+{% if (data['index'] > 0) %}
+<table id="sd-cart-summary" rules="all">
+	<col width="50"/>
+	<col width="150"/>
+	<col width="25"/>
+	<col width="75"/>
+	{% for i in range(low=1, high=data['index'], step=1) %}
+		{% if (data[i]['qty'] == 0)  %}
+			{# continue #}
+		{% else %}
+			{% set sku = data[i]['guid'] ? data[i]['guid'] : data[i]['sku'] %}
+			{% set media = data[i]['secure_media'] ? data[i]['secure_media'] : data[i]['media'] %}
+			{% set totalprice = (data[i]['qty'] * data[i]['sdprice']) %}
+
+	<tr class="sd-cartItem sd-cartItem-{{ sku }}">
+		<td>
+			<img alt="{{ data[i]['title'] }}" src="{{ media }}"/>
+		</td>
+		<td>
+			{{ data[i]['title'] }}
+			<br/>
+			<span class="sd-cartSku">{{ sku }}</span>
+		</td>
+		<td class="sd-cartQty">
+			{{ data[i]['qty'] }}
+		</td>
+		<td>{{ sd_currency(false) ~ (totalprice|number_format(2)) }}</td>
+	</tr>
+			{% endif %}
+	{% endfor %}
+	
+	<tr class="sd-cartTotalsSummary">
+		<td colspan="4" class="sd-cartTotalsLabel">
+			<div id="sd-cart-totals">
+				{% include 'form-carttotals.htm' %}
+			</div>
+		</td>
+	</tr>
+
+	{% if (sd_option('site_shipping') == 'on' and sd_option('shipping_mode') != 'fixed') %}
+	<tr class="sd-cartShippingSummary">
+		<td colspan="4">
+			<div id="sd-cart-shipping">
+				{% include 'form-shippingservices.htm' with {'data':data} %}
+			</div>
+		</td>
+	</tr>
+	{% endif %}
+	{% if sd_option('site_cart_notice_text') %}
+	<tr class="sd-cartCustomSummary">
+		<td colspan="4" id="sd-cartCustom">{{ sd_option('site_cart_notice_text') }}</td>
+	</tr>
+	{% endif %}
+</table>
+{% endif %}

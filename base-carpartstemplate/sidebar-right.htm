@@ -1,0 +1,56 @@
+<div class="col-right sidebar span4">
+{% set bestsellers = sd_getresults('id:>0','both',null,'popular') %}
+{% if bestsellers %}
+<div class="ma-bestseller-products block">
+    <div class="ma-bestseller-product-title block-title"><strong>Bestseller Products</strong></div>
+    <div class="bestseller-category block-content">
+        <ul class="bestseller-product">
+{% for key, row in bestsellers %}
+    {% if (key == 'all' or key == 'time') %}
+        {# continue #}
+    {% else %}
+        {% spaceless %}
+            {% if row['guid'] %}
+                {% set sku = row['guid'] %}
+            {% else %}
+                {% set sku = row['sku'] %}
+            {% endif %}
+
+            {% set media = sd_parsemedia(row['media']) %}
+
+            {% if (is_image(media[0])) %}
+                {% set image_url = sd_getmediathumb(media[0]) %}
+
+                {% if media[1] %}
+                    {% set alt_text = media[1]|escape %}
+                {% else %}
+                    {% set alt_text = row['title']|escape %}
+                {% endif %}
+
+                {% if (sd_option('image_thumb_titles') == 'on') %}
+                    {#
+                    {% set alt_text = alt_text ~ '" title="' ~ alt_text %}
+                    #}
+                {% endif %}
+            {% else %}
+                {% set image_url = output.icons['no_thumb'] %}
+                {% set alt_text = '' %}
+            {% endif %}
+
+            {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
+
+        {% endspaceless %}
+            <li class="item">
+                <a href="{{ sd_seturl(row['uri'], 'item') }}" title="{{ alt_text }}">
+                    <img src="{{ image_url }}" alt="{{ alt_text }}" />
+                </a>
+                <h2 class="product-name"><a href="{{ sd_seturl(row['uri'], 'item') }}" title="{{ alt_text }}">{{ row['title'] }}</a></h2>
+                <div class="price-box">{{ sd_price(false, true, true, row) }}</div>
+            </li>
+    {% endif %}
+{% endfor %}
+		</ul>			
+    </div>
+</div>
+{% endif %}
+</div>

@@ -1,0 +1,151 @@
+{# suredone default home page template #}
+{% set customhome = sd_option('site_custom_home') %}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+
+{% include 'sidebar.htm' %}
+
+<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 col-right-1">
+	<div class="col-main">
+    {% if customhome %}
+        {{ sd_swaphome(customhome) }}
+    {% else %}
+        <h1>{{ sd_content('title_link') }}</h1>
+        <div id="sd-newest-blogs">{{ sd_content('newest_blogs') }}</div>
+        <div id="sd-release-preview">{{ sd_content('release_preview') }}</div>
+        <div id="sd-content">
+            {% if sd_is_get %}
+                {{ sd_content('results') }}
+            {% elseif sd_option('site_releases_preview_interval') %}
+                <h3><a href="{{ sd_seturl('','home') }}?show" onclick="return sdAjaxCall('show=new')">Show All New Products</a></h3>
+            {% endif %}
+        </div>
+    {% endif %}
+
+	{% set featured = sd_getresults('featured:=1') %}
+	{% if featured %}
+
+
+    <div class="std"><div class="home-content">
+		    <div class="newproductslider">
+			    <div class="newproduct-title">
+				    <div class="bg-title"><h2 class="title">Featured Products</h2></div>
+			    </div>
+
+
+				<ul class="products-grid pdt-list zoomOut play">
+				{% for key, row in featured %}
+					{% if (key == 'all' or key == 'time') %}
+					{# continue #}
+					{% else %}
+						{% spaceless %}
+						{% if row['guid'] %}
+							{% set sku = row['guid'] %}
+						{% else %}
+							{% set sku = row['sku'] %}
+						{% endif %}
+
+						{% set media = sd_parsemedia(row['media']) %}
+
+						{% if (is_image(media[0])) %}
+							{% set image_url = sd_securemedia(media[0]) %}
+
+							{% if media[1] %}
+								{% set alt_text = media[1]|escape %}
+							{% else %}
+								{% set alt_text = row['title']|escape %}
+							{% endif %}
+
+							{% if (sd_option('image_thumb_titles') == 'on') %}
+								{#
+								{% set alt_text = alt_text ~ '" title="' ~ alt_text %}
+								#}
+							{% endif %}
+						{% else %}
+							{% set image_url = output.icons['no_thumb'] %}
+							{% set alt_text = '' %}
+						{% endif %}
+
+						{% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
+                    
+						{% endspaceless %}
+					<li class="item item-animate">
+						<div class="item-inner">
+							<div class="box-images">
+								<a href="{{ sd_seturl(row['uri'], 'item') }}" title="{{ alt_text }}" class="product-image">
+									<span class="">
+										<img alt="{{ alt_text }}" width="195" class="row-data-img" src="{{ image_url }}"/>
+									</span>
+								</a>
+							</div>
+							<div class="product-shop">
+								<div class="f-fix">
+									<h2 class="product-name"><a href="{{ sd_seturl(row['uri'], 'item') }}" title="{{ alt_text }}">{{ row['title'] }}</a></h2>
+									<div class="ratings">
+										{{ sku }}
+									</div>
+									<div class="price-box">
+										<span class="regular-price" >
+                                            <span class="price">
+	                                            {{ sd_price(false, true, true, row) }}
+                                            </span>
+										</span>
+									</div>
+									<div class="actions">
+										<a class="button btn-cart" href="{{ sd_seturl(row['uri'], 'item') }}"><span><span>View Details</span></span></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					{% endif %}
+				{% endfor %}
+				</ul>
+			    <script type="text/javascript">
+				    jQuery(document).ready(function($){
+					    (function(selector){
+						    var $content = $(selector);
+						    var $slider  = $('.products-grid', $content);
+						    var slider 	 = $slider.bxSlider({
+							    auto: 0, speed: 600, controls: 1, pager: 0, maxSlides: 4, slideWidth: 195, 				moveSlides:1,
+							    slideMargin: 30,
+							    autoHover: true, // stop while hover <=> slider.stopAuto(); + slider.startAuto();
+						    })
+
+					    })(".newproductslider");
+				    });
+			    </script>
+			</div>
+	    </div></div>
+		{% endif %}
+		<!--
+		<section>
+			<div id="block-subcribe">
+				<div class="block block-subscribe">
+					<h3 class="subcribe-title">newsletter</h3>
+					<div class="content-subcribe">
+						<div class="form-subscribe-header">
+							<p>This is Photoshop's version  of Lorem Ipsum. Proin gravida nibh vel velit auctor aliquet.</p>
+							<p>Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh.</p>
+						</div>
+						<div class="input-box">
+							{{ output.emaillist_html }}
+						</div>
+					</div>
+					<script type="text/javascript">jQuery(window).scroll(function () {
+							if (jQuery(this).scrollTop() > 1650) {
+								jQuery('.block-subscribe').addClass("fix-subcribe");
+							} else {
+								jQuery('.block-subscribe').removeClass("fix-subcribe");
+							}
+						});
+					</script>
+				</div>
+			</div>
+		</section>
+	-->
+    {% include 'widgets.htm' %}
+	</div>
+</div>
+
+{% include 'footer.htm' %}

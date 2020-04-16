@@ -181,6 +181,8 @@
     <div>
         <div id="sd-submitBlock">
             {% if (steps) %}
+            <a href="{{ output.cart_suri }}" class="sd-formButton">Return to cart</a>
+
             <input alt="Pay Now" class="sd-formButton" src="" tabindex="35" id="sd-formSubmitButton" type="submit" value="Pay Now"/>
             {% else %}
             <input alt="Pay Now" class="sd-formButton" tabindex="35" id="sd-formSubmitButton" type="image" src="{{ sd_securemedia(output.icons['pay_now_cards']) }}" value="Pay Now"/>

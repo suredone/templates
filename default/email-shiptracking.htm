@@ -36,19 +36,19 @@ Order# {{ data['order'] }}<br/><br/>
 
             {% if carrier == 'FEDEX' %}
                 <span>
-                    <a href="https://www.fedex.com/fedextrack/?tracknumbers={{ trk }}" target="_blank">{{ row['shiptracking'] }}</a>
+                    <a href="https://www.fedex.com/fedextrack/?tracknumbers={{ row['shiptracking'] }}" target="_blank">{{ row['shiptracking'] }}</a>
                 </span><br />
             {% elseif carrier == 'UPS' %}
                 <span>
-                    <a href="https://wwwapps.ups.com/WebTracking/processInputRequest?track.x=0&track.y=0&InquiryNumber1={{ trk }}" target="_blank">{{ row['shiptracking'] }}</a>
+                    <a href="https://wwwapps.ups.com/WebTracking/processInputRequest?track.x=0&track.y=0&InquiryNumber1={{ row['shiptracking'] }}" target="_blank">{{ row['shiptracking'] }}</a>
                 </span><br />
             {% elseif carrier == 'USPS' %}
                 <span>
-                    <a href="https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1={{ trk }}" target="_blank">{{ row['shiptracking'] }}</a>
+                    <a href="https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1={{ row['shiptracking'] }}" target="_blank">{{ row['shiptracking'] }}</a>
                 </span><br />
             {% else %}
                 <span>
-                    <a href="https://www.google.com/#q={{ trk }}" target="_blank">{{ row['shiptracking'] }}</a>
+                    <a href="https://www.google.com/#q={{ row['shiptracking'] }}" target="_blank">{{ row['shiptracking'] }}</a>
                 </span><br />
             {% endif %}
         {% endif %}

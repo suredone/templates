@@ -1,8 +1,8 @@
 {# suredone default cart template #}
 {% set doaction = output.doaction %}
+{% include 'html-header.htm' %}
 
 {% if sd_is_cart_set and doaction in ['checkout-customer', 'checkout-payment'] %}
-{% include 'html-header.htm' %}
     <div id="custom-checkout">
         <div id="mast-brand">
             <a href="{{ sd_siteinfo('url') }}" title="HOME">
@@ -21,16 +21,16 @@
                 <div id="checkout-progress-wrapper">
                     <div class="block block-progress opc-block-progress">
                         <div class="block-content">
-                            {% include 'form-cartsummary-div.htm' with {'data': output.cart,'steps': 'true'} %}
+                            {% include 'form-cartsummary-div.htm' with {'data': output.cart, 'steps': 'true'} %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{% include 'footer.htm' with {'steps': 'true'} %}
 {# paypal express checkout #}
 {% elseif sd_setsecure('cart') and sd_function_last == 'paypal-express-checkout' and doaction == 'paypal-checkout' %}
-{% include 'html-header.htm' %}
 <div id="custom-checkout">
     <div id="mast-brand">
         <a href="{{ sd_siteinfo('url') }}" title="HOME">
@@ -42,12 +42,12 @@
         </a>
     </div>
     <div id="sd-checkout-contents" class="pp-checkout-custom">
-        {% include 'form-cartsummary-div.htm' with {'data': output.cart} %}
+        {% include 'form-cartsummary-div.htm' with {'data': output.cart, 'steps': 'true'} %}
         {% include 'form-paypalcheckout-div.htm' with {'data':output.form_data } %}
     </div>
 </div>
+{% include 'footer.htm' with {'steps': 'true'} %}
 {% else %}
-    {% include 'html-header.htm' %}
     {% include 'header.htm' %}
     <div id="sd-site-body" class="sd-cart-body">
     {# cart progress bar #}
@@ -61,7 +61,7 @@
         {# include 'form-cartcontents.htm' with {'data': output.cart} #}
         {# the above can be used and uses divs instead of tables - this version does not have styles applied on default css stylesheet #}
         <div id="sd-paymentOptions">
-            {{ output.buttons['checkout_cards'] }}
+            {{ output.buttons['checkout_steps'] }}
             {{ output.buttons['checkout_paypal'] }}
             {{ output.buttons['continue_shopping'] }}
             {{ output.buttons['create_account'] }}

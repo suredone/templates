@@ -6,8 +6,6 @@
 {% endfor %}
 
 {% if sd_form %}
-    {{ sd_admin_forms('ShippingProcessAll', data, true, true) }}
-
     {% set sd_form = false %}
     {% for  key, order in data %}
         {% if (key != 'all' and key != 'time' and key != 'type') %}

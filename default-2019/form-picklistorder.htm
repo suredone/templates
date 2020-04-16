@@ -40,7 +40,7 @@
         {% endif %}
 
         {# custom fields #}
-        {% if ((data['shipauth'] or data['shiplabs']) and shipopts['invoice_fields'] and data['item'][i]) %}
+        {% if (sd_is_admin and shipopts['invoice_fields'] and data['item'][i]) %}
             {% for ifr in shipopts['invoice_fields'] %}
                 {% set order_invvars = order_invvars|merge([ { name: ifr, value: data['item'][i][ifr] } ]) %}
             {% endfor %}

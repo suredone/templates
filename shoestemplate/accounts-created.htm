@@ -1,0 +1,16 @@
+<div id="sd-login">
+    <div class="alert alert-danger">
+        <i class="fa fa-exclamation-triangle"></i>
+        <button class="close btooltip" data-dismiss="alert" title="" data-placement="top" data-toggle="tooltip" type="button" data-original-title="Close">×</button>
+        <div class="errors">
+            <ul>
+                <li>{{ sd_notice(false) }}</li>
+            </ul>
+        </div>
+    </div>
+   <b id="sd-acctTitle">{{ sd_option('business_name') }} Account</b>
+   <span id="sd-acctNotice">{{ sd_notice() }}</span>
+   <a href="{{ output.accounts_uri }}?do=my-account">
+       <img src="{{ sd_is_secure ? sd_securemedia(output.icons['next']) : output.icons['next'] }}" alt="Continue" class="sd-formButton" />
+   </a>
+</div>

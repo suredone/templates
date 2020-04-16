@@ -1,0 +1,145 @@
+{% set site_url = sd_siteinfo('url', false) %}
+{% set site_logo = sd_siteinfo('logo_secure_url', false) %}
+{% set login_url = sd_seturl(sd_option('site_uri_accounts'), 'service', 'absolute', true) ~ '?do=invoice&order=' ~ data['order'] %}
+{% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'), true) : [] %}
+<html>
+<head>
+	<title>{{ sd_siteinfo('business', false) }} Order# {{ data['order'] }}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+	<a href="{{ site_url }}">
+		<img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}" style="border:0px none;"/>
+	</a>
+	<br/><br/>
+
+	INVOICE<br/>Order# {{ data['order'] }}<br/><br/>
+	<table rules="all" width="500" id="sd-orderEmailInfo">
+		<col width="250"/>
+		<col width="250"/>
+		{% include 'form-cartbillshipto.htm' with {'data': data} %}
+		{% if (data['comments']) %}
+		<tr>
+			<td align="center" colspan="2">ORDER COMMENTS:</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2">{{ data['comments'] }}</td>
+		</tr>
+		{% endif %}
+	</table>
+	<table rules="all" width="500" id="sd-orderEmailTotals">
+		<col width="400"/>
+		<col width="100"/>
+		<tr>
+			<td colspan="2" align="center">ORDER TOTALS</td>
+		</tr>
+		<tr>
+			<td align="right">ITEM TOTAL</td>
+			<td align="left">{{ sd_currency(false) ~ data['itemtotal'] }}</td>
+		</tr>
+
+		{% if (data['shippingtotal'] > 0) %}
+		{% set cartshiptotal = shipopts['combine_handling'] == 'on' ? data['shippingtotal'] + data['handlingtotal'] : data['shippingtotal'] %}
+		<tr>
+			<td align="right">SHIPPING TOTAL</td>
+			<td align="left">{{ sd_currency(false) ~ cartshiptotal }}</td>
+		</tr>
+		{% endif %}
+
+		{% if (data['handlingtotal'] > 0 and shipopts['combine_handling'] != 'on') %}
+		<tr>
+			<td align="right">HANDLING TOTAL</td>
+			<td align="left">{{ sd_currency(false) ~ data['handlingtotal'] }}</td>
+		</tr>
+		{% endif %}
+		{% if (data['taxtotal'] > 0) %}
+		<tr>
+			<td align="right">{{ data['bstatename'] }} TAX TOTAL</td>
+			<td align="left">{{ sd_currency(false) ~ data['taxtotal'] }}</td>
+		</tr>
+		{% endif %}
+		{% if (data['discount'] > 0) %}
+		<tr>
+			<td align="right">ORDER DISCOUNT</td>
+			<td align="left" style="color:#F00;">-{{ sd_currency(false) ~ data['discount'] }}</td>
+		</tr>
+		{% endif %}
+		<tr>
+			<td align="right">ORDER TOTAL</td>
+			<td align="left">{{ sd_currency(false) ~ data['total'] }}</td>
+		</tr>
+	</table>
+
+	{# form cart items in email #}
+	{% set cart = data['cart']|length > 0 ? data['cart'] : sd_cart() %}
+	{% if (cart['index'] > 0)  %}
+	<table rules="all" width="500" id="sd-orderEmailItems">
+		<col width="100"/>
+		<col width="275"/>
+		<col width="25"/>
+		<col width="100"/>
+		<tr>
+			<td colspan="4" align="left">ITEMS ORDERED:</td>
+		</tr>
+		<tr>
+			<td colspan="2">ITEM</td>
+			<td>QTY</td>
+			<td>PRICE PAID</td>
+		</tr>
+
+		{% for i in range(low = 1, high = cart['index'], step = 1) %}
+			{% if (cart[i]['qty'] == 0) %}
+				{# continue #}
+			{% else %}
+				{% if (cart[i]['guid']) %}
+					{% set sku = cart[i]['guid'] %}
+				{% else %}
+					{% set sku = cart[i]['sku'] %}
+				{% endif %}
+
+				{% if cart[i]['secure_media'] %}
+					{% set media = cart[i]['secure_media'] %}
+				{% else %}
+					{% set media = cart[i]['media'] %}
+				{% endif %}
+		<tr>
+			<td>
+				{% if (is_image(media) and cart[i]['galleryuri']) %}
+				<a href="{{ sd_seturl(cart[i]['galleryuri'], 'gallery', 'absolute') }}" title="{{ sku }} Gallery">
+					<img alt="{{ cart[i]['title'] }}" class="sd-cartImage" src="{{ media }}"/>
+				</a>
+				{% elseif (is_image(media)) %}
+	            <img alt="{{ cart[i]['title'] }}" class="sd-cartImage" src="{{ media }}"/>
+				{% endif %}
+			</td>
+			<td>
+				{{ cart[i]['title'] }}
+				<br/>
+				{{ sku }}
+			</td>
+			<td align="center">{{ cart[i]['qty'] }}</td>
+			<td align="center">{{ sd_currency(false) ~ ((cart[i]['qty'] * cart[i]['sdprice'])|number_format(2)) }}</td>
+		</tr>
+		{% endif %}
+		{% endfor %}
+	</table>
+	{% endif %}
+	{# end form cart items #}
+
+
+	<br/><br/>
+	Thank you for your order!
+	<br/>Your ship tracking number will be emailed to you after your shipment has been processed.
+
+	{% if (data['admin_invoice']) %}
+	<br/><br/>
+	<a href="{{ sd_seturl('orders', 'admin', '', true) }}?do=invoice&order={{ data['order'] }}">SEE INVOICE</a>
+	{% elseif (sd_is_logged_in) %}
+	<br/><br/>
+	Once your shipment has been processed you may log in <a href="{{ login_url }}">here</a> to track your shipment.
+	{% endif %}
+
+	<br/><br/>
+	{{ sd_option('email_signature') }}
+</body>
+</html>

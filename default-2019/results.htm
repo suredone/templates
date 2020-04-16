@@ -299,8 +299,7 @@
             {% set offercurrency = sd_option('site_currency') %}
 
             {# setup head #}
-<table rules="all" cellspacing="0" cellpadding="0" id="results-content" itemscope
-       itemtype="http://data-vocabulary.org/Product">
+<table rules="all" cellspacing="0" cellpadding="0" id="results-content">
     <col width="50" />
     <col width="50" />
     <col width="50" />
@@ -363,8 +362,8 @@
         {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
 
         {# offer details #}
-        <tr>
-            <td class="td-price{{ discountpricecss }}" itemprop="offerDetails" itemscope itemtype="http://data-vocabulary.org/Offer">
+        <tr itemscope itemtype="http://schema.org/Product">
+            <td class="td-price{{ discountpricecss }}" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
                 <meta itemprop="currency" content="{{ offercurrency }}" />
                 <meta itemprop="price" content="{{ sd_price(false, false, false, row) }}" />
                 {{ sd_price(false, true, true, row) }}

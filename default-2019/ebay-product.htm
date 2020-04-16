@@ -66,7 +66,10 @@
     <div id="sd-ebay-listing-description">
         <h3 class="sd-ebay-listing-description-label ebay-label-title">ITEM TITLE</h3>
         <div class="sd-ebay-listing-description-content ebay-content-title">[%EBAY_TITLE%]</div>
-        <div id="sd-ebay-listing-details">[%EBAY_DETAILS%] [%EBAY_LONGDESCRIPTION%]</div>
+        <div id="sd-ebay-listing-details" vocab="https://schema.org/" typeof="Product">
+            [%EBAY_DETAILS%]
+            <span property="description">[%EBAY_LONGDESCRIPTION%]</span>
+        </div>
     {% set ebay_description_about = sd_option('ebay' ~ data.instanceid ~ '_description_about') %}
     {% if ebay_description_about %}
         <h3 class="sd-ebay-listing-description-label ebay-label-description">ABOUT</h3>

@@ -1,0 +1,88 @@
+{# suredone default product template #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+{% include 'sidebar.htm' %}
+<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 col-right-1">
+	<div class="col-main">
+		<div class="breadcrumbs">{{ sd_content('cat_breadcrumbs') }}</div>
+		<div class="product-view" itemscope itemtype="http://schema.org/Product">
+			<div class="product-essential">
+				<div class="row">
+					<div class="product-img-box col-sm-5 col-md-5 col-sms-6 col-smb-12"  id="sd-media">
+						<div class="product-image">{{ sd_content('media_main') }}</div>
+						{{ sd_content('media_thumbs') }}
+						{{ sd_content('gallery_link') }}
+					</div>
+					<div class="product-shop col-sm-7 col-md-7 col-sms-6 col-smb-12" id="sd-product">
+						<div class="product-name">
+							<h1>{{ sd_content('title_link') }}</h1>
+						</div>
+
+						{{ sd_content('price') }}
+						{{ sd_content('cart_details') }}
+						<div id="sd-social-share">
+							{{ sd_content('googleplus_button') }}
+							{{ sd_content('twitter_button') }}
+							{{ sd_content('pinterest_button') }}
+							{{ sd_content('facebook_button') }}
+						</div>
+
+						{{ sd_content('content') }}
+					</div>
+				</div>
+				<div class="clearer"></div>
+			</div>
+
+			{# sd_content('description_details') #}
+			<div class="product-collateral row-fluid">
+				<ul class="product-tabs">
+					<li id="product_tabs_description" class=" active first"><a href="#">Description</a></li>
+					<li id="product_tabs_details" class=""><a href="#">Details</a></li>
+					{% if sd_content('tags', false) %}
+					<li id="product_tabs_tags"><a href="#">Tags</a></li>
+					{% endif %}
+					{% if sd_content('shipping_details', false) %}
+					<li id="product_tabs_ship" class=" last"><a href="#">Shipping Details</a></li>
+					{% endif %}
+				</ul>
+
+				<div class="product-tabs-content" id="product_tabs_description_contents">
+					<div class="std">{{ sd_content('long_description') }}</div>
+				</div>
+				<div class="product-tabs-content" id="product_tabs_details_contents" style="display: none;">
+					<div class="std">{{ sd_content('item_details') }}</div>
+				</div>
+				{% if sd_content('tags', false) %}
+				<div class="product-tabs-content" id="product_tabs_tags_contents" style="display: none;">
+					<div class="std">{{ sd_content('tags') }}</div>
+				</div>
+				{% endif %}
+				{% if sd_content('shipping_details', false) %}
+				<div class="product-tabs-content" id="product_tabs_ship_contents" style="display: none;">
+					<div class="std">{{ sd_content('shipping_details') }}</div>
+				</div>
+				{% endif %}
+			</div>
+			<script type="application/javascript">
+				$(function(){
+					$('.product-tabs li a').click(function(e){
+						parent = $(this).parent();
+						id = $(this).parent().attr('id');
+
+						if(id)
+						{
+							$('.product-tabs li').removeClass('active');
+							parent.addClass('active');
+							$('div.product-tabs-content').hide();
+							$('#' + id + '_contents').show();
+						}
+
+						return false;
+					});
+				});
+			</script>
+		</div>
+    {% include 'widgets.htm' %}
+	</div>
+</div>
+{% include 'footer.htm' %}

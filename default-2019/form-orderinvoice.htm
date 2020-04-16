@@ -133,12 +133,6 @@
     {% if sd_is_admin and invoice_vars is not empty %}
     <div class="sd-ship-vars">{{ invoice_vars }}</div>
     {% endif %}
-    {% if sd_is_admin and order['shipauth'] %}
-        {{ sd_admin_forms('ShippingProcessBox',order) }}
-    {% endif %}
-    {% if sd_is_admin and order['shiplabs'] %}
-        {{ sd_admin_forms('ShippingProcessLabel',order) }}
-    {% endif %}
 {# admin shipping label processing end #}
 </div>
 {% else %}

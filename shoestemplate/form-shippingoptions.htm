@@ -1,0 +1,38 @@
+{# form ShippingServices #}
+{% if (sd_option('site_shipping') == 'on' and sd_option('shipping_mode') != 'fixed' and sd_cartdimensions()) %}
+    {% set cartdimensions = sd_cartdimensions() %}
+
+    {% if (sd_option('business_country') == 'US' and data['scountry'] == 'US') %}
+        {% set shipping_services = sd_option('shipping_services_domestic')|split('*') %}
+        {% set default_service = sd_option('shipping_service_default_domestic') %}
+    {% else %}
+        {% set shipping_services = sd_option('shipping_services_international')|split('*') %}
+        {% set default_service = sd_option('shipping_service_default_international') %}
+    {% endif %}
+
+    {% set shipping_service = data.shipservice ? data.shipservice : default_service %}
+    {% set shipping_carriers = sd_option('shipping_carriers_enabled')|split('*') %}
+    {% set shipping_services_labels = sd_option('shipping_services_labels')|split('*') %}
+    {% set new_shipping_services_labels = [] %}
+    {% for key, service in shipping_services_labels %}
+        {% set new_custom_array = service|split('|') %}
+        {% set new_custom_row = {(new_custom_array[0]) : (new_custom_array[1])} %}
+        {% set new_shipping_services_labels = new_shipping_services_labels + new_custom_row %}
+    {% endfor %}
+
+    {% set shipping_rates = sd_shipping_rates(shipping_services, data) %}
+
+    {% for service,rate in shipping_rates if service == default_service or cartdimensions.weight > 0 %}
+        {% for carrier in shipping_carriers %}
+            {% if carrier|lower in service|lower %}
+            <div class="ship-service-radio" class="clearfix">
+                {% set shipping_selected = service == shipping_service or rate['service_code'] == shipping_service ? ' checked' : '' %}
+                <input type="radio" id="sd-ship-service-{{ service }}" name="sd_ship_service" value="{{ service }}" onclick="sdApplyTotals('shipping', 'sd-ship-service-{{ service }}');"{{ shipping_selected }}/>
+                <span class="service-label"><label for="sd-ship-service-{{ service }}"> {{ new_shipping_services_labels[service] }}</label></span>
+                <span class="service-rate">{{ rate['currency_symbol']}}{{ rate['checkout_rate'] }}</span>
+                <span class="service-days">{{ rate['delivery_days'] }} business days</span>
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endif %}

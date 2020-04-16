@@ -1,0 +1,238 @@
+{% set site_sets = sd_option('site_live') ? json_decode(sd_option('site_live'), true) : [] %}
+{% set site_url = (sd_option('site_user') and site_sets['site'] == 'on' and site_sets['live'] == 'on') ? sd_siteinfo('url', false) : '' %}
+{% set site_logo = sd_siteinfo('logo_secure_url', false) %}
+
+{% if data['oid'] %}
+	{% if (data['shipasgift']) %}
+		{% set sgiftclass = 'sd-ship-gift ' %}
+	{% endif %}
+
+	{% set items = data['items']|split('*') %}
+	{% set names = data['names']|split('*') %}
+	{% set titles = data['titles']|split('*') %}
+	{% set prices = data['prices']|split('*') %}
+	{% set qtys = data['qtys']|split('*') %}
+	{% set imgs = data['media']|split('*') %}
+
+	{% if data['uris'] %}
+		{%  set uris = data['uris']|split('*') %}
+	{% endif %}
+
+	{% set currency_symbol = sd_currency(false) %}
+	{% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'), true) : [] %}
+	{% set uservars = sd_option('user_field_names') ? sd_option('user_field_names')|split('*') : [] %}
+	{# need info #}
+	{# set stockbys = (sd_option('site_cart_stock_by')) ? array_unique(array_merge(['stock'], sd_option('site_cart_stock_by')|split('*'))) : ['stock'] #}
+
+	{% set stockbys = (sd_option('site_cart_stock_by')) ? ((sd_option('site_cart_stock_by')|split('*'))|merge(['stock'])) : ['stock'] %}
+
+	<div class="sd-invoice">
+
+		{% set printing_logic = (shipopts['printer_sets']['invoice']) ? shipopts['printer_sets']['invoice'] : "post" %}
+
+		{% if not data['printerset']%}
+		<form id="sd-shipping-options-printer-sets-{{ data['order'] }}">
+			<input type="hidden" id="sd-shipping_options_printer_sets_label" name="sd_shipping_options_printer_sets_label" value="{{ shipopts['printer_sets']['label'] }}"/>
+			<input type="hidden" id="sd-shipping_options_printer_sets_invoice" name="sd_shipping_options_printer_sets_invoice" value="{{ printing_logic }}"/>
+		</form>
+		{% endif %}
+
+		<div class="sd-invoiceHead">
+			<span class="sd-invoiceLogo">
+			{% if site_url %}
+			<a href="{{ site_url }}">
+				<img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}"/>
+			</a>
+			{% else %}
+			<img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}"/>
+			{% endif %}
+			</span>
+			<span class="sd-invoiceAddress">
+				{% include 'form-businessaddress.htm' %}
+			</span>
+		</div>
+		<div class="sd-invoiceDate">
+			Order Date: {{ data['date']|date("F jS, Y - H:i:s") }} UTC
+		</div>
+		<div class="sd-invoiceTitle">
+			Order Number: <a href="{{ sd_seturl('orders?do=edit&order=' ~ data['order'], 'admin', null, true) }}">{{ data['order'] }}</a>
+		</div>
+		{% if (data['carrier'] and data['tracking']) %}
+			<div class="sd-invoiceTracking">Tracking: {{ data['carrier']|upper }} {{ data['tracking'] }}</div>
+		{% endif %}
+
+		<table rules="all" class="sd-cartContents">
+			<col width="400"/>
+			<col width="400"/>
+			{% include 'form-cartbillshipto.htm' with {'data':data} %}
+		</table>
+		<table rules="all" class="sd-cartContents">
+			<col width="150"/>
+			<col width="400"/>
+			<col width="50"/>
+			<col width="100"/>
+			<col width="100"/>
+			<tr class="sd-cartHeader">
+				<td colspan="2">ITEM</td>
+				<td>QTY</td>
+				<td>EACH</td>
+				<td>TOTAL</td>
+			</tr>
+		{% for i in range(low=0, high=(items|length - 1), step=1) %}
+
+			{% set skus = items[i]|split('|') %}
+			{% set sku = skus[1] ? skus[1] : skus[0] %}
+			{% set guid = skus[1] ? true : false %}
+			{% set media = sd_securemedia(imgs[i]) %}
+
+			{% if uris %}
+				{% set urls = uris[i]|split('|') %}
+				{% set url = sd_seturl(urls[0], 'item', 'absolute') %}
+
+				{% if urls[1] %}
+					{% set gurl = sd_seturl(urls[1], 'gallery', 'absolute') %}
+				{% endif %}
+			{% endif %}
+
+			{% set totalprice = (qtys[i] * prices[i])|number_format(2) %}
+
+			{% if ((data['shipauth'] or data['shiplabs']) and shipopts['invoice_fields'] and (data['item'][i])) %}
+				{% set  invoicevarsdata = '' %}
+
+				{% for if in shipopts['invoice_fields'] %}
+					{% if (data['item'][i][if] or if in stockbys) %}
+						{% set iflabel = ( if in uservars) ? 'user-' ~ if : if %}
+						{% set invoicevarsdata = invoicevarsdata ~ '<span class="' ~ if ~ '">' %}
+						{% set invoicevarsdata = invoicevarsdata ~ (output.details_labels[iflabel] ? (output.details_labels[iflabel] ~ output.details_labels[iflabel ~ '_sep'] ~ data['item'][i][if]) : data['item'][i][if]) %}
+						{% set invoicevarsdata = invoicevarsdata ~ '</span>' %}
+					{% endif %}
+				{% endfor %}
+
+				{% set invoicevars = invoicevars ~ (invoicevarsdata ? (' <div class="item"><span class="sku">SKU:' ~ sku ~ '</span>' ~ invoicevarsdata ~ '</div>') : '') %}
+			{% endif %}
+			<tr>
+				<td class="sd-cartMedia">
+				{% if (gurl) %}
+					<a href="{{ gurl }}" target="_blank">
+						<img class="sd-cartImage"  src="{{ media }}" alt="{{ sku }}"/>
+					</a>
+				{% elseif media %}
+					<a href="{{ sd_getmediafull(media) }}" target="_blank">
+							<img class="sd-cartImage" src="{{ media }}" alt="{{ sku }}"/>
+					</a>
+				{% else %}
+					{# no image#}
+				{% endif %}
+				</td>
+
+				<td class="sd-cartTitle">
+				{% if (url and site_sets['site'] == 'on') %}
+					<a href="{{ url }}" target="_blank">
+						{{ titles[i] }}
+						<br/>
+						{{ sku }}
+					</a>
+				{% else %}
+					{{ titles[i] }}
+					<br/>
+					{{ sku }}
+				{% endif %}
+				</td>
+
+				<td class="sd-cartQty">{{ qtys[i] }}</td>
+
+				<td class="{{ sgiftclass }}sd-cartPrice">
+					{{ currency_symbol ~ (prices[i]|number_format(2)) }}
+				</td>
+
+				<td class="{{ sgiftclass }}sd-cartPriceTotal">
+					{{ currency_symbol ~ totalprice }}
+				</td>
+			</tr>
+		{% endfor %}
+
+			<tr>
+				<td class="sd-order-totals-labels" colspan="4">ITEM TOTAL</td>
+				<td class="{{ sgiftclass }}sd-order-totals">
+					{{ currency_symbol ~ (data['itemtotal']|number_format(2)) }}
+				</td>
+			</tr>
+
+			{% if (data['taxtotal'] > 0) %}
+			<tr>
+				<td class="sd-order-totals-labels" colspan="4">{{ sd_option('business_state') }} TAX TOTAL</td>
+				<td class="{{ sgiftclass }}sd-order-totals">
+					{{ currency_symbol ~ (data['taxtotal']|number_format(2)) }}
+				</td>
+			</tr>
+			{% endif %}
+
+			{% if (data['shippingtotal'] > 0) %}
+			<tr>
+				<td class="sd-order-totals-labels" colspan="4">SHIPPING TOTAL</td>
+				<td class="{{ sgiftclass }}sd-order-totals">
+				{% set cartshiptotal = (shipopts['combine_handling'] == 'on') ? data['shippingtotal'] + data['handlingtotal'] : data['shippingtotal'] %}
+				{{ currency_symbol ~ (cartshiptotal|number_format(2)) }}
+				</td>
+			</tr>
+			{% endif %}
+
+			{% if (data['handlingtotal'] > 0 and shipopts['combine_handling'] != 'on') %}
+			<tr>
+				<td class="sd-order-totals-labels" colspan="4">HANDLING TOTAL</td>
+				<td class="{{ sgiftclass }}sd-order-totals">
+					{{ currency_symbol ~ (data['handlingtotal']|number_format(2)) }}
+				</td>
+			</tr>
+			{% endif %}
+
+			{% if (data['discount'] > 0) %}
+			<tr>
+				<td class="sd-order-totals-labels" colspan="4">ORDER DISCOUNT</td>
+				<td class="{{ sgiftclass }}sd-order-totals-discount">
+					-{{ currency_symbol ~ (data['discount']|number_format(2)) }}
+				</td>
+			</tr>
+			{% endif %}
+
+			<tr>
+				<td class="sd-order-totals-labels" colspan="4">ORDER TOTAL</td>
+				<td class="{{ sgiftclass }}sd-order-totals">
+					{{ currency_symbol ~ (data['total']|number_format(2)) }}
+				</td>
+			</tr>
+
+			{% if data['comments'] %}
+			<tr class="sd-cartHeader">
+				<td colspan="5">ORDER COMMENTS</td>
+			</tr>
+			<tr>
+				<td class="sd-invoiceComments" colspan="5">{{ data['comments'] }}</td>
+			</tr>
+		{% endif %}
+		</table>
+
+		{% if invoicevars %}
+			<div class="sd-ship-vars">{{ invoicevars }}</div>
+		{% endif %}
+
+		{% if (data['shipauth']) %}
+			{{ sd_admin_forms('ShippingProcessBox', data, true, true) }}
+		{% endif %}
+
+		{% if (data['shiplabs']) %}
+			{{ sd_admin_forms('ShippingProcessLabel', data, true, true) }}
+		{% endif %}
+	</div>
+{% else %}
+	<div class="sd-invoice">
+		<div class="sd-invoiceHead">
+			<span class="sd-invoiceLogo">
+				<a href="{{ site_url }}">
+					<img src="{{ site_logo }}" alt="{{ sd_siteinfo('business', false) }}"/>
+				</a>
+			</span>
+		</div>
+		<div class="sd-invoiceTitle">{{ sd_notice(false) }}</div>
+	</div>
+{% endif %}

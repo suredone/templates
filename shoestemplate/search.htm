@@ -1,0 +1,73 @@
+{# suredone default search template #}
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div class="title-breadcrumb">
+    <div class="container">
+        <div class="col-md-12">
+            <!-- Collection Listing Title -->
+            <div class="collection-listing-title">
+                <h2 class="collection-title">{{ sd_title() }}</h2>
+            </div>
+            <!-- Begin breadcrumb -->
+            <div class="breadcrumb clearfix">
+                {{ sd_content('cat_breadcrumbs') }}
+                {# <span class="arrow-space"><i class="fa fa-angle-right"></i></span> <strong>Page 1 of 1</strong>#}
+            </div>
+        </div>
+    </div>
+</div>
+<div id="search">
+	<div class="container results">
+            <div id="sd-site-body">
+                <div id="sd-search">
+                    <h1>{{ sd_title() }}</h1>
+                    <div id="sd-content">
+                    {#
+                        {{ sd_content() }}
+                    #}
+                        {#<div class="category-products" id="sd-content">#}
+                            {% set searchtype = get_type()=='pages' and get_reqs('name') ? 'newest_blogs' : 'results' %}
+                            {% if searchtype == 'results' %}
+                                {% include 'results.htm' with {'var': 'search'}%}
+                            {% else %}
+                                {{ sd_content(searchtype) }}
+                            {% endif %}
+                       {# </div>#}
+                    </div>
+                </div>
+                {% include 'widgets.htm' %}
+            </div>
+	</div>
+</div>
+
+<style>
+    #sd-search #sd-content #search-form { display: none; }
+</style>
+{% include 'footer.htm' %}
+{#
+{% include 'html-header.htm' %}
+{% include 'header.htm' %}
+<div id="search">
+    <div class="container">
+        <div class="col-md-12 expanded-message">
+            &#123;&#35;
+                {{ sd_content() }}
+            &#35;&#125;
+            <div class="search-field">
+                {% set searchtype = get_type()=='pages' and get_reqs('name') ? 'newest_blogs' : 'results' %}
+                {% if searchtype == 'results' %}
+                    {% include 'results.htm' %}
+                {% else %}
+                    {{ sd_content(searchtype) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    #sd-search #sd-content #search-form { display: none; }
+</style>
+{% include 'footer.htm' %}
+#}

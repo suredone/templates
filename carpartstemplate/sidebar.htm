@@ -1,0 +1,95 @@
+{# suredone default sidebar template #}
+<div class="col-left sidebar span3">
+	{% set site_custom_navhead = sd_option('site_custom_navhead') %}
+	{% if site_custom_navhead %}
+		{{ sd_swaptags('add',site_custom_navhead) }}
+	{% endif %}
+	
+	<div class="block">
+		<div class="block-title">
+			<strong><span>Search</span></strong>
+		</div>
+		<div id="epid-fitment-search"></div>
+	</div>
+	
+    <div class="block block-verticalmenu visible-desktop">
+        <div class="block-title"><strong><span>Categories </span></strong></div>
+        <div class="block-content">
+            <!--{{ sd_content('cat_nav_menu') }}-->
+            <ul id="ma-accordion" class="accordion">
+                {% set catsMenu = sd_categories() %}
+                {% set newCats = [] %}
+                {% set newChilds = [] %}
+                {% for cat in catsMenu %}
+                {% if cat.level < 2 %}
+                {% set newCat = {(cat.cid) : (cat.navorder)} %}
+                {% set newCats = newCats + newCat %}
+                {% else %}
+                {% if newChilds[(cat.parenturi)] %}
+                {% set temp = newChilds[(cat.parenturi)] %}
+
+                {% set temp = temp + ({(cat.cid) ~ '' : (cat.navorder)})%}
+                {% set newChilds = newChilds|merge({(cat.parenturi): temp}) %}
+                {% else %}
+                {% set newChilds = newChilds + ({(cat.parenturi) : ({(cat.cid) ~ '' : (cat.navorder)})}) %}
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for catID, val in newCats|sort %}
+                <li class="category-{{ catsMenu[catID].cid }}">
+                    <a href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">
+                        <span>{{ catsMenu[catID].navtitle ? catsMenu[catID].navtitle : catsMenu[catID].title }}</span>
+                    </a>
+                    {% if newChilds[(catsMenu[catID].uri)] %}
+                    <ul class="level-2 menu-sub-cat">
+                        {% for catChildID, val in newChilds[(catsMenu[catID].uri)]|sort %}
+                        <li class="category-{{ catsMenu[catChildID].cid }}">
+                            <a tabindex="-1" href="{{ sd_seturl(catsMenu[catChildID].uri, 'category') }}"><span>{{ catsMenu[catChildID].navtitle }}</span></a>
+                            {% if newChilds[(catsMenu[catChildID].uri)] %}
+                            <ul class="level-3 menu-sub-cat">
+                                <li class='category-{{ catsMenu[catChildID].cid }}'>
+                                    {% for catChildChildID, val in newChilds[(catsMenu[catChildID].uri)]|sort %}
+                                    <a href="{{ sd_seturl(catsMenu[catChildChildID].uri, 'category') }}"><span>{{ catsMenu[catChildChildID].navtitle ? catsMenu[catChildChildID].navtitle : catsMenu[catChildChildID].title }}</span></a>
+                                    {% endfor %}
+                                </li>
+                            </ul>
+                            <span class="head">
+                                <a href="javascript:void(0)"></a>
+                            </span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <span class="head">
+                        <a href="javascript:void(0)"></a>
+                    </span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+	<script type="text/javascript">
+		//<![CDATA[
+		function validatePollAnswerIsSelected() {
+			var options = $$('input.poll_vote');
+			for (i in options) {
+				if (options[i].checked == true) {
+					return true;
+				}
+			}
+			return false;
+		}
+		//]]>
+	</script>
+	<p class="visible-desktop">
+		<a href="#">
+			<img alt="" src="//s3.amazonaws.com/assets.suredone.com/2439/images/left.png">
+		</a>
+	</p>
+	{% set site_custom_navfoot = sd_option('site_custom_navfoot') %}
+	{% if site_custom_navfoot %}
+		{{ sd_swaptags('add',site_custom_navfoot) }}
+	{% endif %}
+</div>

@@ -1,0 +1,181 @@
+{# suredone default headers #}
+{% if output.doaction not in ['checkout', 'paypal-checkout', 'checkout-customer', 'checkout-payment'] %}
+<header class="header-wrapper">
+	{% set sdheadercustom = sd_option('site_custom_header') %}
+	{% if sdheadercustom %}
+		{{ sd_swaptags('add', sdheadercustom) }}
+	{% else %}
+	<div class="header-quick-access">
+		<div class="row">
+			<div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+				
+			</div>
+			<div class="col-xs-12 col-sm-7 col-md-7 col-lg-7">
+				<div class="header-toplinks">
+					<ul class="links">
+						<li class="first">{{ output.accounts_html }}</li>
+						<li>{{ output.contact_html }}</li>
+						<li>{{ output.releases_html }}</li>
+						<li>{{ output.sitemap_html }}</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="header">
+		<div class="page-header-content">
+			<div class="row">
+				<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+					<h1 class="logo">
+						<a href="{{ sd_siteinfo('url') }}" title="HOME">
+							{% if sd_is_secure %}
+								{{ sd_siteinfo('logo_secure') }}
+							{% else %}
+								{{ sd_siteinfo('logo') }}
+							{% endif %}
+						</a>
+					</h1>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+					<div class="form-search">
+                        {{ output.search_html }}
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+					<div class="header-cart-mini">
+						<div class="topcart-mini-container">
+							<div id ="mini_cart_block">
+								<div class="block-cart mini_cart_ajax">
+									<div class="block-cart">
+										<div class="cart-mini-title">
+											<span class="cart-title"><i class="fa fa-shopping-cart"></i>{{ output.cart_html }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</header>
+<nav>
+	<div class="nav-mobilemenu-container visible-xs">
+		<div class="navbar">
+			<div id="navbar-inner" class="navbar-inner navbar-inactive">
+				<div class="menu-mobile">
+					<a class="btn btn-navbar navbar-toggle">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<span class="brand navbar-brand">Menu</span>
+				</div>
+
+                <ul id="nav-mobilemenu" class="mobilemenu nav-collapse collapse">
+                    {% set catsMenu = sd_categories() %}
+
+                    {% set newCats = [] %}
+                    {% set newChilds = [] %}
+                    {% for cat in catsMenu %}
+                        {% if cat.level < 2 %}
+                            {% set newCat = {(cat.cid) : (cat.navorder)} %}
+                            {% set newCats = newCats + newCat %}
+                        {% else %}
+                            {% if newChilds[(cat.parenturi)] %}
+                                {% set temp = newChilds[(cat.parenturi)] %}
+                                {% set temp = temp + ({(cat.cid) ~ '' : (cat.navorder)})%}
+                                {% set newChilds = newChilds|merge({(cat.parenturi): temp}) %}
+                            {% else %}
+                                {% set newChilds = newChilds + ({(cat.parenturi) : ({(cat.cid) ~ '' : (cat.navorder)})}) %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for catID, val in newCats|sort %}
+                        <li class="level{{ catsMenu[catID].level - 1 }} level-top parent">
+                            <a class="level-top" href="{{ sd_seturl(catsMenu[catID].uri, 'category') }}">
+                                <span>{{ catsMenu[catID].navtitle ? catsMenu[catID].navtitle : catsMenu[catID].title }}</span>
+                            </a>
+                            {% if newChilds[(catsMenu[catID].uri)] %}
+                                <ul class="level{{ catsMenu[catID].level - 1 }}">
+                                    {% for catChildID, val in newChilds[(catsMenu[catID].uri)]|sort %}
+                                    <li class="level{{ catsMenu[catChildID].level - 1 }} 
+                                        {% if newChilds[(catsMenu[catChildID].uri)] %}level-top parent{% endif %}">
+                                        <a href="{{ sd_seturl(catsMenu[catChildID].uri, 'category') }}">
+                                            <span>{{ catsMenu[catChildID].navtitle ? catsMenu[catChildID].navtitle : catsMenu[catChildID].title }}</span>
+                                        </a>
+                                        {% if newChilds[(catsMenu[catChildID].uri)] %}
+                                        <ul class="level{{ catsMenu[catChildID].level - 1 }}">
+                                            {% for catChildChildID, val in newChilds[(catsMenu[catChildID].uri)]|sort %}
+                                            <li class="level{{ catsMenu[catChildID].level - 1 }}">
+                                                <a href="{{ sd_seturl(catsMenu[catChildChildID].uri, 'category') }}">
+                                                    <span>{{ catsMenu[catChildChildID].navtitle ? catsMenu[catChildChildID].navtitle : catsMenu[catChildChildID].title }}</span>
+                                                </a>
+                                                {% if newChilds[(catsMenu[catChildChildID].uri)] %}
+                                                <ul class="level{{ catsMenu[catChildChildID].level - 1 }}">
+                                                    {% for catChildChildChildID, val in newChilds[(catsMenu[catChildChildID].uri)]|sort %}
+                                                    <li class="level{{ catsMenu[catChildChildID].level - 1 }}">
+                                                        <a href="{{ sd_seturl(catsMenu[catChildChildChildID].uri, 'category') }}">
+                                                            <span>{{ catsMenu[catChildChildChildID].navtitle ? catsMenu[catChildChildChildID].navtitle : catsMenu[catChildChildChildID].title }}</span>
+                                                        </a>
+                                                        {% if newChilds[(catsMenu[catChildChildChildID].uri)] %}
+                                                        <ul class="level{{ catsMenu[catChildChildChildID].level - 1 }}">
+                                                            {% for catChildChildChildChildID, val in newChilds[(catsMenu[catChildChildChildID].uri)]|sort %}
+                                                            <li class="level{{ catsMenu[catChildChildChildID].level - 1 }}">
+                                                                <a href="{{ sd_seturl(catsMenu[catChildChildChildChildID].uri, 'category') }}">
+                                                                    <span>{{ catsMenu[catChildChildChildChildID].navtitle ? catsMenu[catChildChildChildChildID].navtitle : catsMenu[catChildChildChildChildID].title }}</span>
+                                                                </a>
+                                                            </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                        <span class="head"><a href="javascript:void(0)"></a></span>
+                                                        {% endif %}
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                <span class="head"><a href="javascript:void(0)"></a></span>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% endif %}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+			</div>
+		</div>
+	</div>
+</nav>
+{% else %}
+<header class="header-wrapper">
+	<div class="header">
+		<div class="page-header-content">
+			<div class="row">
+				<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+					<h1 class="logo">
+						<a href="{{ sd_siteinfo('url') }}" title="HOME">
+							{% if sd_is_secure %}
+								{{ sd_siteinfo('logo_secure') }}
+							{% else %}
+								{{ sd_siteinfo('logo') }}
+							{% endif %}
+						</a>
+					</h1>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+{% endif %}
+<main class="main-wrapper">
+	<section class="main-page">
+		<div class="main-container col2-left-layout">
+			<div class="main">
+				<div class="row">

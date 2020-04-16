@@ -72,15 +72,13 @@
         </div>
         {% endif %}
     {% elseif sd_is_admin and get_do() == 'packing' %}
-        {% if orders['all'] is defined and orders['all']>50 %}
-            {{ sd_admin_forms('ShippingProcessAll', orders) }}
-        {% endif %}
         {% for order in orders %}
             {% if is_array(order) %}
                 {% set order = order|merge(order,{'printerset':true}) %}
                 {% include 'form-orderinvoice.htm' with {'order':order} %}
             {% endif %}
         {% endfor %}
+        {{ sd_page_numbers('page_nums', orders['all'], sd_option('site_accounts_orders_limit'))|replace({'page=':'do=packing&page=','onclick':'ondblclick','http:':'https:'}) }}
     {% else %}
         {% include 'form-orderinvoice.htm' with {'order':orders[1]} %}
     {% endif %}

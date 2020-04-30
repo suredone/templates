@@ -1,10 +1,12 @@
 {% set doaction = output.doaction %}
+{% set checkoutstripe = sd_option('site_cart_card_processor') == 'stripe' and sd_option('stripe_api_publish_key') %}
 {% if doaction == 'checkout-shipping' %}
     {% set checkoutfunction = '' %}
     {% set checkoutbutton = 'Continue to payment' %}
 {% else %}
     {% set checkoutfunction = doaction == 'checkout-customer' ? 'return sdValidForm();' : 'return sdValidCC();' %}
     {% set checkoutbutton = 'Continue to shipping &amp; payment' %}
+    {% if doaction == 'checkout-payment' and checkoutstripe %}{% set checkoutfunction = 'return false;' %}{% endif %}
 {% endif %}
 <form action="{{ output.cart_suri }}" method="post" id="sd-payForm" class="checkbe" name="sd_payForm" onsubmit="{{ checkoutfunction }}">
     <input type="hidden" name="do" value="{{ doaction }}"/>
@@ -146,7 +148,7 @@
         <div class="clearfix">
             <div class="sd-payInfo clearfix">
                 <div id="sd-creditcardForm">
-                    {% include 'form-cardcheckout-div.htm' with {'data': data, 'steps': 'true'} %}
+                    {% include 'form-cardcheckout-div.htm' with {'data': data, 'steps': 'true', 'stripe': checkoutstripe} %}
                 </div>
             </div>
         </div>

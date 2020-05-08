@@ -1,54 +1,22 @@
 {# form AccountLoginForm #}
-<div class="page-title">
-	<h1>{{ sd_notice(false) }}</h1>
-</div>
-
 <form action="{{ output.accounts_uri }}" method="post" id="sd-loginForm" onsubmit="return sdEmptyLogin(this.form)">
-	<div class="col2-set">
-		<div class="col-1 new-users">
-			<div class="content">
-				<h2>New Customers</h2>
-				<p>By creating an account with our store, you will be able to move through the checkout process faster, store multiple shipping addresses, view and track your orders in your account and more.</p>
-			</div>
-		</div>
-		<div class="col-2 registered-users">
-			<div class="content">
-				<h2>Registered Customers</h2>
-				<p>If you have an account with us, please log in.</p>
-				<input type="hidden" name="do" value="sign-in"/>
-				<b id="sd-acctTitle">{{ sd_siteinfo('business', false) }} Account</b>
-				<ul class="form-list">
-					<li>
-						<label for="user-email">Email Address</label>
-						<div class="input-box">
-							<input class="input-text" type="text" size="45" maxlength="100" id="user-email" name="sd_user" vcard_name="vCard.Email" value="{{ data['email'] }}"/>
-						</div>
-					</li>
-					<li>
-						<label for="user-password">Password</label>
-						<div class="input-box">
-							<input class="input-text" type="password" size="45" maxlength="100" id="user-password" name="sd_pass" value=""/>
-						</div>
-					</li>
-				</ul>
-
-				<br/>
-				<input type="checkbox" name="sd_remember" value="yes"/>Remember Me
-				<br/>
-			</div>
-		</div>
-	</div>
-	<div class="col2-set">
-		<div class="col-1 new-users">
-			<div class="buttons-set">
-				<button type="button" title="Create an Account" class="button" onclick="window.location='{{ output.accounts_uri }}?do=create-account';"><span><span>Create an Account</span></span></button>
-			</div>
-		</div>
-		<div class="col-2 registered-users">
-			<div class="buttons-set">
-				<a href="{{ output.accounts_uri }}?do=forgot-password" class="f-left">Forgot Your Password?</a>
-				<button type="submit" class="button" title="Login" name="send" id="send2"><span><span>Login</span></span></button>
-			</div>
-		</div>
-	</div>
+	<input type="hidden" name="do" value="sign-in" />
+	<b id="sd-acctTitle">{{ sd_siteinfo('business', false) }} Account</b>
+	<span id="sd-acctNotice">{{ sd_notice(false) }}</span>
+	<label for="user-email">Email Address</label>
+	<br />
+	<input type="text" size="45" maxlength="100" id="user-email" name="sd_user" vcard_name="vCard.Email" value="{{ data['email'] }}" />
+	<br /><br />
+	<label for="user-password">Password</label>
+	<br />
+	<input type="password" size="45" maxlength="100" id="user-password" name="sd_pass" value="" />
+	<br />
+	<a href="{{ output.accounts_uri }}?do=forgot-password">Forgot Password?</a>
+	<br /><br />
+	<input type="checkbox" name="sd_remember" value="yes" />Remember Me
+	<br /><br />
+	<input type="image" src="{{ output.icons['sign_in'] }}" value="Sign In" class="sd-formButton" />
+	<a href="{{ output.accounts_uri }}?do=create-account">
+		<img src="{{ output.icons['create_acct'] }}" alt="Create Account" class="sd-formButton" />
+	</a>
 </form>

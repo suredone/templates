@@ -1,25 +1,37 @@
 {% if data.progress == 1 %}
-<div class="col-md-9 col-md-offset-3 padding-o padding-sm">
-    <div class="page-title title-buttons">
-        <h1>Shopping Cart</h1>
-    </div>
-</div>
+<table rules="none" id="sd-progress">
+    <col width="266" /><col width="268" /><col width="266" />
+    <tr>
+        <td class="sd-progress1">Shopping Cart</td>
+        <td class="sd-progress2g">Checkout</td>
+        <td class="sd-progress3g">Order Complete</td>
+    </tr>
+</table>
 {% elseif data.progress == 2 %}
-<div class="col-xs-12 checkout-title">
-    <div class="page-title title-buttons">
-        <h1>Checkout</h1>
-    </div>
-</div>
+<table rules="none" id="sd-progress">
+    <col width="266" /><col width="268" /><col width="266" />
+    <tr>
+        <td class="sd-progress1">Shopping Cart</td>
+        <td class="sd-progress2">Checkout</td>
+        <td class="sd-progress3g">Order Complete</td>
+    </tr>
+</table>
 {% elseif data.progress == 3 %}
-<div class="col-xs-12 checkout-title">
-    <div class="page-title title-buttons">
-        <h1>Order Complete</h1>
-    </div>
-</div>
+<table rules="none" id="sd-progress">
+    <col width="266" /><col width="268" /><col width="266" />
+    <tr>
+        <td class="sd-progress1">Shopping Cart</td>
+        <td class="sd-progress2">Checkout</td>
+        <td class="sd-progress3">Order Complete</td>
+    </tr>
+</table>
 {% else %}
-<div class="col-md-9 col-md-offset-3 padding-o padding-sm">
-    <div class="page-title title-buttons">
-        <h1>Shopping Cart</h1>
-    </div>
-</div>
+<table rules="none" id="sd-progress">
+    <col width="266" /><col width="268" /><col width="266" />
+    <tr>
+        <td class="sd-progress1g">Shopping Cart</td>
+        <td class="sd-progress2g">Checkout</td>
+        <td class="sd-progress3g">Order Complete</td>
+    </tr>
+</table>
 {% endif %}

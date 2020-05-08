@@ -1,59 +1,60 @@
-{# form AccountForm #}
 <form action="{{ output.accounts_uri }}" method="post" id="sd-payForm" name="sd_payForm" onsubmit="return sdValidForm();">
-	<input type="hidden" name="do" value="{{ output.buttons['form_action'] }}" />
-	<input type="hidden" name="sd_js" value="jsoff" />
-	<input type="hidden" name="sd_create_acct" value="auto" />
+    <input type="hidden" name="do" value="{{ output.buttons['form_action'] }}" />
+    <input type="hidden" name="sd_js" value="jsoff" />
+    <input type="hidden" name="sd_create_acct" value="auto" />
+    <table rules="cols" cellpadding="0" cellspacing="0" id="sd-accountInfo">
+        <col width="400" /><col width="400" />
+        <tr>
+            <td colspan="2">
+                <span id="sd-acctNotice">{{ sd_notice(false) }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="sd-emailForm">
+                    {% include 'form-useremail.htm' with {'data': data} %}
+                </div>
+            </td>
+            <td>
+                <div id="sd-passForm">
+                    {% include 'form-userpass.htm' with {'data': data} %}
+                </div>
+            </td>
+        </tr>
+        <tr>
+        {# start shipping form #}
+        {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on') %}
+            {% set baddrlab = 'BILLING ADDRESS' %}
+            <td class="sd-payInfo">
+        {% else %}
+            {%  set baddrlab = (sd_option('site_shipping') == 'on') ? 'BILLING/SHIPPING ADDRESS' : 'ADDRESS' %}
+            <td class="sd-payInfo" colspan="2">
+        {% endif %}
+                <b class="sd-infoBold">{{ baddrlab }}</b> <img src="{{ output.icons['required'] }}" alt="Required" /> = REQUIRED
+                <div id="sd-billingForm">
+                    {% include 'form-wwwuserbilling.htm' with {'data':data} %}
+                </div>
+            </td>
+        {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on') %}
+            <td class="sd-payInfo">
+                <b class="sd-infoBold">SHIPPING ADDRESS</b>
+                <br />
+                <img class="sd-formIcon" src="{{ output.icons['vform']['shiplocation'] }}" name="sdform-vsshiploc" alt="Required ship to location" />
+                <select tabindex="20" id="sd-ship-location" name="sd_ship_location" onchange="sdShipForm(this,'WWWCartShipping','sd-shippingForm');">
+                    <option value="BillingAddress" {{ data['select_billing'] }}>Same As Billing Address</option>
+                    <option value="OtherAddress" {{ data['select_other'] }}>Other Address</option>
+                </select>
+                <div id="sd-shippingForm">
+                    {% if (data['select_other']) %}
+                        {% include 'form-wwwusershipping.htm' with {'data':data} %}
+                    {% endif %}
+                </div>
 
-	<span id="sd-acctNotice">{{ sd_notice(false) }}</span>
-	<div id="sd-accountInfo">
-		<div class="row">
-			<div class="col-md-6">
-				<div id="sd-emailForm">
-					{% include 'form-useremail.htm' with {'data': data} %}
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div id="sd-passForm">
-					{% include 'form-userpass.htm' with {'data': data} %}
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-6">
-				<div class="sd-payInfo">
-					{# start shipping form #}
-					{% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on') %}
-						{% set baddrlab = 'BILLING ADDRESS' %}
-					{% else %}
-						{%  set baddrlab = (sd_option('site_shipping') == 'on') ? 'BILLING/SHIPPING ADDRESS' : 'ADDRESS' %}
-					{% endif %}
-					<b class="sd-infoBold">{{ baddrlab }}</b> <img src="{{ output.icons['required'] }}" alt="Required" /> = REQUIRED
-					<div id="sd-billingForm">
-						{%  include 'form-wwwuserbilling.htm' with {'data':data} %}
-					</div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				{# shipping form #}
-				{%  if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on') %}
-					<div class="sd-payInfo">
-						<b class="sd-infoBold">SHIPPING ADDRESS</b>
-						<br />
-						<img class="sd-formIcon" src="{{ output.icons['vform']['shiplocation'] }}" name="sdform-vsshiploc" alt="Required ship to location" />
-						<select tabindex="20" id="sd-ship-location" name="sd_ship_location" onchange="sdShipForm(this,'{{ output.buttons['form_cart_shipping'] }}','sd-shippingForm');">
-							<option value="BillingAddress" {{ data['select_billing'] }}>Same As Billing Address</option>
-							<option value="OtherAddress" {{ data['select_other'] }}>Other Address</option>
-						</select>
-						<div id="sd-shippingForm">
-							{% if (data['select_other']) %}
-								{% include 'form-wwwusershipping.htm' with {'data':data} %}
-							{% endif %}
-						</div>
-					</div>
-					{# shipping form end #}
-				{% endif %}
-			</div>
-		</div>
-	</div>
-	<div id="sd-submitBlock">{{ output.buttons['form_submit'] }}</div>
+            </td>
+        {% endif %}
+        </tr>
+        <tr>
+            <td id="sd-submitBlock" colspan="2">{{ output.buttons['form_submit'] }}</td>
+        </tr>
+    </table>
 </form>

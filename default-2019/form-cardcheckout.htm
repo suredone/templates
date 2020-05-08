@@ -40,8 +40,8 @@
                 <option value="JCB">JCB</option>
                 {% endif %}
             </select>
-            {% if (not data['ccerror'] and output.doaction == 'checkout' and (output.buttons['checkout_paypal'] or output.buttons['checkout_google'] or output.buttons['checkout_dwolla']))  %}
-                <span id="sd-alt-co-buttons">{{ output.buttons['checkout_paypal'] }} {{ output.buttons['checkout_google'] }} {{ output.buttons['checkout_dwolla'] }}</span>
+            {% if (not data['ccerror'] and output.doaction == 'checkout' and output.buttons['checkout_paypal'])  %}
+                <span id="sd-alt-co-buttons">{{ output.buttons['checkout_paypal'] }}</span>
             {% endif %}
         </div>
     </div>

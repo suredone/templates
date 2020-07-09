@@ -1,0 +1,17 @@
+{% set user_fields = sd_option('user_field_names')|split('*') %}
+{% set display_fields = sd_option('item_details_fields_displayed')|split('*') %}
+<p class="description">
+{{ data['longdescription'] }}
+</p>
+<p class="product-details">
+    <ul>
+        {% for field,value in data %}
+        	{% if value is not iterable and value matches '/^\\d+\\.?\\d*\\d*$/' and value == 0 %}{% set value = '' %}{% endif %}
+            {% set display_field = field in user_fields ? 'user-' ~ field : field %}
+            {% if display_field in display_fields and value is not empty %}
+                {% set field_label = output.details_labels[display_field] ? output.details_labels[display_field] : field %}
+            <li>{{ field_label }}: {{ data[field] }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</p>

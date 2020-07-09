@@ -47,7 +47,6 @@
             <div id="sd-cart-shipping">
             <form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm" onsubmit="sdApplyShipping('sd-ship-service-estimate', false, 'sd-shipForm');return false;">
                 <input type="hidden" name="sd_ship_service" value="DEFAULT" id="sd-ship-service-estimate" />
-                <input type="hidden" name="sd_b_state" value="" />
                 <input type="text" name="sd_b_zip" value="" id="sd-ship-service-estimate-postalcode" placeholder="Postal Code"/>
                 <input type="hidden" name="sd_b_country" value="US" />
                 <button value="Estimate Shipping" type="button" onclick="sdApplyShipping('sd-ship-service-estimate', false, 'sd-shipForm');">Estimate Shipping (US)</button>

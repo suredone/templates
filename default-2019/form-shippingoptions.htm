@@ -5,6 +5,12 @@
     {% if (sd_option('business_country') == 'US' and data['scountry'] == 'US') %}
         {% set shipping_services = sd_option('shipping_services_domestic')|split('*') %}
         {% set default_service = sd_option('shipping_service_default_domestic') %}
+
+        {% if default_service == 'FEDEX-FEDEX_GROUND' and not data['sbusiness'] %}
+            {% set default_service = 'FEDEX-GROUND_HOME_DELIVERY' %}
+        {% elseif default_service == 'FEDEX-GROUND_HOME_DELIVERY' and data['sbusiness'] %}
+            {% set default_service = 'FEDEX-FEDEX_GROUND' %}
+        {% endif %}
     {% else %}
         {% set shipping_services = sd_option('shipping_services_international')|split('*') %}
         {% set default_service = sd_option('shipping_service_default_international') %}
@@ -20,16 +26,24 @@
         {% set new_shipping_services_labels = new_shipping_services_labels + new_custom_row %}
     {% endfor %}
 
+    {% set totals = sd_carttotals() %}
     {% set shipping_rates = sd_shipping_rates(shipping_services, data) %}
+
+    {% if (shipping_service == 'FEDEX-FEDEX_GROUND' or shipping_service == 'fedex_ground') and not data['sbusiness'] %}
+        {% set shipping_service = 'FEDEX-GROUND_HOME_DELIVERY' %}
+    {% elseif (shipping_service == 'FEDEX-GROUND_HOME_DELIVERY' or shipping_service == 'fedex_home_delivery') and data['sbusiness'] %}
+        {% set shipping_service = 'FEDEX-FEDEX_GROUND' %}
+    {% endif %}
 
     {% for service,rate in shipping_rates if service == default_service or cartdimensions.weight > 0 %}
         {% for carrier in shipping_carriers %}
             {% if carrier|lower in service|lower %}
             <div class="ship-service-radio" class="clearfix">
                 {% set shipping_selected = service == shipping_service or rate['service_code'] == shipping_service ? ' checked' : '' %}
+                {% set shipping_rate = service == default_service and totals.shipping == 0 ? '0.00' : rate['checkout_rate'] %}
                 <input type="radio" id="sd-ship-service-{{ service }}" name="sd_ship_service" value="{{ service }}" onclick="sdApplyTotals('shipping', 'sd-ship-service-{{ service }}');"{{ shipping_selected }}/>
                 <span class="service-label"><label for="sd-ship-service-{{ service }}"> {{ new_shipping_services_labels[service] }}</label></span>
-                <span class="service-rate">{{ rate['currency_symbol']}}{{ rate['checkout_rate'] }}</span>
+                <span class="service-rate">{{ rate['currency_symbol']}}{{ shipping_rate }}</span>
                 <span class="service-days">{{ rate['delivery_days'] }} business days</span>
             </div>
             {% endif %}

@@ -40,21 +40,21 @@
         </tr>
         <tr>
             <td align="right">ITEM TOTAL</td>
-            <td align="left">{{ sd_currency(false) ~ data['itemtotal'] }}</td>
+            <td align="left">{{ sd_currency(false) ~ data['itemtotal']|number_format(2) }}</td>
         </tr>
 
         {% if (data['shippingtotal'] > 0) %}
         {% set cartshiptotal = shipopts['combine_handling'] == 'on' ? data['shippingtotal'] + data['handlingtotal'] : data['shippingtotal'] %}
         <tr>
             <td align="right">SHIPPING TOTAL</td>
-            <td align="left">{{ sd_currency(false) ~ cartshiptotal }}</td>
+            <td align="left">{{ sd_currency(false) ~ cartshiptotal|number_format(2) }}</td>
         </tr>
         {% endif %}
 
         {% if (data['handlingtotal'] > 0 and shipopts['combine_handling'] != 'on') %}
         <tr>
             <td align="right">HANDLING TOTAL</td>
-            <td align="left">{{ sd_currency(false) ~ data['handlingtotal'] }}</td>
+            <td align="left">{{ sd_currency(false) ~ data['handlingtotal']|number_format(2) }}</td>
         </tr>
         {% endif %}
         {% if (data['taxtotal'] > 0) %}
@@ -63,18 +63,18 @@
                 set billingstatename = sd_statename(data['billing']['stateprovince']) ? sd_statename(data['billing']['stateprovince']) : data['billing']['stateprovince']
             %}
             <td align="right">{{ billingstatename }} TAX TOTAL</td>
-            <td align="left">{{ sd_currency(false) ~ data['taxtotal'] }}</td>
+            <td align="left">{{ sd_currency(false) ~ data['taxtotal']|number_format(2) }}</td>
         </tr>
         {% endif %}
         {% if (data['discounttotal'] > 0) %}
         <tr>
             <td align="right">ORDER DISCOUNT</td>
-            <td align="left" style="color:#F00;">-{{ sd_currency(false) ~ data['discounttotal'] }}</td>
+            <td align="left" style="color:#F00;">-{{ sd_currency(false) ~ data['discounttotal']|number_format(2) }}</td>
         </tr>
         {% endif %}
         <tr>
             <td align="right">ORDER TOTAL</td>
-            <td align="left">{{ sd_currency(false) ~ data['total'] }}</td>
+            <td align="left">{{ sd_currency(false) ~ data['total']|number_format(2) }}</td>
         </tr>
     </table>
 

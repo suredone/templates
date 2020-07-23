@@ -49,7 +49,7 @@
 		<tr id="sd-customCodes" class="sd-payInfo">
 			<td class="sd-ccField">Promo Code</td>
 			<td class="sd-ccInfo">
-				<input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="15"/>
+				<input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="100"/>
 				<input type="button" id="sd-apply-code" value="Apply" onclick="sdApplyTotals('discount','sd-order-code');"/>
 				{% if output.legal_uri  %}
 				<a href="{{ output.legal_uri }}" target="_blank" onclick="window.open('{{ output.legal_uri }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">

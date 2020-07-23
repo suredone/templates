@@ -105,7 +105,7 @@
             <div class="sd-payInfo">
                 <img class="sd-formIcon" src="{{ sd_securemedia(output.icons['blank']) }}" alt=""/>
                 <label for="sd-order-code">Promo Code</label>
-                <input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="15"  value="{{ data['code'] }}"/>
+                <input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="100"  value="{{ data['code'] }}"/>
                 <input type="button" id="sd-apply-code" value="Apply" onclick="sdApplyTotals('discount','sd-order-code');"/>
 
                 {% if output.legal_uri %}

@@ -6,7 +6,7 @@
 
 {# create or edit account #}
 {% if doaction == 'create-account' or (doaction == 'edit-account' and sd_is_logged_in) %}
-    {% include 'accounts-edit-create.htm' %}
+    {% include 'form-accountform.htm' with {'data':output.form_data} %}
 
 {# signed-in #}
 {% elseif doaction == 'sign-in' and sd_is_logged_in %}

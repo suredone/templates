@@ -40,7 +40,7 @@
             {% if carrier|lower in service|lower %}
             <div class="ship-service-radio" class="clearfix">
                 {% set shipping_selected = service == shipping_service or rate['service_code'] == shipping_service ? ' checked' : '' %}
-                {% set shipping_rate = service == default_service and totals.shipping == 0 ? '0.00' : rate['checkout_rate'] %}
+                {% set shipping_rate = service == default_service ? totals.shipping|number_format(2, '.', ',') : rate['checkout_rate'] %}
                 <input type="radio" id="sd-ship-service-{{ service }}" name="sd_ship_service" value="{{ service }}" onclick="sdApplyTotals('shipping', 'sd-ship-service-{{ service }}');"{{ shipping_selected }}/>
                 <span class="service-label"><label for="sd-ship-service-{{ service }}"> {{ new_shipping_services_labels[service] }}</label></span>
                 <span class="service-rate">{{ rate['currency_symbol']}}{{ shipping_rate }}</span>
@@ -49,4 +49,11 @@
             {% endif %}
         {% endfor %}
     {% endfor %}
+    {% if 'PICKUP' in shipping_services %}
+            <div class="ship-service-radio" class="clearfix">
+                <input type="radio" id="sd-ship-service-PICKUP" name="sd_ship_service" value="PICKUP" onclick="sdApplyTotals('shipping', 'sd-ship-service-PICKUP');"/>
+                <span class="service-label"><label for="sd-ship-service-PICKUP"> Local Pickup</label></span>
+                <span class="service-rate">$0.00</span>
+            </div>
+    {% endif %}
 {% endif %}

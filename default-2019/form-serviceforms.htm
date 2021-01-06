@@ -15,8 +15,9 @@
     <form action="{{ output.helpform_uri }}" method="post" id="sd-supportForm" onsubmit="return sdServiceForm(this.form);">
         <b id="sd-acctTitle">Customer Service</b>
         <span id="sd-svcNotice">
-            {% if (output.notice_html) %}
-                {{ output.notice_html }}
+            {% set notice = sd_notice(false) %}
+            {% if (notice) %}
+                {{ notice }}
             {% else %}
                 Please choose one of the following options
             {% endif %}
@@ -39,5 +40,6 @@
         <div id="sd-serviceForm">
             {% include formtype with {'data': data}  %}
         </div>
+        <div id="sd-recaptcha">{{ sd_recaptcha() }}</div>
     </form>
 </div>

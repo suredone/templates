@@ -1,10 +1,11 @@
 {# card processing form #}
 {% set wpsets = sd_option('site_cart_card_processor')=='worldpay' and sd_option('worldpay_settings') ? json_decode(sd_option('worldpay_settings'),true) : [] %}
 <div class="sd-cc-wrapper">
+{% if not stripe %}
     <div>
         <div id="sd-cardNotice">
-            {% if (data['ccerror'])  %}
-                {{  sd_notice(false) }}
+            {% if (data['ccerror']) %}
+                {{ sd_notice(false) }}
             {% endif %}
         </div>
     </div>
@@ -39,8 +40,8 @@
                 <option value="JCB">JCB</option>
                 {% endif %}
             </select>
-            {% if (not data['ccerror'] and output.doaction == 'checkout' and (output.buttons['checkout_paypal'] or output.buttons['checkout_google'] or output.buttons['checkout_dwolla']))  %}
-                <span id="sd-alt-co-buttons">{{ output.buttons['checkout_paypal'] }} {{ output.buttons['checkout_google'] }} {{ output.buttons['checkout_dwolla'] }}</span>
+            {% if (not data['ccerror'] and output.doaction == 'checkout' and output.buttons['checkout_paypal'])  %}
+                <span id="sd-alt-co-buttons">{{ output.buttons['checkout_paypal'] }}</span>
             {% endif %}
         </div>
     </div>
@@ -99,8 +100,95 @@
             <input AUTOCOMPLETE="off" placeholder="CVV" type="text" size="4" maxlength="4" id="sd-cc-cvv" name="sd_cc_cvv" value="" required/>
         </div>
     </div>
+{% else %}
+    <div>
+        <div id="card-element"></div>
 
-    {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on' and sd_option('shipping_gift') == 'on')  %}
+        <div id="card-errors" role="alert"></div>
+    </div>
+    <style type="text/css">
+        .StripeElement {
+          box-sizing: border-box;
+          height: 40px;
+          padding: 10px 12px;
+          border: 1px solid transparent;
+          border-radius: 4px;
+          background-color: white;
+          box-shadow: 0 1px 3px 0 #e6ebf1;
+          -webkit-transition: box-shadow 150ms ease;
+          transition: box-shadow 150ms ease;
+        }
+        .StripeElement--focus {
+          box-shadow: 0 1px 3px 0 #cfd7df;
+        }
+        .StripeElement--invalid {
+          border-color: #fa755a;
+        }
+        .StripeElement--webkit-autofill {
+          background-color: #fefde5 !important;
+        }
+    </style>
+    <script type="text/javascript">
+        var stripe = Stripe('{{sd_option('stripe_api_publish_key')}}', {apiVersion:'2020-03-02'});
+
+        var elements = stripe.elements();
+        var style = {
+          base: {
+            color: "#32325d",
+          }
+        };
+
+        var card = elements.create("card", { style: style });
+        card.mount("#card-element");
+
+        // Handle real-time validation errors from the card Element.
+        card.addEventListener('change', function(event) {
+          var displayError = document.getElementById('card-errors');
+          if (event.error) {
+            displayError.textContent = event.error.message;
+          } else {
+            displayError.textContent = '';
+          }
+        });
+
+        // Handle form submission.
+        var form = document.getElementById('sd-payForm');
+        form.addEventListener('submit', function(event) {
+          event.preventDefault();
+
+          var data = {
+            name: '{{data['bfirstname']}} {{data['blastname']}}',
+            address_line1: '{{data['baddress1']}}',
+            address_line2: '{{data['baddress2']}}',
+            address_city: '{{data['bcity']}}',
+            address_state: '{{data['bstate']}}',
+            address_zip: '{{data['bzip']}}',
+            address_country: '{{data['bcountry']}}',
+          }
+
+          stripe.createToken(card, data).then(function(result) {
+            if (result.error) {
+              var errorElement = document.getElementById('card-errors');
+              errorElement.textContent = result.error.message;
+            } else {
+              stripeTokenHandler(result.token);
+            }
+          });
+        });
+
+        function stripeTokenHandler(token) {
+          var form = document.getElementById('sd-payForm');
+          var hiddenInput = document.createElement('input');
+          hiddenInput.setAttribute('type', 'hidden');
+          hiddenInput.setAttribute('name', 'sd_card_token');
+          hiddenInput.setAttribute('value', token.id);
+          form.appendChild(hiddenInput);
+          form.submit();
+        }
+    </script>
+{% endif %}
+
+    {% if (sd_option('site_shipping') == 'on' and sd_option('shipping_address') == 'on' and sd_option('shipping_gift') == 'on') %}
         {% if (data['shipasgift'])  %}
             {% set sag_check = ' checked' %}
         {% else %}
@@ -138,7 +226,7 @@
             </div>
         </div>
         <div class="sd-ccInfo">
-            <input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="15" value="{{ data['code']  }}" />
+            <input type="text" id="sd-order-code" name="sd_order_code" size="10" maxlength="100" value="{{ data['code'] }}" placeholder="Discount Code" />
             <input type="button" id="sd-apply-code" value="Apply" onclick="sdApplyTotals('discount','sd-order-code');"/>
             {% if output.legal_uri  %}
             <a href="{{ output.legal_uri }}" target="_blank" id="sd-agree-popup" onclick="window.open('{{ output.legal_uri  }}','Terms of Service','toolbar=0,status=0,menubar=0');return false;">

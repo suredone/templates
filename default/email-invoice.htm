@@ -1,7 +1,4 @@
 {# form InvoiceEmail #}
-{% set admindash = sd_option('site_admin_dashboard') ? json_decode(sd_option('site_admin_dashboard'),true) : [] %}
-{% set adminv2set = admindash['user_interface']['v2'] ? true : false %}
-{% set adminurlbase = adminv2set ? sd_seturl('#!/orders/edit/','admin','',true) : sd_seturl('orders?do=edit&oid=','admin','',true) %}
 {% set site_url = sd_siteinfo('url', false) %}
 {% set site_logo = sd_siteinfo('logo_secure_url', false) %}
 {% set login_url = sd_seturl(sd_option('site_uri_accounts'), 'service', 'absolute', true) ~ '?do=invoice&order=' ~ data['channel'] ~ data['ordernumber'] %}
@@ -120,7 +117,7 @@
 
     {% if (data['admin_invoice']) %}
     <br/><br/>
-    <a href="{{ adminurlbase }}{{ data['oid'] }}">SEE INVOICE</a>
+    <a href="{{ sd_seturl('orders', 'admin', '', true) }}?do=invoice&oid={{ data['oid'] }}">SEE INVOICE</a>
     {% elseif (sd_is_logged_in) %}
     <br/><br/>
     Once your shipment has been processed you may log in <a href="{{ login_url }}">here</a> to track your shipment.

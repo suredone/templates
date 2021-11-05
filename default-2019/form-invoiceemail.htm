@@ -133,7 +133,7 @@
 
     {% if (data['admin_invoice']) %}
     <br/><br/>
-    <a href="{{ sd_seturl('orders', 'admin', '', true) }}?do=invoice&order={{ data['order'] }}">SEE INVOICE</a>
+    <a href="{{ sd_seturl('orders', 'admin', '', true) }}?do=invoice&oid={{ data['oid'] }}">SEE INVOICE</a>
     {% elseif (sd_is_logged_in) %}
     <br/><br/>
     Once your shipment has been processed you may log in <a href="{{ login_url }}">here</a> to track your shipment.

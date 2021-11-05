@@ -75,7 +75,7 @@
     {% if not get_reqs('view') %}
     <tr class="sd-cartRow">
         <td class="sd-cartOrder">
-            <a href="{{ sd_seturl('orders?do=edit&order=' ~ data['order'], 'admin', '', true) }}">
+            <a href="{{ sd_seturl('orders?do=edit&oid=' ~ data['oid'], 'admin', '', true) }}">
                 {{ data['order'] }}
             </a>
         </td>

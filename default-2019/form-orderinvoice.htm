@@ -20,7 +20,7 @@
     {% set uris = order['uris'] ? order['uris']|split('*') : [] %}
     {% set currency_symbol = sd_currency(false) %}
     {% set printing_logic = shipopts['printer_sets'] is defined and shipopts['printer_sets']['invoice'] is defined ? shipopts['printer_sets']['invoice']|escape('html') : 'post' %}
-    {% set invoice_url = sd_is_admin ? sd_seturl('#!/orders/edit/' ~ order['order'],'admin',null,true) : output.accounts_uri ~ '?do=invoice&order=' ~ order['order'] %}
+    {% set invoice_url = sd_is_admin ? sd_seturl('#!/orders/edit/' ~ order['oid'],'admin',null,true) : output.accounts_uri ~ '?do=invoice&order=' ~ order['order'] %}
     {% set invoice_vars = '' %}
 <div class="sd-invoice">
 {% if order['printerset'] is empty %}

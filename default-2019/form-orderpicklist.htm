@@ -2,7 +2,7 @@
 
 {% set admindash = sd_option('site_admin_dashboard') ? json_decode(sd_option('site_admin_dashboard'),true) : [] %}
 {% set adminv2set = admindash['user_interface']['v2'] ? true : false %}
-{% set adminurlbase = adminv2set ? sd_seturl('#!/orders/edit/','admin','',true) : sd_seturl('orders?do=edit&order=','admin','',true) %}
+{% set adminurlbase = adminv2set ? sd_seturl('#!/orders/edit/','admin','',true) : sd_seturl('orders?do=edit&oid=','admin','',true) %}
 {% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'),true) : [] %}
 {% set invoice_fields = is_array(shipopts['invoice_fields']) ? shipopts['invoice_fields'] : [] %}
 {% set uservars = sd_option('user_field_names') ? sd_option('user_field_names')|split('*') : [] %}

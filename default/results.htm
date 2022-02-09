@@ -286,48 +286,6 @@
     </div>
     {% endif %}
 
-{% elseif (group == 'releases') %}
-
-    {% if results %}
-    <div id="sd-releases">
-        {# get data #}
-        {% for key, row in results %}
-            {% if (not is_array(row)) %}
-                {# continue #}
-            {% else %}
-            {% set url = sd_seturl([row['uri'], row['date']], 'post') %}
-            <p class="release-item">
-                <strong><a href="{{ url }}">{{ row['title'] }}</a></strong>
-                <em class="published">{{ sd_datetext(row['date'],false) }}</em>
-                <span class="description">{{ row['description'] }}</span>
-            </p>
-            {% endif %}
-        {% endfor %}
-        {% set prevpage = results['prev_page'] %}
-        {% set nextpage = results['next_page'] %}
-        {# setup page nav #}
-        {% if (prevpage == 0 and nextpage == 0) %}
-            <p id="release-nav">
-                <a href="{{ sd_seturl('','home') }}">{{ sd_option('site_nav_icon_prev') }} {{ sd_option('post_home_link_text') }} {{ sd_option('site_nav_icon_next') }}</a>
-            </p>
-        {% else %}
-            <p id="release-nav">
-            {% if (prevpage == 0) %}
-                <span id="page-prev"><a href="{{ sd_seturl('','home') }}">{{ sd_option('site_nav_icon_prev') }} {{ sd_option('post_home_link_text') }} </a></span>
-            {% elseif (prevpage == 1) %}
-                <span id="page-prev"><a href="{{ output.request_uri }}" onclick="return sdAjaxCall(\'page={{ prevpage }}\')" rel="prev">{{ sd_option('site_nav_icon_prev') }} Prev </a></span>
-            {% else %}
-                <span id="page-prev"><a href="{{ output.request_uri }}?page={{ prevpage }}" onclick="return sdAjaxCall(\'page={{ prevpage }}\')" rel="prev">{{ sd_option('site_nav_icon_prev') }} Prev </a></span>
-            {% endif %}
-            {% if (nextpage == 0) %}
-                 | <span id="page-next"><a href="{{ sd_seturl('','home') }}"> {{ sd_option('post_home_link_text') }} {{ sd_option('site_nav_icon_next') }}</a></span>
-            {% else %}
-                 | <span id="page-next"><a href="{{ output.request_uri }}?page={{ nextpage }}" onclick="return sdAjaxCall(\'page={{ nextpage }}\')" rel="next">Next {{ sd_option('site_nav_icon_next') }}</a></span>
-            {% endif %}
-            </p>
-        {% endif %}
-    </div>
-    {% endif %}
 {% elseif (group == 'stock') %}
 
     {# original stock/condition production layout #}

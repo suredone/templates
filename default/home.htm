@@ -14,7 +14,7 @@
             {% if sd_is_get %}
                 {# sd_content('results') #}
                 {% include 'results.htm' %}
-            {% elseif sd_option('site_releases_preview_interval') %}
+            {% else %}
                 <h3><a href="{{ sd_seturl('','home') }}?show" onclick="return sdAjaxCall('show=new')">Show All New Products</a></h3>
             {% endif %}
         </div>

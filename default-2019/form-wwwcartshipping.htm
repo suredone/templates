@@ -10,6 +10,14 @@
     {% set applystate = applystate|merge(["'shipping'"]) %}
 {% endif %}
 
+{% if (sd_option('site_cart_tax') == 'on' and sd_option('site_cart_tax_by') == 'country') %}
+    {% set applycountry = applycountry|merge(["'tax'"]) %}
+{% endif %}
+
+{% if (sd_option('site_cart_tax') == 'on' and sd_option('site_cart_tax_by') == 'state') %}
+    {% set applystate = applystate|merge(["'tax'"]) %}
+{% endif %}
+
 {% if applycountry %}
     {% set applybcountry = "onchange=\"sdApplyTotals(["  ~ (applycountry|join(',')) ~ "],'sd-s-country');\"" %}
 {% endif %}

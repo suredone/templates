@@ -56,10 +56,7 @@
         {% endif %}
         {% if (data['taxtotal'] > 0) %}
         <tr>
-            {%
-                set billingstatename = sd_statename(data['billing']['stateprovince']) ? sd_statename(data['billing']['stateprovince']) : data['billing']['stateprovince']
-            %}
-            <td align="right">{{ billingstatename }} TAX TOTAL</td>
+            <td align="right">TAX TOTAL</td>
             <td align="left">{{ sd_currency(false) ~ data['taxtotal']|number_format(2) }}</td>
         </tr>
         {% endif %}

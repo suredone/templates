@@ -12,6 +12,13 @@
             <div class="sd-ppField" style="vertical-align:top;">Ship To:</div>
             <div class="sd-ppInfo">
                 {% include 'form-shippingaddress.htm' with {'data': data} %}
+                {% if data['sphone'] is empty %}
+                <br /><br />
+                <span class="sd-sphone sd-payInfo">
+                    <b>Phone Number:</b>
+                    <input type="text" size="45" maxlength="25" id="sd-s-phone" name="sd_s_phone" value="" />
+                </span>
+                {% endif %}
             </div>
         </div>
         <div id="sd-emailForm" class="clearfix shipping-method-custom">

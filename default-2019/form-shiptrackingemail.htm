@@ -21,7 +21,7 @@
 <br/><br/>
 Order# {{ data['order'] }}<br/><br/>
 {{ statuskw }}
-{% spaceless %}
+{% apply spaceless %}
 {% if data['shiptracking'] %}
 
     {% set shipping_tracking_codes = ['FEDEX', 'UPS', 'USPS'] %}
@@ -75,7 +75,7 @@ Order# {{ data['order'] }}<br/><br/>
         {% endfor %}
     {% endif %}
 {% endif %}
-{% endspaceless %}
+{% endapply %}
 <br/><br/>
 
 {% if (data['shipservice']) %}

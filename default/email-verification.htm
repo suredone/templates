@@ -1,7 +1,7 @@
 {# form VerificationEmail #}
 {% set site_url = sd_siteinfo('url', false) %}
 {% set site_logo = sd_siteinfo('logo_secure_url', false) %}
-{% spaceless %}
+{% apply spaceless %}
 <html>
 <head>
 	<title>{{ sd_siteinfo('business', false) }} Account Verification</title>
@@ -19,4 +19,4 @@
 	{{ sd_option('email_signature') }}
 </body>
 </html>
-{% endspaceless %}
+{% endapply %}

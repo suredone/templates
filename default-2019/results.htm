@@ -430,7 +430,7 @@
     {% else %}
         {# product grid #}
         {% if results %}
-            {% spaceless %}
+            {% apply spaceless %}
             {% set url = sd_seturl() %}
 
             {% set search_query = get_search_query() %}
@@ -499,7 +499,7 @@
             {# offer sets #}
             {% set offerconditions = ['new', 'used', 'refurbished'] %}
             {% set offercurrency = sd_option('site_currency') %}
-            {% endspaceless %}
+            {% endapply %}
 <div class="toolbar">
     <div class="pager">
         <p class="view-mode">
@@ -530,7 +530,7 @@
                 {% if (key == 'all' or key == 'time') %}
                     {# continue #}
                 {% else %}
-                    {% spaceless %}
+                    {% apply spaceless %}
                     {% if row['guid'] %}
                         {% set sku = row['guid'] %}
                     {% else %}
@@ -570,7 +570,7 @@
                         {% endif %}
 <ol class="products-list" id="products-list">
     {% endif %}
-    {% endspaceless %}
+    {% endapply %}
 
     {% if lastcol == 3 %}
     {% set classlastcol = 'last' %}
@@ -724,7 +724,7 @@
     {% else %}
         {# product grid #}
         {% if results %}
-            {% spaceless %}
+            {% apply spaceless %}
             {% set url = sd_seturl() %}
 
             {% set search_query = get_search_query() %}
@@ -793,7 +793,7 @@
             {# offer sets #}
             {% set offerconditions = ['new', 'used', 'refurbished'] %}
             {% set offercurrency = sd_option('site_currency') %}
-            {% endspaceless %}
+            {% endapply %}
             {#
             <div class="toolbar">
                 <div class="pager">
@@ -819,7 +819,7 @@
                 {% if (key == 'all' or key == 'time') %}
                     {# continue #}
                 {% else %}
-                    {% spaceless %}
+                    {% apply spaceless %}
                     {% if row['guid'] %}
                         {% set sku = row['guid'] %}
                     {% else %}
@@ -859,7 +859,7 @@
                         {% endif %}
                 <div class="xt-blog col-xs-12" id="blog-list">
                     {% endif %}
-                    {% endspaceless %}
+                    {% endapply %}
 
                     {% if lastcol == 3 %}
                     {% set classlastcol = 'last' %}
@@ -931,7 +931,7 @@
     {% else %}
         {# product grid #}
         {% if results %}
-            {% spaceless %}
+            {% apply spaceless %}
             {% set url = sd_seturl() %}
 
             {% set search_query = get_search_query() %}
@@ -1007,7 +1007,7 @@
             {# offer sets #}
             {% set offerconditions = ['new', 'used', 'refurbished'] %}
             {% set offercurrency = sd_option('site_currency') %}
-            {% endspaceless %}
+            {% endapply %}
 <div class="search_for">Search results for: <span>{{ search_query }}</span></div>
 <div class="toolbar">
     <div class="pager">
@@ -1039,7 +1039,7 @@
     {% if (key == 'all' or key == 'time') %}
         {# continue #}
     {% else %}
-        {% spaceless %}
+        {% apply spaceless %}
         {% if row['guid'] %}
             {% set sku = row['guid'] %}
         {% else %}
@@ -1079,7 +1079,7 @@
             {% endif %}
 <div class="products-grid">
     {% endif %}
-    {% endspaceless %}
+    {% endapply %}
 
     {% if lastcol == 3 %}
     {% set classlastcol = 'last' %}

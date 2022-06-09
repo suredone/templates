@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless %}
 {% set applycountry = [] %}
 {% set applystate = [] %}
 
@@ -26,7 +26,7 @@
     {% set applybstate = " onchange=\"sdApplyTotals([" ~ (applystate|join(',')) ~ "],'sd-s-state');\"" %}
 {% endif %}
 
-{% endspaceless %}
+{% endapply %}
 <input type="hidden" id="sd-ship-form" name="sd_ship_form" value="WWWCartShipping"/>
 <div class="table-responsive">
     <div rules="none" class="table clearfix">

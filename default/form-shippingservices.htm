@@ -53,17 +53,19 @@
         <form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
             <input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="international"/>
             <select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
-            {% for service in custom_shipping_services_international if service==default_int or cartdimensions.weight>0 %}
-                {% if (service == default_int) %}
-                    {% set selected = ' selected' %}
-                {% else %}
-                    {% set selected = '' %}
-                {% endif %}
-                {% for carrier in carriers %}
-                    {% if carrier|lower in service|lower %}
-                    <option id="sd-shipint-{{ service }}" value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+            {% for service in custom_shipping_services_international %}
+                {% if service==default_int or cartdimensions.weight>0 %}
+                    {% if (service == default_int) %}
+                        {% set selected = ' selected' %}
+                    {% else %}
+                        {% set selected = '' %}
                     {% endif %}
-                {% endfor %}
+                    {% for carrier in carriers %}
+                        {% if carrier|lower in service|lower %}
+                        <option id="sd-shipint-{{ service }}" value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
             </select>
             <input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>
@@ -81,17 +83,19 @@
         <form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
             <input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="domestic"/>
             <select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
-            {% for service in custom_shipping_services_domestic if service==default_dom or cartdimensions.weight>0 %}
-                {% if (service == default_dom) %}
-                    {% set selected = ' selected' %}
-                {% else %}
-                    {% set selected = '' %}
-                {% endif %}
-                {% for carrier in carriers %}
-                    {% if carrier|lower in service|lower %}
-                    <option id="sd-shipdom-{{ service }}" value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+            {% for service in custom_shipping_services_domestic %}
+                {% if service==default_dom or cartdimensions.weight>0 %}
+                    {% if (service == default_dom) %}
+                        {% set selected = ' selected' %}
+                    {% else %}
+                        {% set selected = '' %}
                     {% endif %}
-                {% endfor %}
+                    {% for carrier in carriers %}
+                        {% if carrier|lower in service|lower %}
+                        <option id="sd-shipdom-{{ service }}" value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
             </select>
             <input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>
@@ -114,17 +118,19 @@
             <form action="{{ output.cart_suri }}" method="post" id="sd-shipForm" name="sd_shipForm">
                 <input type="hidden" id="sd-ship-service-location" name="sd_ship_service_location" value="international"/>
                 <select id="sd-ship-service" name="sd_ship_service" onchange="sdApplyTotals(['shipping'],this.id);">
-                {% for service in custom_shipping_services_international if service==default_int or cartdimensions.weight>0 %}
-                    {% if (service == default_int) %}
-                        {% set selected = ' selected' %}
-                    {% else %}
-                        {% set selected = '' %}
-                    {% endif %}
-                    {% for carrier in carriers %}
-                        {% if carrier|lower in service|lower %}
-                        <option value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+                {% for service in custom_shipping_services_international %}
+                    {% if service==default_int or cartdimensions.weight>0 %}
+                        {% if (service == default_int) %}
+                            {% set selected = ' selected' %}
+                        {% else %}
+                            {% set selected = '' %}
                         {% endif %}
-                    {% endfor %}
+                        {% for carrier in carriers %}
+                            {% if carrier|lower in service|lower %}
+                            <option value="{{ service }}" {{ selected }}>{{ new_custom_shipping_services_labels[service] }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
                 </select>
                 <input type="button" id="sd-ship-recalculate" name="sd_ship_recalculate" value="Recalculate" onclick="sdApplyTotals(['shipping'],'sd-ship-service');"/>

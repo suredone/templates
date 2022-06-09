@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless %}
 {% set applycountry = [] %}
 
 {% if (sd_option('site_cart_card_filters') == 'on' and sd_option('site_cart_card_countries')) %}
@@ -20,7 +20,7 @@
 {% set icons_vform_bstate = (output.icons['vform']['bstate'] == output.icons['required']) ? output.icons['vform']['bstate'] : output.icons['blank'] %}
 {% set icons_vform_bzip = (output.icons['vform']['bzip'] == output.icons['required']) ? output.icons['vform']['bzip'] : output.icons['blank'] %}
 
-{% endspaceless %}
+{% endapply %}
 <table rules="none" cellpadding="0" cellspacing="0">
 	<col width="185"/>
 	<col width="10"/>

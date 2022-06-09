@@ -154,7 +154,7 @@
                     {% if (key == 'all' or key == 'time') %}
                     {# continue #}
                     {% else %}
-                    {% spaceless %}
+                    {% apply spaceless %}
                     {% if row['guid'] %}
                     {% set sku = row['guid'] %}
                     {% else %}
@@ -184,7 +184,7 @@
 
                     {% set discountpricecss = row['discountprice'] > 0 ? ' td-discount-price' : '' %}
 
-                    {% endspaceless %}
+                    {% endapply %}
                     <div class="col-md-3 col-sm-3">
                         <div class="xt-feature">
                             <div class="product-img">

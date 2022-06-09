@@ -129,7 +129,7 @@
         }
     </style>
     <script type="text/javascript">
-        var stripe = Stripe('{{sd_option('stripe_api_publish_key')}}', {apiVersion:'2020-03-02'});
+        var stripe = Stripe('{{sd_option('stripe_api_publish_key')}}', {apiVersion:'2020-03-02'})
 
         var elements = stripe.elements();
         var style = {

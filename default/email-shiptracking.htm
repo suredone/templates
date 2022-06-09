@@ -5,7 +5,7 @@
 {% set site_logo = sd_siteinfo('logo_secure_url', false) %}
 {% set trackcodes = ['NOTRACKING', 'REFUNDED', 'CANCELED', 'PICKUP', 'PENDING', 'ORDERED', 'SHIPPED', 'DROPSHIPPED','INCOMPLETE', 'REJECTED'] %}
 {% set statuskw = ((data['status']|upper) in trackcodes) ? 'Status:' : 'Tracking#' %}
-{% spaceless %}
+{% apply spaceless %}
 <html>
 <head>
     <title>{{ sd_siteinfo('business', false) }} Ship Tracking</title>
@@ -83,4 +83,4 @@ Order# {{ data['order'] }}<br/><br/>
 <br/><br/>{{ sd_option('email_signature') }}
 </body>
 </html>
-{% endspaceless %}
+{% endapply %}

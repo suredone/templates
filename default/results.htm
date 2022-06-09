@@ -497,7 +497,7 @@
         {{ output.items_html }}
     {% else %}
         {% if results %}
-            {% spaceless %}
+            {% apply spaceless %}
             {% set url = sd_seturl() %}
 
             {% set search_query = get_search_query() %}
@@ -551,7 +551,7 @@
             {% set offerconditions = {'new':'NewCondition', 'used':'UsedCondition', 'refurbished':'RefurbishedCondition', 'damaged':'DamagedCondition'} %}
             {% set offercurrency = sd_option('site_currency') %}
 
-            {% endspaceless %}
+            {% endapply %}
             {# setup table #}
                 <table rules="all" cellspacing="0" cellpadding="0" id="results-content">
                 {% for i in 0..colmax %}
@@ -587,7 +587,7 @@
                     {% if (not is_array(row)) %}
                         {# continue #}
                     {% else %}
-                        {% spaceless %}
+                        {% apply spaceless %}
                         {% set sku = row['guid'] ? row['guid'] : row['sku'] %}
                         {% set media = sd_parsemedia(row['media']) %}
 
@@ -663,7 +663,7 @@
                         {% if (colnum == colmax) %}
                             </tr>
                         {% endif %}
-                        {% endspaceless %}
+                        {% endapply %}
                         {% set colnum = colnum + 1 %}
                         {% if(colnum == colnext) %}
                             {% set colnum = 1 %}

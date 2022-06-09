@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless %}
 
 {% if (sd_option('international_shipping_locations'))  %}
     {% set applyscountry = " onchange=\"sdApplyTotals(['shipping'],'sd-s-country');\"" %}
@@ -7,7 +7,7 @@
 {% set icons_vform_sstate = (output.icons['vform']['sstate'] == sd_securemedia(output.icons['required'])) ? output.icons['vform']['sstate'] : sd_securemedia(output.icons['blank']) %}
 {% set icons_vform_szip = (output.icons['vform']['szip'] == sd_securemedia(output.icons['required'])) ? output.icons['vform']['szip'] : sd_securemedia(output.icons['blank']) %}
 
-{% endspaceless %}
+{% endapply %}
 <table rules="none" cellpadding="0" cellspacing="0">
     <col width="185"/>
     <col width="10"/>

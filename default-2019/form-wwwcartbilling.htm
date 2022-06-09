@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless %}
 {% set applycountry = [] %}
 {% set applystate = [] %}
 
@@ -30,7 +30,7 @@
     {% set applybstate = " onchange=\"sdApplyTotals([" ~ (applystate|join(',')) ~ "],'sd-b-state');\"" %}
 {% endif %}
 
-{% endspaceless %}
+{% endapply %}
 <input type="hidden" id="sd-bill-form" name="sd_bill_form" value="WWWCartBilling"/>
 <div class="table-responsive">
     <div rules="none" class="table clearfix">

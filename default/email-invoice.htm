@@ -3,7 +3,7 @@
 {% set site_logo = sd_siteinfo('logo_secure_url', false) %}
 {% set login_url = sd_seturl(sd_option('site_uri_accounts'), 'service', 'absolute', true) ~ '?do=invoice&order=' ~ data['channel'] ~ data['ordernumber'] %}
 {% set shipopts = sd_option('shipping_package_method') ? json_decode(sd_option('shipping_package_method'), true) : [] %}
-{% spaceless %}
+{% apply spaceless %}
 <html>
 <head>
     <title>{{ sd_siteinfo('business', false) }} Order# {{ data['ordernumber'] }}</title>
@@ -124,4 +124,4 @@
     {{ sd_option('email_signature') }}
 </body>
 </html>
-{% endspaceless %}
+{% endapply %}

@@ -26,11 +26,7 @@
     {% set itemtotal = 0 %}
 
     {% for i in range(low=1, high=data['index'], step=1) %}
-
-        {% if (data[i]['qty'] == 0) %}
-            {# continue #}
-        {% else %}
-
+        {% if (data[i]['qty'] > 0) %}
             {% if data[i]['guid'] %}
                 {%  set sku = data[i]['guid'] %}
             {% else %}

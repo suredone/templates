@@ -5,9 +5,7 @@
     <col width="25"/>
     <col width="75"/>
     {% for i in range(low=1, high=data['index'], step=1) %}
-        {% if (data[i]['qty'] == 0)  %}
-            {# continue #}
-        {% else %}
+        {% if (data[i]['qty'] > 0)  %}
             {% set sku = data[i]['guid'] ? data[i]['guid'] : data[i]['sku'] %}
             {% set media = data[i]['secure_media'] ? data[i]['secure_media'] : data[i]['media'] %}
             {% set totalprice = (data[i]['qty'] * data[i]['sdprice']) %}

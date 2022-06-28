@@ -54,7 +54,7 @@
     {% set skus = items[i]|split('|') %}
     {% set media = sd_securemedia(imgs[i]) %}
     {% set urls = uris[i]|length > 0 ? uris[i]|split('|') : [] %}
-    {% set totalprice = qtys[i] * prices[i] %}
+    {% set totalprice = qtys[i] > 0 ? qtys[i] * prices[i] : 0 %}
     {% set invoice_fields_data = '' %}
     {% if sd_is_admin and invoice_fields|length > 0 and order['item'][i] %}
         {% for inv_field in invoice_fields %}

@@ -28,6 +28,11 @@
 			<div class="sd-invlabelContent">
 
 			{# custom inventory label views #}
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$("#bcTarget{{ row['id'] }}").barcode("{{ row['guid'] }}", "code128",{barWidth:1, barHeight:30});
+				});
+			</script>
 			{% if get_reqs('view') or shipopts['label_fields']|length > 0 %}
 				{% set viewvars = get_reqs('view') ? get_reqs('view')|split(',') : shipopts['label_fields'] %}
 				{% for view in viewvars %}
@@ -39,17 +44,11 @@
 					{% endif %}
 				{% endfor %}
 			{% else %}
-				{% set sku = row['guid'] %}
-				<script type="text/javascript">
-					$(document).ready(function(){
-						$("#bcTarget{{ row['id'] }}").barcode("{{ sku }}", "code128",{barWidth:1, barHeight:30});
-					});
-				</script>
 				<span class="sd-title">{{ row['title']|escape('html') }}</span>
 				<span class="sd-price">{{ row['price'] }}</span>
-				<span class="sd-sku"><a href="https://app.suredone.com/#!/products/edit/{{ sku|escape('url') }}/guid">{{ sku|escape('html') }}</a></span>
-				<div id="bcTarget{{ row['id'] }}"></div>
+				<span class="sd-sku"><a href="https://app.suredone.com/#!/products/edit/{{ row['guid']|escape('url') }}/guid">{{ row['guid']|escape('html') }}</a></span>
 			{% endif %}
+			<div id="bcTarget{{ row['id'] }}"></div>
 
 			</div>
 

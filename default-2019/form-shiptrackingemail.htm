@@ -85,18 +85,6 @@ Order# {{ data['order'] }}<br/><br/>
     Ship Carrier: {{ data['shipcarrier'] }}<br/><br/>
 {% endif %}
 
-<table rules="none" width="500">
-    <col width="500"/>
-    <tr>
-        <td align="left">SHIP TO:</td>
-    </tr>
-    <tr>
-        <td align="left">
-            {% include 'form-shippingaddress.htm' with {'data':data} %}
-        </td>
-    </tr>
-</table>
-
 {% if data['shiptrackingmessage'] %}
 <br/><br/>
 {{ data['shiptrackingmessage'] }}

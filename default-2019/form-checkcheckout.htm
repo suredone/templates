@@ -1,5 +1,4 @@
 {# card processing form #}
-{% set wpsets = sd_option('site_cart_card_processor')=='worldpay' and sd_option('worldpay_settings') ? json_decode(sd_option('worldpay_settings'),true) : [] %}
 <div rules="none" cellpadding="0" cellspacing="0">
     <div>
         <div colspan="3" id="sd-cardNotice">
@@ -8,16 +7,6 @@
             {% endif %}
         </div>
     </div>
-    {% if sd_option('site_cart_card_processor')=='worldpay' and wpsets['methods']=='creditcheck' %}
-    <div>
-        <div class="sd-payInfo" colspan="3"><b class="sd-infoBold sd-shipAddrLabel">PAYMENT TYPE</b><br />
-            <select id="sd-payment_type" name="sd_payment_type" onchange="sdShipForm(this,this.value,'sd-paymentForm');">
-                <option value="CardCheckout" {{ data['select_paybycredit'] }}>Pay By Credit Card</option>
-                <option value="CheckCheckout" selected>Pay By Check</option>
-            </select>
-        </div>
-    </div>
-    {% endif %}
     <div>
         <div class="sd-ccLVimg">
             <img class="sd-formIcon" src="{{ output.icons['vform']['check_account'] }}" name="sdform-vcheckaccount" alt="Required pay by check account"/>

@@ -1,5 +1,4 @@
 {# card processing form #}
-{% set wpsets = sd_option('site_cart_card_processor')=='worldpay' and sd_option('worldpay_settings') ? json_decode(sd_option('worldpay_settings'),true) : [] %}
 <div class="sd-cc-wrapper">
 {% if not stripe %}
     <div>
@@ -9,16 +8,6 @@
             {% endif %}
         </div>
     </div>
-    {% if sd_option('site_cart_card_processor')=='worldpay' and wpsets['methods']=='creditcheck' %}
-    <div class="clearfix">
-        <div class="sd-payInfo clearfix"><b class="sd-infoBold sd-shipAddrLabel">PAYMENT TYPE</b><br />
-            <select id="sd-payment_type" name="sd_payment_type" onchange="sdShipForm(this,this.value,'sd-paymentForm');">
-                <option value="CardCheckout" {{ data['select_paybycredit'] }}>Pay By Credit Card</option>
-                <option value="CheckCheckout" {{ data['select_paybycheck'] }}>Pay By Check</option>
-            </select>
-        </div>
-    </div>
-    {% endif %}
     <div>
         <div class="sd-ccField">
             {% if (steps) %}<h4>Credit card <img src="https://assets.suredone.com/base/icon/sd-cards.gif"/></h4>{% endif %}

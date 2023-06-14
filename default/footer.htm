@@ -31,15 +31,6 @@
     <div id="foot-pow">{{ sd_siteinfo('version_logo_powered_link') }}</div>
 </div>
 {% endif %}
-{% if sd_option('site_tracking') == 'on' and sd_option('site_tracking_google_account') is not empty %}
-<script type="text/javascript">
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-</script>
-{% endif %}
 <!-- colorbox image gallery -->
 <script type="text/javascript">
     $(".sd-gallery-thumbs").colorbox({rel:'sd-gallery-thumbs', transition:"none", width:"75%", height:"75%", current:'Image {current} of {total}', 'onComplete': function(){

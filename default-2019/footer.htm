@@ -175,15 +175,6 @@
     </div>
     {% endif %}
     <div id="foot-pow">{{ sd_siteinfo('version_logo_powered_link') }}</div>
-    {% if sd_option('site_tracking') == 'on' and sd_option('site_tracking_google_account') is not empty %}
-    <script>
-        (function () {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
-    {% endif %}
 
 </footer>
 <!--

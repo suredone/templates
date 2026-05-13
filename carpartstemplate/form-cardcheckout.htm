@@ -1,7 +1,7 @@
 {# card processing form #}
 {% set wpsets = sd_option('site_cart_card_processor')=='worldpay' and sd_option('worldpay_settings') ? json_decode(sd_option('worldpay_settings'),true) : [] %}
 <div class="sd-cc-wrapper">
-{% if not stripe %}
+{% if not stripe and not authorizenet %}
     <div>
         <div id="sd-cardNotice">
             {% if (data['ccerror']) %}
@@ -100,7 +100,52 @@
             <input AUTOCOMPLETE="off" placeholder="CVV" type="text" size="4" maxlength="4" id="sd-cc-cvv" name="sd_cc_cvv" value="" required/>
         </div>
     </div>
+{% elseif authorizenet %}
+  {% if (steps) %}
+    <h4>Credit card <img src="https://assets.suredone.com/base/icon/sd-cards.gif"/></h4>
+  {% endif %}
+
+  <input type="hidden" name="dataValue" id="dataValue" />
+  <input type="hidden" name="dataDescriptor" id="dataDescriptor" />
+  <script type="text/javascript" src="https://jstest.authorize.net/v1/Accept.js" charset="utf-8"></script>
+  <script type="text/javascript" src="https://jstest.authorize.net/v3/AcceptUI.js" charset="utf-8"></script>
+
+  <script type="text/javascript">
+      function responseHandler(response) {
+          if (response.messages.resultCode === "Error") {
+              var i = 0;
+              while (i < response.messages.message.length) {
+                  window.alert(
+                      response.messages.message[i].code + ": " +
+                      response.messages.message[i].text
+                  );
+                  i = i + 1;
+              }
+          } else {
+              paymentFormUpdate(response.opaqueData)
+          }
+      }
+
+      function paymentFormUpdate(opaqueData) {
+          document.getElementById("dataDescriptor").value = opaqueData.dataDescriptor
+          document.getElementById("dataValue").value = opaqueData.dataValue
+
+          document.getElementById("sd-payForm").submit()
+      }
+  </script>
+
+  <style>
+      div#AcceptUIContainer {
+          right: 0;
+          top: 0 !important;
+          left: 0 !important;
+          bottom: 0 !important;
+          margin: auto !important;
+          position: fixed !important;
+      }
+  </style>
 {% else %}
+    <!-- Stripe -->
     <div>
         <div id="card-element"></div>
 
@@ -129,7 +174,7 @@
         }
     </style>
     <script type="text/javascript">
-        var stripe = Stripe('{{sd_option('stripe_api_publish_key')}}', {apiVersion:'2020-03-02'});
+        var stripe = Stripe('{{sd_option('stripe_api_publish_key')}}', {apiVersion:'2020-03-02'})
 
         var elements = stripe.elements();
         var style = {
@@ -269,11 +314,44 @@
     <div>
         <div id="sd-submitBlock">
             {% if (steps) %}
-            <a href="{{ output.cart_suri }}" class="sd-formButton">Return to cart</a>
+                <a href="{{ output.cart_suri }}" class="sd-formButton">Return to cart</a>
 
-            <input alt="Pay Now" class="sd-formButton" src="" tabindex="35" id="sd-formSubmitButton" type="submit" value="Pay Now"/>
+                {% if authorizenet %}
+                    <button type="button"
+                        class="AcceptUI"
+                        data-responseHandler="responseHandler"
+                        data-acceptUIFormBtnTxt="Complete purchase" 
+                        data-acceptUIFormHeaderTxt="Card Information"
+                        data-billingAddressOptions='{"show":true, "required":false}' 
+                        data-paymentOptions='{"showCreditCard": true, "showBankAccount": false}' 
+                        data-apiLoginID="{{sd_option('authorizenet_id')}}"
+                        data-clientKey="{{sd_option('authorizenet_public_client_key')}}"
+                        style="border: 1px solid #fff; color: white; padding: 10px; border-radius: 5px; background-color: #43b75e;"
+                    >
+                        Pay Now
+                    </button>
+                {% else %}
+                    <input alt="Pay Now" class="sd-formButton" src="" tabindex="35" id="sd-formSubmitButton" type="submit" value="Pay Now"/>
+                {% endif %}
+
             {% else %}
-            <input alt="Pay Now" class="sd-formButton" tabindex="35" id="sd-formSubmitButton" type="image" src="{{ sd_securemedia(output.icons['pay_now_cards']) }}" value="Pay Now"/>
+                {% if authorizenet %}
+                    <button type="button"
+                        class="AcceptUI"
+                        data-responseHandler="responseHandler"
+                        data-acceptUIFormBtnTxt="Complete purchase" 
+                        data-acceptUIFormHeaderTxt="Card Information"
+                        data-billingAddressOptions='{"show":true, "required":false}' 
+                        data-paymentOptions='{"showCreditCard": true, "showBankAccount": false}' 
+                        data-apiLoginID="{{sd_option('authorizenet_id')}}"
+                        data-clientKey="{{sd_option('authorizenet_public_client_key')}}"
+                        style="border: 1px solid #fff; color: white; padding: 10px; border-radius: 5px; background-color: #43b75e;"
+                    >
+                        Pay Now
+                    </button>
+                {% else %}
+                    <input alt="Pay Now" class="sd-formButton" tabindex="35" id="sd-formSubmitButton" type="image" src="{{ sd_securemedia(output.icons['pay_now_cards']) }}" value="Pay Now"/>
+                {% endif %}
             {% endif %}
         </div>
     </div>
